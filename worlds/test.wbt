@@ -1,0 +1,27 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/Floor.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/dji/mavic/protos/Mavic2Pro.proto"
+
+WorldInfo {
+  title "test"
+  basicTimeStep 8
+  defaultDamping Damping {
+  }
+}
+Viewpoint {
+  orientation -0.1387331327125486 0.6341049503344013 0.7606996975477043 0.56012545523486
+  position -3.2770252662262362 -1.5788522335961046 1.3525893881416695
+  follow "Mavic 2 PRO"
+}
+TexturedBackground {
+}
+Floor {
+}
+Mavic2Pro {
+  controller "uav_controller"
+}
+TexturedBackgroundLight {
+}

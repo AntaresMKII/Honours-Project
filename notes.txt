@@ -1,0 +1,37 @@
+=========================================
+	Notes For The Report
+=========================================
+
+===== Automatic Movement using GNSS =====
+
+Webots assumes that the world is flat.
+No need to account for earth curvature
+
+- Goal:
+A set of coordinates in the world that
+the drone needs to reach
+
+- Flight path:
+The flight path is relativelt easy to
+calculate. The distance between
+the drone and the goal can be
+computed using Euclidian Distance.
+
+Distance d: Euclidian Distance
+Heading: The heading is the angle
+between the distance and the
+north. It can be computed using
+trigonometry
+alpha = cos^-1(adj/dist)
+adj = length of NS coordinates
+
+- How to turn?
+Apply a yaw motion until compass
+reads the correct heading. Find
+the correct way to turn using
+subtraction of curr heading and
+desired heading
+
+- How to move?
+Apply pitch to move forward
+account for possible momentum
