@@ -60,9 +60,14 @@ double uav_get_pitch(Uav* uav);
 double uav_get_yaw(Uav* uav);
 
 double uav_get_gps_altitude(Uav* uav);
+double* uav_get_gps_pos(Uav* uav);
 
 double uav_get_roll_velocity(Uav* uav);
 double uav_get_pitch_velocity(Uav* uav);
 double uav_get_yaw_velocity(Uav* uav);
 
 void uav_actuate_motors(Uav* uav, double roll, double pitch, double yaw, double altitude);
+
+double uav_get_heading(Uav* uav);
+
+void cm_move_to_goal(Uav* uav, double* goalCoord, double altitude);

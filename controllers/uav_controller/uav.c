@@ -67,6 +67,11 @@ double uav_get_gps_altitude(Uav* uav){
     return wb_gps_get_values(uav->gps)[2];
 }
 
+/* Get UAV GPS coordinates */
+double* uav_get_gps_pos(Uav* uav){
+    return wb_gps_get_values(uav->gps);
+}
+
 /* Get UAV roll velocity */
 double uav_get_roll_velocity(Uav* uav){
     return wb_gyro_get_values(uav->gyro)[0];
@@ -133,4 +138,14 @@ void uav_actuate_motors(Uav* uav, double roll, double pitch, double yaw, double 
     wb_motor_set_velocity(uav->motors[1], -front_right_motor_input);
     wb_motor_set_velocity(uav->motors[2], -rear_left_motor_input);
     wb_motor_set_velocity(uav->motors[3], rear_right_motor_input);
+}
+
+// Get the current heading of the UAV
+double uav_get_heading(Uav* uav){
+    const double *north = wb_compass_get_values(uav->compass);
+    double rad = atan2(north[1], north[0]);
+    double heading = (rad - 1.5708) / M_PI * 180.0;
+    if (heading < 0.0)
+        heading = heading + 360.0;
+    return heading;
 }
