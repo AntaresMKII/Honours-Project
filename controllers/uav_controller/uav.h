@@ -50,6 +50,7 @@ typedef struct uav
 
     /* Variables */
     double target_alt; // Targeted altitude
+    bool tagetReached;
 } Uav;
 
 void uav_init(Uav* uav, int timestep);

@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
 
   Uav uav;
   double target_altitude = 1.0;
-  const double goal[3] = {10.0, 10.0, 1.0};
+  const double goal[3] = {-5.0, 0.0, 1.0};
 
   /* Initialize the uav */
   uav_init(&uav, timestep);

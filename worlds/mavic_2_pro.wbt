@@ -19,8 +19,8 @@ WorldInfo {
   }
 }
 Viewpoint {
-  orientation -0.049979572656669864 -0.002466652751046019 0.9987471942094568 2.921530025493772
-  position 3.5872836252066715 -0.594058718624044 0.42646846367169383
+  orientation -0.10946259201751128 -0.00023000967620557972 0.9939908893165754 3.0011494674504626
+  position 3.5547843017874556 -0.3122474058612393 0.8443965580251496
   near 0.2
   follow "Mavic 2 PRO"
   followSmoothness 0.2
@@ -47,4 +47,21 @@ Mavic2Pro {
       near 0.2
     }
   ]
+}
+Solid {
+  translation -5 0 0.1
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Sphere {
+        radius 0.1
+      }
+    }
+  ]
+  boundingObject Sphere {
+    radius 0.1
+  }
+  physics Physics {
+  }
 }

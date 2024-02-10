@@ -7,24 +7,50 @@
  */
 
 #include "uav.h"
+#include "vector.h"
+#include <stdio.h>
 
 #define DEBUG
 
-// Euclidian distance between two points in a coorinate plane
-double cm_euclidian_distance(double* uavPos, double* goalPos){
-    double xDiff = uavPos[0] - goalPos[0];
-    double yDiff = uavPos[1] - goalPos[1];
-
-    return sqrt(pow(xDiff, 2) + pow(yDiff, 2));
-}
-
-// Computes the heading of the goal from distance and current position
-double cm_compute_heading(double* uavPos, double* goalPos, double dist){
-    double opp = fabs(goalPos[1] - uavPos[1]);
+// Compute the heading relative to the UAV's current position
+double compute_heading(double* gpsCoord, double* goalCoord) {
+    double relVec[2];
+    double heading;
+    double northVec[2] = {0,1};
     
-    return asin(opp / dist);
+    relVec[0] = goalCoord[0] - gpsCoord[0];
+    relVec[1] = goalCoord[1] - gpsCoord[1];
+
+    heading = angle_between(relVec, northVec);
+
+    heading = (heading - 1.5708) / M_PI * 180.0;
+
+    return heading;
 }
 
+// Compute the yaw displacement required to turn nicely to the desired heading
+double turn_to_heading(double targetHeading, double curHeading) {
+    double relHeading = targetHeading;
+    double yaw = 0.1;
+
+    #ifdef DEBUG
+    printf("Relative Heading: %f\n", relHeading);
+    #endif /* ifdef DEBUG */
+
+    if (relHeading <= 0) {
+        relHeading += 360.0;
+    }
+
+    if (relHeading > 180.0) {
+        // turn left otherwise turn right
+        yaw *= -1.0;
+        relHeading = (relHeading - 360.0) * -1.0;
+    }
+
+    return yaw * (relHeading / 180.0);
+}
+
+// Move the UAV towards the predefined goal
 void cm_move_to_goal(Uav* uav, double* goalCoord, double altitude){
     double *gpsCoord;
     double dist, heading, curHeading;
@@ -32,25 +58,14 @@ void cm_move_to_goal(Uav* uav, double* goalCoord, double altitude){
     double pitch = 0.0;
 
     gpsCoord = uav_get_gps_pos(uav);
-    dist = cm_euclidian_distance(gpsCoord, goalCoord);
-    heading = cm_compute_heading(gpsCoord, goalCoord, dist);
-
     curHeading = uav_get_heading(uav);
 
-    #ifdef DEBUG
-    printf("Distance: %f\tHeading: %f to %f\n", dist, curHeading, heading);
-    #endif /* ifdef DEBUG */
+    heading = compute_heading(gpsCoord, goalCoord);
+#ifdef DEBUG
+    printf("Computed Heading: %f\tCurrent Heading: %f\n", heading + curHeading, curHeading);
+#endif /* ifdef DEBUG */
 
-    if (curHeading != heading) {
-        yaw = 1.3;
-        if (curHeading < heading || curHeading > heading + 180.0)
-            yaw *= -1.0;
-
-    }
-
-    if (dist > 0) {
-        pitch = -1.3;
-    }
+    yaw = turn_to_heading(heading, curHeading);
 
     uav_actuate_motors(uav, 0.0, pitch, yaw, altitude);
 }

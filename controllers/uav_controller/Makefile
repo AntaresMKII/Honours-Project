@@ -65,7 +65,7 @@
 ###
 ###-----------------------------------------------------------------------------
 
-C_SOURCES = uav.c control_module.c uav_controller.c
+C_SOURCES = vector.c uav.c control_module.c uav_controller.c
 ### Do not modify: this includes Webots global Makefile.include
 null :=
 space := $(null) $(null)

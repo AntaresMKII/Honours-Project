@@ -1,11 +1,11 @@
 build/release/control_module.o: control_module.c uav.h \
- C:\Program\ Files\Webots/include/controller/c/webots/robot.h \
- C:\Program\ Files\Webots/include/controller/c/webots/types.h \
- C:\Program\ Files\Webots/include/controller/c/webots/nodes.h \
- C:\Program\ Files\Webots/include/controller/c/webots/compass.h \
- C:\Program\ Files\Webots/include/controller/c/webots/gps.h \
- C:\Program\ Files\Webots/include/controller/c/webots/gyro.h \
- C:\Program\ Files\Webots/include/controller/c/webots/inertial_unit.h \
- C:\Program\ Files\Webots/include/controller/c/webots/keyboard.h \
- C:\Program\ Files\Webots/include/controller/c/webots/led.h \
- C:\Program\ Files\Webots/include/controller/c/webots/motor.h
+ /home/yannick/src/webots/include/controller/c/webots/robot.h \
+ /home/yannick/src/webots/include/controller/c/webots/types.h \
+ /home/yannick/src/webots/include/controller/c/webots/nodes.h \
+ /home/yannick/src/webots/include/controller/c/webots/compass.h \
+ /home/yannick/src/webots/include/controller/c/webots/gps.h \
+ /home/yannick/src/webots/include/controller/c/webots/gyro.h \
+ /home/yannick/src/webots/include/controller/c/webots/inertial_unit.h \
+ /home/yannick/src/webots/include/controller/c/webots/keyboard.h \
+ /home/yannick/src/webots/include/controller/c/webots/led.h \
+ /home/yannick/src/webots/include/controller/c/webots/motor.h vector.h

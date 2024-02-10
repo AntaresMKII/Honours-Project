@@ -46,6 +46,7 @@ void uav_init(Uav* uav, int timestep){
 
     // Initialize other variables
     uav->target_alt = 1.0;
+    uav->tagetReached = 0;
 }
 
 /* Get UAV roll */
