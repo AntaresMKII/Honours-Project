@@ -7,65 +7,45 @@
  */
 
 #include "uav.h"
-#include "vector.h"
 #include <stdio.h>
+#include <stdlib.h>
 
-#define DEBUG
+double compute_yaw_angle(Uav *uav, Position goal) {
+    double angle;
+    angle = atan2(uav->pos.y - goal.y, uav->pos.x - goal.x);
+    angle = angle - uav->pos.roll;
+    angle = (angle + 2 * M_PI) % (2 * M_PI);
 
-// Compute the heading relative to the UAV's current position
-double compute_heading(double* gpsCoord, double* goalCoord) {
-    double relVec[2];
-    double heading;
-    double northVec[2] = {0,1};
-    
-    relVec[0] = goalCoord[0] - gpsCoord[0];
-    relVec[1] = goalCoord[1] - gpsCoord[1];
-
-    heading = angle_between(relVec, northVec);
-
-    heading = (heading - 1.5708) / M_PI * 180.0;
-
-    return heading;
-}
-
-// Compute the yaw displacement required to turn nicely to the desired heading
-double turn_to_heading(double targetHeading, double curHeading) {
-    double relHeading = targetHeading;
-    double yaw = 0.1;
-
-    #ifdef DEBUG
-    printf("Relative Heading: %f\n", relHeading);
-    #endif /* ifdef DEBUG */
-
-    if (relHeading <= 0) {
-        relHeading += 360.0;
+    if (angle > M_PI) {
+        angle -= 2 * M_PI;
     }
 
-    if (relHeading > 180.0) {
-        // turn left otherwise turn right
-        yaw *= -1.0;
-        relHeading = (relHeading - 360.0) * -1.0;
+    return MAX_YAW_DIST * angle / (2 * M_PI);
+}
+
+double compute_pitch_angle(double yaw) {
+    return clamp(log10(fabs(yaw)), MAX_PITCH_DIST, 0.1);
+}
+
+int move_to_goal(Uav *uav, Position goal, double *disturbance) {
+    double yaw_distrubance, pitch_disturbance;
+
+    // Check if UAV is at goal
+    if ((uav->pos.x - goal.x) < TARGET_PRECISION) {
+        // Can be modified to allow for multiple waypoints
+        return 1;
     }
 
-    return yaw * (relHeading / 180.0);
+    yaw_distrubance = compute_yaw_angle(uav, goal);
+    pitch_disturbance = compute_pitch_angle(yaw_distrubance);
+
+    disturbance = (double *) malloc(sizeof(double[2]));
+    if (disturbance == NULL) {
+        perror("Error: Failed to allocate memory!");
+        return -1;
+    }
+
+    return 0;
 }
 
-// Move the UAV towards the predefined goal
-void cm_move_to_goal(Uav* uav, double* goalCoord, double altitude){
-    double *gpsCoord;
-    double dist, heading, curHeading;
-    double yaw = 0.0;
-    double pitch = 0.0;
 
-    gpsCoord = uav_get_gps_pos(uav);
-    curHeading = uav_get_heading(uav);
-
-    heading = compute_heading(gpsCoord, goalCoord);
-#ifdef DEBUG
-    printf("Computed Heading: %f\tCurrent Heading: %f\n", heading + curHeading, curHeading);
-#endif /* ifdef DEBUG */
-
-    yaw = turn_to_heading(heading, curHeading);
-
-    uav_actuate_motors(uav, 0.0, pitch, yaw, altitude);
-}

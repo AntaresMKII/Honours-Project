@@ -7,8 +7,6 @@
 
 #include "uav.h"
 
-#define CLAMP(value, low, high) ((value) < (low) ? (low) : ((value) > (high) ? (high) : (value)))
-
 /* Initialization of the UAV */
 void uav_init(Uav* uav, int timestep){
 
@@ -149,4 +147,15 @@ double uav_get_heading(Uav* uav){
     if (heading < 0.0)
         heading = heading + 360.0;
     return heading;
+}
+
+// Kind of pointless to use these functions
+// Get position of UAV
+Position uav_get_position(Uav* uav) {
+    return uav->pos;
+}
+
+// Set UAV position
+void uav_set_position(Uav* uav, Position position) {
+    uav->pos = position;
 }

@@ -22,12 +22,21 @@
 #include <webots/led.h>
 #include <webots/motor.h>
 
+#include "util.h"
+
 // Constants
 #define ROLL_P 50.0
 #define PITCH_P 30.0
 #define VERTICAL_P 3.0
 #define VERTICAL_T 68.5
 #define VERTICAL_O 0.6
+#define TARGET_PRECISION 0.5
+#define MAX_YAW_DIST 0.6
+#define MAX_PITCH_DIST -1
+
+typedef struct Position {
+    double x, y, z, pitch, roll, yaw;
+}Position;
 
 typedef struct uav
 {
@@ -51,6 +60,7 @@ typedef struct uav
     /* Variables */
     double target_alt; // Targeted altitude
     bool tagetReached;
+    Position pos = {0, 0, 0, 0, 0, 0}; // position + pitch, roll and yaw attitude
 } Uav;
 
 void uav_init(Uav* uav, int timestep);
@@ -70,5 +80,3 @@ double uav_get_yaw_velocity(Uav* uav);
 void uav_actuate_motors(Uav* uav, double roll, double pitch, double yaw, double altitude);
 
 double uav_get_heading(Uav* uav);
-
-void cm_move_to_goal(Uav* uav, double* goalCoord, double altitude);
