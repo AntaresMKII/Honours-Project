@@ -7,8 +7,6 @@
  */
 
 #include "uav.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 double compute_yaw_angle(Uav *uav, Position goal) {
     double angle;

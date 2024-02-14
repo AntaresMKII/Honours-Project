@@ -36,7 +36,7 @@
 
 typedef struct Position {
     double x, y, z, pitch, roll, yaw;
-}Position;
+} Position;
 
 typedef struct uav
 {
