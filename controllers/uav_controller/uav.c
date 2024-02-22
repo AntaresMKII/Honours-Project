@@ -2,10 +2,12 @@
  * File: uav.c
  * Author: Yannick Abouem
  * Date: 25/01/2024
- * Description: uav structure
+ * Description: uav structure35.6
 */
 
 #include "uav.h"
+
+#define CLAMP(val, min, max) ((val) < (min) ? (min) : ((val) > (max) ? (max) : (val)))
 
 /* Initialization of the UAV */
 void uav_init(Uav* uav, int timestep){
@@ -39,12 +41,17 @@ void uav_init(Uav* uav, int timestep){
     // Set motors to velocity mode
     for(int i = 0; i < 4; i++){
         wb_motor_set_position(uav->motors[i], INFINITY);
-        wb_motor_set_velocity(uav->motors, 1.0);
+        wb_motor_set_velocity(uav->motors[i], 1.0);
     }
 
     // Initialize other variables
-    uav->target_alt = 1.0;
-    uav->tagetReached = 0;
+
+    uav->t = wb_robot_get_time();
+
+    uav->pitch_disturbance = 0.0;
+    uav->yaw_disturbance = 0.0;
+
+    uav->target_reached = 0;
 }
 
 /* Get UAV roll */
@@ -83,7 +90,7 @@ double uav_get_pitch_velocity(Uav* uav){
 
 /* Get UAV yaw velocity */
 double uav_get_yaw_velocity(Uav* uav){
-    return wb_gyro_get_values(uav->gyro)[3];
+    return wb_gyro_get_values(uav->gyro)[2];
 }
 
 /* Compute roll input */
@@ -101,7 +108,7 @@ double uav_compute_pitch_input(Uav* uav, double pitch_disturbance){
     const double c_pitch = CLAMP(uav_get_pitch(uav), -1.0, 1.0);
     const double c_pitch_velocity = uav_get_pitch_velocity(uav);
 
-    return c_pitch_p * c_pitch +c_pitch_velocity + pitch_disturbance;
+    return c_pitch_p * c_pitch + c_pitch_velocity + pitch_disturbance;
 }
 
 /* Compute yaw input */
@@ -134,8 +141,8 @@ void uav_actuate_motors(Uav* uav, double roll, double pitch, double yaw, double 
     const double rear_right_motor_input = c_vertical_thrust + vertical_input + roll_input - pitch_input - yaw_input;
 
     wb_motor_set_velocity(uav->motors[0], front_left_motor_input);
-    wb_motor_set_velocity(uav->motors[1], -front_right_motor_input);
-    wb_motor_set_velocity(uav->motors[2], -rear_left_motor_input);
+    wb_motor_set_velocity(uav->motors[1], -1 * front_right_motor_input);
+    wb_motor_set_velocity(uav->motors[2], -1 * rear_left_motor_input);
     wb_motor_set_velocity(uav->motors[3], rear_right_motor_input);
 }
 

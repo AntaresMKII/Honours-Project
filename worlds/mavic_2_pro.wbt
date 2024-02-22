@@ -19,8 +19,8 @@ WorldInfo {
   }
 }
 Viewpoint {
-  orientation -0.10946259201751128 -0.00023000967620557972 0.9939908893165754 3.0011494674504626
-  position 3.5547843017874556 -0.3122474058612393 0.8443965580251496
+  orientation 0.24255614633816236 -0.0012130184066884615 -0.9701366112357193 3.1512958447978336
+  position 4.0882702644589575 -0.03517056520204124 2.159218561103144
   near 0.2
   follow "Mavic 2 PRO"
   followSmoothness 0.2
@@ -49,19 +49,41 @@ Mavic2Pro {
   ]
 }
 Solid {
-  translation -5 0 0.1
+  translation -6 5 1.5
   children [
     Shape {
       appearance PBRAppearance {
+        baseColor 1 0.333333 0
+        metalness 0.1
       }
-      geometry Sphere {
+      geometry Cylinder {
+        height 3
         radius 0.1
       }
     }
   ]
-  boundingObject Sphere {
-    radius 0.1
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.05
   }
-  physics Physics {
+}
+Solid {
+  translation -4 5 1.5
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0.333333 0
+        metalness 0.1
+      }
+      geometry Cylinder {
+        height 3
+        radius 0.1
+      }
+    }
+  ]
+  name "solid(1)"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.05
   }
 }

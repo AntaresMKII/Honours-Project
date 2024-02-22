@@ -1,16 +1,46 @@
-/*
-* util.c
-* Author: Yannick Abouem
-* Date: 12/02/2024
-*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <webots/robot.h>
 
-double clamp(double val, double min, double max) {
-    if (val < min) {
-        return min;
-    }
-    else if (val > max) {
-        return max;
+FILE *file_ptr;
+
+void init_debug_file() {
+    int time = wb_robot_get_time();
+    file_ptr = fopen("uav_debug.txt", "w+");
+
+    if (file_ptr == NULL) {
+        printf("Unable to open debug file! Quitting controller!");
+        exit(EXIT_FAILURE);
     }
 
-    return val;
+    fprintf(file_ptr, "[%d] Controller strted\n", time);
+}
+
+void logvi(int val, char *name) {
+    int time = wb_robot_get_time();
+    fprintf(file_ptr, "[%d] %s %d\n", time, name, val);
+}
+
+void log2vi(int val1, char *name1, int val2, char *name2) {
+    int time = wb_robot_get_time();
+    fprintf(file_ptr, "[%d] %s %d\t%s %d\n", time, name1, val1, name2, val2);
+}
+
+void logvf(double val, char *name) {
+    int time = wb_robot_get_time();
+    fprintf(file_ptr, "[%d] %s %f\n", time, name, val);
+}
+
+void log2vf(double val1, char *name1, double val2, char *name2) {
+    int time = wb_robot_get_time();
+    fprintf(file_ptr, "[%d] %s %f\t%s %f\n", time, name1, val1, name2, val2);
+}
+
+void logs(char *str) {
+    int time = wb_robot_get_time();
+    fprintf(file_ptr, "[%d] %s\n", time, str);
+}
+
+void cleanup_debug_file() {
+    fclose(file_ptr);
 }

@@ -8,4 +8,7 @@ build/release/uav.o: uav.c uav.h \
  /home/yannick/src/webots/include/controller/c/webots/inertial_unit.h \
  /home/yannick/src/webots/include/controller/c/webots/keyboard.h \
  /home/yannick/src/webots/include/controller/c/webots/led.h \
- /home/yannick/src/webots/include/controller/c/webots/motor.h
+ /home/yannick/src/webots/include/controller/c/webots/motor.h \
+ /home/yannick/src/webots/include/controller/c/webots/camera.h \
+ /home/yannick/src/webots/include/controller/c/webots/camera_recognition_object.h \
+ util.h
