@@ -25,7 +25,8 @@
 
 #include "util.h"
 
-#define DEBUG
+// Uncomment for debug functionality
+//#define DEBUG
 
 // Constants
 #define ROLL_P 50.0
@@ -71,6 +72,9 @@ typedef struct uav
     double yaw_disturbance;
 
     int target_reached;
+
+    // Communication
+    unsigned char id;
 } Uav;
 
 void uav_init(Uav* uav, int timestep);

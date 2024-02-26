@@ -9,6 +9,15 @@
 
 #define CLAMP(val, min, max) ((val) < (min) ? (min) : ((val) > (max) ? (max) : (val)))
 
+union converter {
+    double num;
+    unsigned char bytes[8];
+};
+
+unsigned char gen_id(Position pos) {
+    return 0;
+}
+
 /* Initialization of the UAV */
 void uav_init(Uav* uav, int timestep){
 
@@ -38,12 +47,6 @@ void uav_init(Uav* uav, int timestep){
     uav->motors[2] = rear_left_motor;
     uav->motors[3] = rear_right_motor;
 
-    // Set motors to velocity mode
-    for(int i = 0; i < 4; i++){
-        wb_motor_set_position(uav->motors[i], INFINITY);
-        wb_motor_set_velocity(uav->motors[i], 1.0);
-    }
-
     // Initialize other variables
 
     uav->t = wb_robot_get_time();
@@ -52,6 +55,20 @@ void uav_init(Uav* uav, int timestep){
     uav->yaw_disturbance = 0.0;
 
     uav->target_reached = 0;
+
+    // initialize UAV position
+    uav->pos.x = wb_gps_get_values(uav->gps)[0];
+    uav->pos.y = wb_gps_get_values(uav->gps)[1];
+    uav->pos.z = wb_gps_get_values(uav->gps)[2];
+
+    // Initialize UAV id
+    uav->id = 0;
+
+    // Set motors to velocity mode
+    for(int i = 0; i < 4; i++){
+        wb_motor_set_position(uav->motors[i], INFINITY);
+        wb_motor_set_velocity(uav->motors[i], 1.0);
+    }
 }
 
 /* Get UAV roll */

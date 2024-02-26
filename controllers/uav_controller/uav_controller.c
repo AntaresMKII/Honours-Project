@@ -1,5 +1,6 @@
 #include "uav.h"
 #include "util.h"
+#include <stdio.h>
 
 int main(int argc, char **argv) {
   // Initialize webots controller
@@ -28,6 +29,8 @@ int main(int argc, char **argv) {
     if (wb_robot_get_time() > 1.0)
       break;
   }
+  
+  // Initialize the id of the uav
 
   // Main loop
   while (wb_robot_step(timestep) != -1) {
