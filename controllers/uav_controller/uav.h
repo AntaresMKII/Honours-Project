@@ -22,8 +22,11 @@
 #include <webots/led.h>
 #include <webots/motor.h>
 #include <webots/camera.h>
+#include <webots/emitter.h>
+#include <webots/receiver.h>
 
 #include "util.h"
+#include "comm_module.h"
 
 // Uncomment for debug functionality
 //#define DEBUG
@@ -61,6 +64,9 @@ typedef struct uav
 
     WbDeviceTag motors[4];
 
+    WbDeviceTag emitter;
+    WbDeviceTag receiver;
+
     /* Variables */
     double target_alt; // Targeted altitude
     bool tagetReached;
@@ -74,7 +80,7 @@ typedef struct uav
     int target_reached;
 
     // Communication
-    unsigned char id;
+    struct comm_module comm_mod;
 } Uav;
 
 void uav_init(Uav* uav, int timestep);

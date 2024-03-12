@@ -3,20 +3,22 @@
 #include <stdio.h>
 
 int main(int argc, char **argv) {
-  // Initialize webots controller
-  wb_robot_init();
-  int timestep = (int)wb_robot_get_basic_time_step();
-#ifdef DEBUG
-  init_debug_file();
-#endif /* ifdef DEBUG */
-
   // Declare variabels and initialize goal
   Uav uav;
   Position goal;
+  int timestep;
 
   goal.x = -5.0;
   goal.y = 6.5;
   goal.z = 2.0; // Target altitude
+
+  // Initialize webots controller
+  wb_robot_init();
+  timestep = (int)wb_robot_get_basic_time_step();
+
+#ifdef DEBUG
+  init_debug_file();
+#endif /* ifdef DEBUG */
 
   /* Initialize the uav */
   uav_init(&uav, timestep);
@@ -30,8 +32,6 @@ int main(int argc, char **argv) {
       break;
   }
   
-  // Initialize the id of the uav
-
   // Main loop
   while (wb_robot_step(timestep) != -1) {
     const double time = wb_robot_get_time();
@@ -44,6 +44,7 @@ int main(int argc, char **argv) {
 #ifdef DEBUG
   cleanup_debug_file();
 #endif /* ifdef DEBUG */
+
   wb_robot_cleanup();
 
   return EXIT_SUCCESS;
