@@ -37,4 +37,7 @@ Apply pitch to move forward
 account for possible momentum
 
 === ID Selection ===
+ TODO
 
+=== OBSTACLE AVOIDANCE ===
+Field D* http://robots.stanford.edu/isrr-papers/final/final-23.pdf
