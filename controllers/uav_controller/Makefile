@@ -65,7 +65,7 @@
 ###
 ###-----------------------------------------------------------------------------
 
-C_SOURCES = comm_module.c util.c uav.c control_module.c uav_controller.c
+C_SOURCES = src/modules/comm_module.c src/util/util.c src/uav.c src/modules/control_module.c src/main.c
 ### Do not modify: this includes Webots global Makefile.include
 null :=
 space := $(null) $(null)

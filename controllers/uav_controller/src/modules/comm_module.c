@@ -5,7 +5,7 @@
 * Description: Communication and distributed algorithms
 */
 
-#include "comm_module.h"
+#include "includes/comm_module.h"
 
 void comm_gen_id(struct comm_module *module, unsigned int seed) {
     srand(seed);

@@ -1,7 +1,7 @@
 #include <limits.h>
 #include <stdlib.h>
 
-#include "heap.h"
+#include "includes/heap.h"
 
 #define parent(i) i/2
 #define left(i) 2*i + 1

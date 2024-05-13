@@ -1,5 +1,5 @@
-#include "uav.h"
-#include "util.h"
+#include "includes/uav.h"
+#include "util/includes/util.h"
 #include <stdio.h>
 
 int main(int argc, char **argv) {

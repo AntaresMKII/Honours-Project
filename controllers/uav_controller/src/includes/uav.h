@@ -25,8 +25,8 @@
 #include <webots/emitter.h>
 #include <webots/receiver.h>
 
-#include "util.h"
-#include "comm_module.h"
+#include "../util/includes/util.h"
+#include "../modules/includes/comm_module.h"
 
 // Uncomment for debug functionality
 //#define DEBUG
