@@ -1,3 +1,6 @@
+#ifndef HEAP_H
+#define HEAP_H
+
 #define MIN_HEAP 0
 #define MAX_HEAP 1
 
@@ -27,3 +30,5 @@ HEAP* new_heap(void *data, int *keys, int h_len, char h_type);
 int heap_add(HEAP* h, void* val, int key);
 
 void heap_destroy(HEAP* h);
+
+#endif // !HEAP_H

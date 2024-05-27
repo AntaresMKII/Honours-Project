@@ -5,6 +5,9 @@
  * Description: uav structure
 */
 
+#ifndef UAV_H
+#define UAV_H
+
 // libc includes
 #include <math.h>
 #include <stdio.h>
@@ -24,6 +27,7 @@
 #include <webots/camera.h>
 #include <webots/emitter.h>
 #include <webots/receiver.h>
+#include <webots/radar.h>
 
 #include "../util/includes/util.h"
 #include "../modules/includes/comm_module.h"
@@ -67,6 +71,8 @@ typedef struct uav
     WbDeviceTag emitter;
     WbDeviceTag receiver;
 
+    WbDeviceTag radar;
+
     /* Variables */
     double target_alt; // Targeted altitude
     bool tagetReached;
@@ -99,9 +105,16 @@ double uav_get_yaw_velocity(Uav* uav);
 
 double uav_get_heading(Uav* uav);
 
+int uav_get_radar_targets_num(Uav* uav);
+WbRadarTarget* uav_get_radar_targets(Uav* uav);
+int uav_get_obstacles(Uav* uav, WbRadarTarget* targets);
+
 /* Setters */
 void uav_set_position(Uav* uav, Position position);
 
 /* Other methods */
 void uav_actuate_motors(Uav* uav, double roll, double pitch, double yaw, double altitude);
 void cm_run(Uav *uav, Position goal, double time);
+Position* cm_detect_obstacles(Uav *uav, int *num);
+
+#endif // !UAV_H

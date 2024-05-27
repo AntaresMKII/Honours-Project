@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <webots/robot.h>
@@ -43,4 +44,12 @@ void logs(char *str) {
 
 void cleanup_debug_file() {
     fclose(file_ptr);
+}
+
+double to_deg(double alpha) {
+    return alpha * 180.0f / M_PI;
+}
+
+double to_rad(double alpha) {
+    return alpha / 180.0f * M_PI;
 }

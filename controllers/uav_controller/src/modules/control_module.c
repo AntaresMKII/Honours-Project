@@ -6,6 +6,10 @@
  * Module that control uav movements
  */
 
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "../includes/uav.h"
 
 #define CLAMP(val, min, max) ((val) < (min) ? (min) : ((val) > (max) ? (max) : (val)))
@@ -43,6 +47,71 @@ int move_to_goal(Uav *uav, Position goal) {
     #endif /* ifdef DEBUG */
 
     return 0;
+}
+
+Position obstacle_relative_pos(double obs_dist, double obs_azimuth) {
+    double alpha = obs_azimuth;
+    double xo = cos(alpha) * obs_dist;
+    double yo = sin(alpha) * obs_dist;
+
+    if (obs_azimuth > 0) {
+        yo = yo * (-1.0f);
+    }
+
+    Position p = {xo, yo, 0};
+
+    return p;
+}
+
+Position rotate_pos(Position v, double alpha) {
+    double xp = v.x * cos(alpha) - v.y * sin(alpha);
+    double yp = v.x * sin(alpha) + v.y * cos(alpha);
+    Position p = { xp, yp, 0 };
+    return p;
+}
+
+Position translate_pos(Position p1, Position p2) {
+    Position pf = { p1.x + p2.x, p1.y + p2.y, 0 };
+    return pf;
+}
+
+Position* cm_detect_obstacles(Uav *uav, int *num) {
+    int target_num;
+    WbRadarTarget *targets;
+    double heading, *gps_pos;
+    Position uav_pos = { 0 };
+
+    target_num = uav_get_radar_targets_num(uav);
+    targets = uav_get_radar_targets(uav);
+    heading = uav_get_heading(uav);
+    heading = to_rad(heading);
+    gps_pos = uav_get_gps_pos(uav);
+
+    uav_pos.x = gps_pos[0];
+    uav_pos.y = gps_pos[1];
+
+    heading = (2*M_PI) - heading;
+
+    Position *targets_pos = (Position *) realloc(targets_pos, sizeof(Position) * target_num);
+    if (targets_pos == NULL) {
+        printf("Failed to allocate memeory in cm_detect_obstacle!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < target_num; i++) {
+        targets_pos[i] = obstacle_relative_pos(targets[i].distance, targets[i].azimuth);
+        targets_pos[i] = rotate_pos(targets_pos[i], heading);
+        targets_pos[i] = translate_pos(uav_pos, targets_pos[i]);
+
+        #ifdef DEBUG
+        logs("Obstacle detected at:");
+        log2vf(targets_pos[i].x, "x:", targets_pos[i].y, "y:");
+        logvi(i, "Target ID:");
+        #endif /* ifdef DEBUG */
+    }
+
+    *num = target_num;
+    return targets_pos;
 }
 
 // update variables in the UAV struct, compute the disturbance and actuate motors

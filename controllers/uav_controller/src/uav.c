@@ -32,6 +32,9 @@ void uav_init(Uav* uav, int timestep){
     uav->receiver = wb_robot_get_device("receiver");
     wb_receiver_enable(uav->receiver, timestep);
 
+    uav->radar= wb_robot_get_device("radar");
+    wb_radar_enable(uav->radar, timestep);
+
     // Get motors of the porpellers
     WbDeviceTag front_left_motor = wb_robot_get_device("front left propeller");
     WbDeviceTag front_right_motor = wb_robot_get_device("front right propeller");
@@ -164,6 +167,22 @@ double uav_get_heading(Uav* uav){
     if (heading < 0.0)
         heading = heading + 360.0;
     return heading;
+}
+
+// Return the number of targets detected by the radar
+int uav_get_radar_targets_num(Uav *uav) {
+    return wb_radar_get_number_of_targets(uav->radar);
+}
+
+// Return the array of detected targets by the radar
+WbRadarTarget* uav_get_radar_targets(Uav* uav) {
+    return wb_radar_get_targets(uav->radar);
+}
+
+// Returns both the number and the array of obstacles identified by the radar
+int uav_get_obstacles(Uav* uav, WbRadarTarget* targets) {
+    targets = uav_get_radar_targets(uav);
+    return uav_get_radar_targets_num(uav);
 }
 
 // Kind of pointless to use these functions
