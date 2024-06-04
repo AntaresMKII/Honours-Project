@@ -40,4 +40,5 @@ account for possible momentum
  TODO
 
 === OBSTACLE AVOIDANCE ===
-Field D* http://robots.stanford.edu/isrr-papers/final/final-23.pdf
+Field D*
+http://robots.stanford.edu/isrr-papers/final/final-23.pdf

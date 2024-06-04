@@ -36,17 +36,36 @@
 //#define DEBUG
 
 // Constants
+
+/// \def Roll constant for PID
 #define ROLL_P 50.0
+
+/// \def Putch constant for PID
 #define PITCH_P 30.0
+
+/// \def Vertical constant for PID
 #define VERTICAL_P 3.0
+
 #define VERTICAL_T 68.5
 #define VERTICAL_O 0.6
+
+/// \def Precision for target navigation
 #define TARGET_PRECISION 0.5
+
+/// \def Maximum yaw allowed
 #define MAX_YAW_DIST 0.4
+
+/// \def Maximum pitch allowed
 #define MAX_PITCH_DIST -1
 
+/// Used for storing position and attitude informations
 typedef struct Position {
-    double x, y, z, pitch, roll, yaw;
+    double x; 
+    double y;
+    double z;
+    double pitch;
+    double roll;
+    double yaw;
 } Position;
 
 typedef struct uav

@@ -1,14 +1,23 @@
+/*! main.c
+ *
+ * Main file of the controllecr. It contains the main function
+ */
 #include "includes/uav.h"
-#include "util/includes/util.h"
+#include "util/includes/map.h"
 #include <stdio.h>
-#include <math.h>
 
+/*!
+ * \brief Main function of the controller
+ *
+ * This function contains the main loop of the controller
+ */
 int main(int argc, char **argv) {
   // Declare variabels and initialize goal
   Uav uav;
   Position goal;
   Position *obstacles;
   int timestep, obstacles_num;
+  Map m;
 
   goal.x = -5.0;
   goal.y = 6.5;
@@ -38,8 +47,8 @@ int main(int argc, char **argv) {
   while (wb_robot_step(timestep) != -1) {
     const double time = wb_robot_get_time();
     
-    obstacles = cm_detect_obstacles(&uav, &obstacles_num);
-    cm_run(&uav, goal, time); // Execute drone movements
+    //obstacles = cm_detect_obstacles(&uav, &obstacles_num);
+    //cm_run(&uav, goal, time); // Execute drone movements
   };
 
   // Clean up
