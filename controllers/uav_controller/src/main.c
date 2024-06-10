@@ -33,6 +33,8 @@ int main(int argc, char **argv) {
 
   /* Initialize the uav */
   uav_init(&uav, timestep);
+  
+  m = map_create();
 
   // Display the welcome message.
   printf("Starting the drone...\n");
@@ -47,7 +49,8 @@ int main(int argc, char **argv) {
   while (wb_robot_step(timestep) != -1) {
     const double time = wb_robot_get_time();
     
-    //obstacles = cm_detect_obstacles(&uav, &obstacles_num);
+    obstacles = cm_detect_obstacles(&uav, &obstacles_num);
+    map_add_obstacles(&m, obstacles, obstacles_num);
     //cm_run(&uav, goal, time); // Execute drone movements
   };
 

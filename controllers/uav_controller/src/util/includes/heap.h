@@ -12,7 +12,7 @@
 #define pop_root(h) heap_extract(h)
 
 typedef struct NODE {
-    int key;
+    void* key;
     void* val;
 } NODE;
 
@@ -20,15 +20,17 @@ typedef struct HEAP {
     NODE *arr;
     int arr_len;
     int h_len;
-    char type; 
+    char type;
 } HEAP;
 
 NODE heap_extract(HEAP* h);
 
-HEAP* new_heap(void *data, int *keys, int h_len, char h_type);
+HEAP* new_heap(void *data, void **keys, int h_len, char (*comp)(void*, void*), void* max_val);
 
-int heap_add(HEAP* h, void* val, int key);
+int heap_add(HEAP* h, void* val, void *key);
 
 void heap_destroy(HEAP* h);
+
+char heap_remove(HEAP *h, void* val);
 
 #endif // !HEAP_H

@@ -1,9 +1,13 @@
+/** \file util.h
+* A simple logging library
+*
+* Author: Yanncik Abouem
+*/
 #ifndef UTIL_H
 #define UTIL_H
 
-// Init and cleanup function
-void init_debug_file();
-void cleanup_debug_file();
+void init_debug_file();     ///< Initializes the logging library
+void cleanup_debug_file();  ///< Cleans up the logging library
 
 // Log functions
 void logvi(int val, char *name);
