@@ -1,5 +1,6 @@
 #include "includes/fds.h"
 #include "../util/includes/heap.h"
+#include "../util/includes/map.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,12 +45,18 @@ void UpdateState(State *s, State s_goal, State s_start, HEAP* OPEN) {
     }
 }
 
-void ComputeShortestPath(HEAP* OPEN, State s_start) {
+void ComputeShortestPath(HEAP* OPEN, State s_start, State s_goal, Map *m) {
+    State** nbrs;
+    int num_nbrs;
    while(compare_keys(get_root_key(OPEN), (void*) key(s_start, s_start))) {
         State* s = (State*) pop_root_val(OPEN);
 
         if (s->g > s->rhs) {
             s->g = s->rhs;
+            nbrs = map_get_nbrs(m, s, &num_nbrs);
+            for (int i = 0; i < num_nbrs; i++) {
+                UpdateState(nbrs[i], s_goal, s_start, OPEN);
+            }
         }
     }
 }
