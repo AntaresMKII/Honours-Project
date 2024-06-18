@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <system_error>
 
 #include "includes/map.h"
 #include "includes/vec.h"
@@ -10,6 +11,10 @@
 inline Vec3d convert(Vec3d v) {
     Vec3d u = {v.x + MAP_SIZE / 2.0f, MAP_SIZE / 2.0f - v.y, v.z};
     return u;
+}
+
+inline int states_are_equal(State *s1, State *s2) {
+    return s1->v.x == s2->v.x && s1->v.y == s2->v.y;
 }
 
 Map map_create() {
@@ -268,4 +273,43 @@ Tuple* map_get_connbrs(Map *m, State *s, int *num_nbrs) {
     }
 
     return tuple_arr;
+}
+
+Cell** map_get_cells_from_states(Map *m, State *s1, State *s2, State *s3, int *num_cells) {
+    Cell **cells, **sel_cells, *tmp;
+    int n_cells, j;
+    State *curr_state;
+    
+    cells = map_get_cells(m, s1->v, &n_cells);
+ 
+    sel_cells = (Cell**) malloc(sizeof(Cell*) * 2);
+    if (sel_cells == NULL) {
+        printf("Unabnle to allocate memory in map_get_cells_from_states\n");
+        exit(EXIT_FAILURE);
+    }
+
+    j = 0;
+
+    for (int i = 0; i < n_cells; i++) {
+        if (states_are_equal(s2, cells[i]->s0) || states_are_equal(s2, cells[i]->s1) || states_are_equal(s2, cells[i]->s2) || states_are_equal(s2, cells[i]->s3)) {
+            sel_cells[j] = cells[i];
+            j++;
+        }
+    }
+
+    for (int i = 0; i < j; i++) {
+        if (states_are_equal(s3, sel_cells[i]->s0) || states_are_equal(s3, sel_cells[i]->s1) || states_are_equal(s3, sel_cells[i]->s3) || states_are_equal(s3, sel_cells[i]->s3)) {
+            if (i != 0) {
+                //flip 
+                tmp = sel_cells[i];
+                sel_cells[i] = sel_cells[i-1];
+                sel_cells[i-1] = tmp;
+            }
+            break;
+        }
+
+    }
+
+    *num_cells = j;
+    return sel_cells;
 }

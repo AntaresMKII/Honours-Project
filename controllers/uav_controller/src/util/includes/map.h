@@ -24,13 +24,10 @@ typedef struct {
 Map map_create();
 
 /// Returns adjacent cells of a given point
-/** This function returns one or more
-* cells from a point vector. If the
-* point falls on the edge between two
-* cells both cells will be returned.
-* If the point lies on a vertex of
-* a cell, it will return all four
-* adjacent cells
+/** This function returns one or more cells from a point vector. If the
+* point falls on the edge between two cells both cells will be returned.
+* If the point lies on a vertex of a cell, it will return all four
+* adjacent cells.
 */
 Cell** map_get_cells(Map *m, Vec3d v, int *num_cells);
 
@@ -39,5 +36,11 @@ State** map_get_nbrs(Map *m, State *s, int *num_nbrs);
 
 /// Returns the contiguous neighbors of a state s
 Tuple* map_get_connbrs(Map*m, State *s, int *num_nbrs);
+
+/// Finds a specific cell given the adjacent states
+/** Given three distinct states, this function returns a pointer to a Cell
+* adjacent to all three states or NULL if such cell does not exits.
+*/
+Cell** map_get_cells_from_states(Map *m, State *s1, State *s2, State *s3, int *num_cells);
 
 #endif // !MAP_H

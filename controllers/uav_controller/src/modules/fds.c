@@ -1,9 +1,10 @@
-#include "includes/fds.h"
-#include "../util/includes/heap.h"
-#include "../util/includes/map.h"
+#include <cmath>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "includes/fds.h"
+#include "../util/includes/heap.h"
 
 #define min(a,b) a < b ? a : b
 
@@ -28,35 +29,61 @@ char compare_keys(void* k1, void* k2) {
     return (((double*)k1)[0] < ((double*)k2)[0]) || ((((double*)k1)[0] == ((double*)k2)[0]) && (((double*)k1)[1] < ((double*)k2)[1]));
 }
 
-void UpdateState(State *s, State s_goal, State s_start, HEAP* OPEN) {
-    if (!s->visited) {
-        s->g = INFINITY;
+double compute_cost(Fds *fds, State *s, State *sa, State *sb) {
+    State *s1, *s2;
+    Cell** cells;
+    int num_cells;
+    double c, b, f, vs, y, x;
+
+    if (fabs(sa->v.x - s->v.x) == 1 && fabs(sa->v.y - s->v.y) == 1) {
+        s1 = sb;
+        s2 = sa;
+    }
+    else {
+        s1 = sa;
+        s2 = sb;
     }
 
-    if ((s->v.x != s_goal.v.x) || (s->v.y != s_goal.v.y)) {
-        //s->rhs = min cost of path to conneigbors
+    cells = map_get_cells_from_states(fds->m, s, s1, s2, &num_cells);
+
+    c = cells[0]->c;
+    b = cells[1]->c;
+
+    if (min(c, b) == 1.0f) {
+        vs = 1.0f;
     }
-
-    // if s is in OPEN remove from OPEN
-    heap_remove(OPEN, (void*) &s);
-
-    if (s->g == s->rhs) {
-        heap_add(OPEN, (void*) &s, (void*) (key(*s, s_start)));
+    else if (s1->g <= s2->g) {
+        vs = min(c, b) + s1->g;
     }
-}
-
-void ComputeShortestPath(HEAP* OPEN, State s_start, State s_goal, Map *m) {
-    State** nbrs;
-    int num_nbrs;
-   while(compare_keys(get_root_key(OPEN), (void*) key(s_start, s_start))) {
-        State* s = (State*) pop_root_val(OPEN);
-
-        if (s->g > s->rhs) {
-            s->g = s->rhs;
-            nbrs = map_get_nbrs(m, s, &num_nbrs);
-            for (int i = 0; i < num_nbrs; i++) {
-                UpdateState(nbrs[i], s_goal, s_start, OPEN);
+    else {
+        f = s1->g - s2->g;
+        if (f <= b) {
+            if (c <= f) {
+                vs = c * sqrt(2.0f) + s2->g;
+            }
+            else {
+                y = min(f / sqrt(pow(c, 2.0f) - pow(f, 2.0f)), 1.0f);
+                vs = c * sqrt(1.0f + pow(y, 2.0f)) + f * (1.0f - y) + s2->g;
+            }
+        }
+        else {
+            if (c <= b) {
+                vs = c * sqrt(2.0f) + s2->g;
+            }
+            else {
+                x = 1.0f - min(b / sqrt(pow(c, 2.0f) - pow(b, 2.0f)), 1.0f);
+                vs = c * sqrt(1.0f + pow((1.0f - x), 2.0f)) + b * x + s2->g;
             }
         }
     }
+
+    return vs;
+}
+
+void UpdateState(State *s, State s_goal, State s_start, HEAP* OPEN) {
+    
+}
+
+void ComputeShortestPath(HEAP* OPEN, State s_start, State s_goal, Map *m) {
+    
 }
