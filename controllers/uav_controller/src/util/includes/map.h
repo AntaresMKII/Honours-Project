@@ -6,10 +6,9 @@
  */
 
 #include "vec.h"
-#ifndef MAP_H
+#include "../../includes/fds_types.h"
 
-#include "../../includes/uav.h"
-#include "../../modules/includes/fds.h"
+#ifndef MAP_H
 
 #define MAP_H
 #define MAP_SIZE 100
@@ -35,12 +34,19 @@ Cell** map_get_cells(Map *m, Vec3d v, int *num_cells);
 State** map_get_nbrs(Map *m, State *s, int *num_nbrs);
 
 /// Returns the contiguous neighbors of a state s
-Tuple* map_get_connbrs(Map*m, State *s, int *num_nbrs);
+Tuple* map_get_connbrs(Map *m, State *s, int *num_nbrs);
 
 /// Finds a specific cell given the adjacent states
 /** Given three distinct states, this function returns a pointer to a Cell
 * adjacent to all three states or NULL if such cell does not exits.
 */
 Cell** map_get_cells_from_states(Map *m, State *s1, State *s2, State *s3, int *num_cells);
+State* map_get_state(Map *m, Vec3d v);
+
+void map_set_cells_cost(Map *m, Vec3d v, double cost);
+
+static inline int states_are_equal(State *s1, State *s2) {
+    return s1->v.x == s2->v.x && s1->v.y == s2->v.y;
+}
 
 #endif // !MAP_H

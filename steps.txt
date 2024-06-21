@@ -1,0 +1,9 @@
+- initialize uav
+- main loop
+	- detect obstacles
+	- add obstacles to map
+	- compute shortest path & update costs (FDS)
+	- extract path
+	- execute movement
+	- exit if drone reaches goal
+- cleanup

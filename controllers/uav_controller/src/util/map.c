@@ -1,20 +1,15 @@
-#include <iterator>
+#include "includes/map.h"
+#include "includes/vec.h"
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <system_error>
 
-#include "includes/map.h"
-#include "includes/vec.h"
 
-inline Vec3d convert(Vec3d v) {
+static inline Vec3d convert(Vec3d v) {
     Vec3d u = {v.x + MAP_SIZE / 2.0f, MAP_SIZE / 2.0f - v.y, v.z};
     return u;
-}
-
-inline int states_are_equal(State *s1, State *s2) {
-    return s1->v.x == s2->v.x && s1->v.y == s2->v.y;
 }
 
 Map map_create() {
@@ -31,29 +26,47 @@ Map map_create() {
         }
 
         for (int j = 0; j < MAP_SIZE; j++) {
-            m[i][j].c = 0;
+            m[i][j].c = 0.0f;
             if (i == 0 && j == 0) {
                 m[i][j].s0 = (State*) malloc(sizeof(State));
                 m[i][j].s0->v.x = -1 * (MAP_SIZE / 2.0f);
                 m[i][j].s0->v.y = (MAP_SIZE / 2.0f);
+                m[i][j].s0->g = INFINITY;
+                m[i][j].s0->rhs = INFINITY;
+                m[i][j].s0->visited = 0;
                 m[i][j].s1 = (State*) malloc(sizeof(State));
                 m[i][j].s1->v.x = m[i][j].s0->v.x + 1;
                 m[i][j].s1->v.y = m[i][j].s0->v.y;
+                m[i][j].s1->g = INFINITY;
+                m[i][j].s1->rhs = INFINITY;
+                m[i][j].s1->visited = 0;
                 m[i][j].s2 = (State*) malloc(sizeof(State));
                 m[i][j].s2->v.x = m[i][j].s1->v.y;
                 m[i][j].s2->v.y = m[i][j].s1->v.y - 1;
+                m[i][j].s2->g = INFINITY;
+                m[i][j].s2->rhs = INFINITY;
+                m[i][j].s2->visited = 0;
                 m[i][j].s3 = (State*) malloc(sizeof(State));
                 m[i][j].s3->v.x = m[i][j].s0->v.x;
                 m[i][j].s3->v.y = m[i][j].s2->v.y;
+                m[i][j].s2->g = INFINITY;
+                m[i][j].s2->rhs = INFINITY;
+                m[i][j].s2->visited = 0;
             }
             else if (i == 0){
                 m[i][j].s0 = m[i][j-1].s1; 
                 m[i][j].s1 = (State*) malloc(sizeof(State));
                 m[i][j].s1->v.x = m[i][j].s0->v.x + 1;
                 m[i][j].s1->v.y = m[i][j].s0->v.y;
+                m[i][j].s1->g = INFINITY;
+                m[i][j].s1->rhs = INFINITY;
+                m[i][j].s1->visited = 0;
                 m[i][j].s2 = (State*) malloc(sizeof(State));
                 m[i][j].s2->v.x = m[i][j].s1->v.x;
                 m[i][j].s2->v.y = m[i][j].s1->v.y - 1;
+                m[i][j].s2->g = INFINITY;
+                m[i][j].s2->rhs = INFINITY;
+                m[i][j].s2->visited = 0;
                 m[i][j].s3 = m[i][j-1].s2;
             }
             else if(j == 0){
@@ -62,9 +75,15 @@ Map map_create() {
                 m[i][j].s2 = (State*) malloc(sizeof(State));
                 m[i][j].s2->v.x = m[i][j].s1->v.x;
                 m[i][j].s2->v.y = m[i][j].s1->v.y - 1;
+                m[i][j].s2->g = INFINITY;
+                m[i][j].s2->rhs = INFINITY;
+                m[i][j].s2->visited = 0;
                 m[i][j].s3 = (State*) malloc(sizeof(State));
                 m[i][j].s3->v.x = m[i][j].s0->v.x;
                 m[i][j].s3->v.y = m[i][j].s0->v.y - 1;
+                m[i][j].s3->g = INFINITY;
+                m[i][j].s3->rhs = INFINITY;
+                m[i][j].s3->visited = 0;
             }
             else {
                 m[i][j].s0 = m[i][j-1].s1;
@@ -72,6 +91,9 @@ Map map_create() {
                 m[i][j].s2 = (State*) malloc(sizeof(State));
                 m[i][j].s2->v.x = m[i][j].s1->v.x;
                 m[i][j].s2->v.y = m[i][j].s1->v.y - 1;
+                m[i][j].s2->g = INFINITY;
+                m[i][j].s2->rhs = INFINITY;
+                m[i][j].s2->visited = 0;
                 m[i][j].s3 = m[i][j-1].s2;
             }
 
@@ -105,7 +127,7 @@ Cell** map_get_cells(Map *m, Vec3d v, int *num_cells) {
             printf("Failed to allocate Cell in map_get_cell");
             exit(EXIT_FAILURE);
         }
-        *rv = &(*m[(int)idx.y][(int)idx.x]);
+        *rv = &(*m)[(int)idx.y][(int)idx.x];
         *num_cells = 1;
     }
     else if (frac.x == 0.0f && frac.y != 0.0f) {
@@ -115,8 +137,8 @@ Cell** map_get_cells(Map *m, Vec3d v, int *num_cells) {
             exit(EXIT_FAILURE);
         }
 
-        rv[0] = &(*m[(int)idx.y][(int)idx.x-1]);
-        rv[1] = &(*m[(int)idx.y][(int)idx.x]);
+        rv[0] = &(*m)[(int)idx.y][(int)idx.x-1];
+        rv[1] = &(*m)[(int)idx.y][(int)idx.x];
         *num_cells = 2;
     }
     else if (frac.x != 0.0f && frac.y == 0.0f) {
@@ -126,8 +148,8 @@ Cell** map_get_cells(Map *m, Vec3d v, int *num_cells) {
             exit(EXIT_FAILURE);
         }
 
-        rv[0] = &(*m[(int)idx.y-1][(int)idx.x]);
-        rv[1] = &(*m[(int)idx.y][(int)idx.x]);
+        rv[0] = &(*m)[(int)idx.y-1][(int)idx.x];
+        rv[1] = &(*m)[(int)idx.y][(int)idx.x];
         *num_cells = 2;
     }
     else {
@@ -137,10 +159,10 @@ Cell** map_get_cells(Map *m, Vec3d v, int *num_cells) {
             exit(EXIT_FAILURE);
         }
 
-        rv[0] = &(*m[(int)idx.y-1][(int)idx.x-1]);
-        rv[1] = &(*m[(int)idx.y-1][(int)idx.x]);
-        rv[2] = &(*m[(int)idx.y][(int)idx.x-1]);
-        rv[3] = &(*m[(int)idx.y][(int)idx.x]);
+        rv[0] = &(*m)[(int)idx.y-1][(int)idx.x-1];
+        rv[1] = &(*m)[(int)idx.y-1][(int)idx.x];
+        rv[2] = &(*m)[(int)idx.y][(int)idx.x-1];
+        rv[3] = &(*m)[(int)idx.y][(int)idx.x];
         *num_cells = 4;
     }
 
@@ -149,12 +171,12 @@ Cell** map_get_cells(Map *m, Vec3d v, int *num_cells) {
 
 State** map_get_nbrs(Map *m, State *s, int *num_nbrs) {
     Cell** cells;
-    int* num_cells;
+    int num_cells;
     State** nbrs;
 
-    cells = map_get_cells(m, s->v, num_cells);
+    cells = map_get_cells(m, s->v, &num_cells);
 
-    if (*num_cells == 4) {
+    if (num_cells == 4) {
         nbrs = (State**) malloc(sizeof(State*) * 8);
         if (nbrs == NULL) {
             printf("Unable to allocate memory in map_get_nbrs\n");
@@ -171,7 +193,7 @@ State** map_get_nbrs(Map *m, State *s, int *num_nbrs) {
 
         *num_nbrs = 8;
     }
-    else if (*num_cells == 2) {
+    else if (num_cells == 2) {
         nbrs = (State**) malloc(sizeof(State*) * 5);
         if (nbrs == NULL) {
             printf("Unable to allocate memory in map_get_nbrs\n");
@@ -254,7 +276,7 @@ Tuple* map_get_connbrs(Map *m, State *s, int *num_nbrs) {
 
     for (int i = 0; i < *num_nbrs; i++) {
         tuple_arr[i].fst = nbrs[i];
-        if (i + 1 <= *num_nbrs) {
+        if (i + 1 < *num_nbrs) {
             tuple_arr[i].snd = nbrs[i+1];
         }
         else {
@@ -312,4 +334,39 @@ Cell** map_get_cells_from_states(Map *m, State *s1, State *s2, State *s3, int *n
 
     *num_cells = j;
     return sel_cells;
+}
+
+State* map_get_state(Map *m, Vec3d v) {
+    Cell** cells;
+    int num_cells;
+
+    cells = map_get_cells(m, v, &num_cells);
+
+    for (int i = 0; i < num_cells; i++) {
+        if (vec_equal(v, cells[i]->s0->v)) {
+            return cells[i]->s0; 
+        }
+        else if (vec_equal(v, cells[i]->s1->v)) {
+            return cells[i]->s1; 
+        }
+        else if (vec_equal(v, cells[i]->s2->v)) {
+            return cells[i]->s2; 
+        }
+        else if (vec_equal(v, cells[i]->s3->v)) {
+            return cells[i]->s3; 
+        }
+    }
+
+    return NULL;
+}
+
+void map_set_cells_cost(Map *m, Vec3d v, double cost) {
+    Cell** cells;
+    int num_cells;
+
+    cells = map_get_cells(m, v, &num_cells);
+
+    for (int i = 0; i < num_cells; i++) {
+        cells[i]->c = cost;
+    }
 }

@@ -1,26 +1,22 @@
 #ifndef FDS_H
 #define FDS_H
 
-#include "../../util/includes/vec.h"
+#include "../../includes/fds_types.h"
 #include "../../util/includes/map.h"
-
-typedef struct {
-    Vec3d v;
-    double rhs;
-    double g;
-    char visited;
-} State;
-
-typedef struct {
-    double c;
-    State* s0;
-    State* s1;
-    State* s2;
-    State* s3;
-} Cell;
+#include "../../util/includes/heap.h"
 
 typedef struct {
     Map *m;
+    State *start;
+    State *end;
+    HEAP *OPEN;
 } Fds;
+
+char compare_keys(void* k1, void* k2);
+void UpdateState(Fds *fds, State *s);
+void ComputeShortestPath(Fds *fds);
+Fds* fds_init(Vec3d start, Vec3d goal);
+void fds_run(Fds* fds, Cell** changed_cells, int num_cells);
+
 
 #endif // !FDS_H

@@ -25,7 +25,7 @@ typedef struct HEAP {
 
 NODE heap_extract(HEAP* h);
 
-HEAP* new_heap(void *data, void **keys, int h_len, char (*comp)(void*, void*), void* max_val);
+HEAP* new_heap(void *data, void **keys, int h_len, char (*k_comp)(void*, void*), char (*v_comp)(void*, void*), void* max_val);
 
 int heap_add(HEAP* h, void* val, void *key);
 

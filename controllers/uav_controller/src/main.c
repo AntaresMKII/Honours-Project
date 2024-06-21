@@ -1,65 +1,53 @@
-/*! main.c
- *
- * Main file of the controllecr. It contains the main function
- */
-#include "includes/uav.h"
-#include "util/includes/map.h"
 #include <stdio.h>
 
-/*!
- * \brief Main function of the controller
- *
- * This function contains the main loop of the controller
- */
-int main(int argc, char **argv) {
-  // Declare variabels and initialize goal
+#include "includes/uav.h"
+#include "modules/includes/fds.h"
+#include "util/includes/map.h"
+#include "util/includes/vec.h"
+
+#define GOAL_X -5.0f
+#define GOAL_Y 6.0f
+#define TARGT_ALT 2.0f
+
+void set_start_and_goal(Uav *uav) {
+  double *d_start = uav_get_gps_pos(uav);
+
+  Vec3d start = {d_start[0], d_start[1], 0};
+  Vec3d goal = {GOAL_X, GOAL_Y, 0};
+
+  uav->fds = fds_init(start, goal);
+}
+
+void init() {
   Uav uav;
-  Position goal;
-  Position *obstacles;
-  int timestep, obstacles_num;
-  Map m;
+  Position goal = {GOAL_X, GOAL_Y, TARGT_ALT};
+  int timestep;
 
-  goal.x = -5.0;
-  goal.y = 6.5;
-  goal.z = 2.0; // Target altitude
-
-  // Initialize webots controller
   wb_robot_init();
   timestep = (int)wb_robot_get_basic_time_step();
 
-#ifdef DEBUG
-  init_debug_file();
-#endif /* ifdef DEBUG */
-
-  /* Initialize the uav */
   uav_init(&uav, timestep);
-  
-  m = map_create();
 
-  // Display the welcome message.
-  printf("Starting the drone...\n");
-
-  // Wait one second.
   while (wb_robot_step(timestep) != -1) {
     if (wb_robot_get_time() > 1.0)
       break;
   }
-  
-  // Main loop
+}
+
+void main_loop() {
   while (wb_robot_step(timestep) != -1) {
     const double time = wb_robot_get_time();
     
-    obstacles = cm_detect_obstacles(&uav, &obstacles_num);
-    map_add_obstacles(&m, obstacles, obstacles_num);
-    //cm_run(&uav, goal, time); // Execute drone movements
   };
+}
 
-  // Clean up
-#ifdef DEBUG
-  cleanup_debug_file();
-#endif /* ifdef DEBUG */
-
+void clean_up() {
   wb_robot_cleanup();
+}
 
+int main(int argc, char *argv[]) {
+  init();
+  main_loop();
+  clean_up();
   return EXIT_SUCCESS;
 }

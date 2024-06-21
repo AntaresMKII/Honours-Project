@@ -21,4 +21,8 @@ typedef union Vec3d {
     };
 } Vec3d;
 
+static inline int vec_equal(Vec3d v, Vec3d u) {
+    return v.x == u.x && v.y == u.y;
+}
+
 #endif // !VEC_H

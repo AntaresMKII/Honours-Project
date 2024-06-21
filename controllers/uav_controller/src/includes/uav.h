@@ -31,6 +31,7 @@
 
 #include "../util/includes/util.h"
 #include "../modules/includes/comm_module.h"
+#include "../modules/includes/fds.h"
 
 // Uncomment for debug functionality
 //#define DEBUG
@@ -102,6 +103,9 @@ typedef struct uav
 
     /* Communication */
     struct comm_module comm_mod;    ///< Communication module structure
+    
+    /* Path planning */
+    Fds *fds; ///< Pointer to the field D* global variables
 } Uav;
 
 /// UAV initialization function

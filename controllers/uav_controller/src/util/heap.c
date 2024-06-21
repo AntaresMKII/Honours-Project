@@ -100,7 +100,7 @@ int heap_insert(NODE* h, NODE *x, int arr_len, int *h_len) {
     return increase_key(h, &h[*h_len-1], k, *h_len);
 }
 
-HEAP* new_heap(void *data, void** keys, int h_len, char (*comp)(void*, void*), void* max_val) {
+HEAP* new_heap(void *data, void** keys, int h_len, char (*k_comp)(void*, void*), char (*v_comp)(void*, void*), void* max_val) {
     NODE *arr;
     HEAP *h;
     int arr_len = 2 * h_len;
@@ -120,7 +120,8 @@ HEAP* new_heap(void *data, void** keys, int h_len, char (*comp)(void*, void*), v
     h->h_len = h_len;
     h->arr_len = arr_len;
 
-    key_comp = comp;
+    key_comp = k_comp;
+    val_comp = v_comp;
     top_val = max_val;
 
     build_heap(h->arr, h->h_len);
@@ -138,8 +139,8 @@ int heap_add(HEAP* h, void* val, void* key) {
     x.val = val;
     x.key = key;
 
-    if (h->h_len > ((3 * h->arr_len) / 4)) {
-        h->arr_len = h->arr_len * 2;
+    if (h->h_len + 1 > ((3 * h->arr_len) / 4)) {
+        h->arr_len = (h->h_len + 1) * 2;
         tmp = (NODE*) malloc(sizeof(NODE) * h->arr_len);
         if (tmp == NULL) {
             return -1;

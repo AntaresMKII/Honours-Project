@@ -6,6 +6,8 @@
 */
 
 #include "includes/uav.h"
+#include "modules/includes/fds.h"
+#include "util/includes/vec.h"
 
 #define CLAMP(val, min, max) ((val) < (min) ? (min) : ((val) > (max) ? (max) : (val)))
 

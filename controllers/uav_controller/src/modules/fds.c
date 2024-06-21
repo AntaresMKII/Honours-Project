@@ -1,32 +1,34 @@
-#include <cmath>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "includes/fds.h"
-#include "../util/includes/heap.h"
 
 #define min(a,b) a < b ? a : b
 
-inline double euclid_heuristic(State s1, State s2) {
-    return sqrt(pow(fabs(s1.v.x - s2.v.x), 2) + pow(fabs(s1.v.y - s2.v.y), 2));
+static inline double euclid_heuristic(State *s1, State *s2) {
+    return sqrt(pow(fabs(s1->v.x - s2->v.x), 2) + pow(fabs(s1->v.y - s2->v.y), 2));
 }
 
-double* key(State s, State s_start) {
+double* key(State *s, State *s_start) {
     double *k = (double*) malloc(2*sizeof(double));
     if (k == NULL) {
         printf("Failed to allocate memory for key!\n");
         exit(EXIT_FAILURE);
     }
 
-    k[0] = min(s.g, s.rhs) + euclid_heuristic(s_start, s);
-    k[1] = min(s.g, s.rhs);
+    k[0] = min(s->g, s->rhs) + euclid_heuristic(s_start, s);
+    k[1] = min(s->g, s->rhs);
 
     return k;
 }
 
 char compare_keys(void* k1, void* k2) {
     return (((double*)k1)[0] < ((double*)k2)[0]) || ((((double*)k1)[0] == ((double*)k2)[0]) && (((double*)k1)[1] < ((double*)k2)[1]));
+}
+
+char compare_states(void* s1, void* s2) {
+    return s1 == s2;
 }
 
 double compute_cost(Fds *fds, State *s, State *sa, State *sb) {
@@ -55,7 +57,7 @@ double compute_cost(Fds *fds, State *s, State *sa, State *sb) {
     else if (s1->g <= s2->g) {
         vs = min(c, b) + s1->g;
     }
-    else {
+    else { 
         f = s1->g - s2->g;
         if (f <= b) {
             if (c <= f) {
@@ -80,10 +82,113 @@ double compute_cost(Fds *fds, State *s, State *sa, State *sb) {
     return vs;
 }
 
-void UpdateState(State *s, State s_goal, State s_start, HEAP* OPEN) {
-    
+void UpdateState(Fds *fds, State *s) {
+    Tuple *connbrs;
+    int num_nbrs;
+
+    if (!s->visited) {
+        s->g = INFINITY;
+    }
+
+    if (!states_are_equal(s, fds->end)) {
+        connbrs = map_get_connbrs(fds->m, s, &num_nbrs);
+        for (int i = 0; i < num_nbrs; i++) {
+            s->rhs = min(s->rhs, compute_cost(fds, s, connbrs[i].fst, connbrs[i].snd));
+        }
+    }
+
+    heap_remove(fds->OPEN, (void*) s);
+
+    if (s->g != s->rhs) {
+        heap_add(fds->OPEN, (void*) s, (void *) key(s, fds->start));
+    }
 }
 
-void ComputeShortestPath(HEAP* OPEN, State s_start, State s_goal, Map *m) {
+void ComputeShortestPath(Fds *fds) {
+    State *s, **nbrs;
+    int num_nbrs;
+
+    while ((compare_keys(get_root_key(fds->OPEN), key(fds->start, fds->start))) || fds->start->g != fds->start->rhs) {
+        s = (State*) pop_root_val(fds->OPEN);
+        nbrs = map_get_nbrs(fds->m, s, &num_nbrs);
+
+        if (s->g > s->rhs) {
+            s->g = s->rhs;
+            for (int i = 0; i < num_nbrs; i++) {
+                UpdateState(fds, nbrs[i]);
+            }
+        }
+        else {
+            s->g = INFINITY;
+            for (int i = 0; i < num_nbrs; i++) {
+                UpdateState(fds, nbrs[i]);
+            }
+            UpdateState(fds, s);
+        }
+    }
+}
+
+Fds* fds_init(Vec3d start, Vec3d goal) {
+    Map *m;
+    State *s_start;
+    State *s_goal;
+    HEAP *h;
+    Fds *fds;
+
+    double *max_val;
+
+    m = malloc(sizeof(Map));
+    if (m == NULL) {
+        printf("Error allocating memory for map in fds_init()\n");
+        exit(EXIT_FAILURE);
+    }
+
+    *m = map_create();
+
+    s_start = map_get_state(m, start);
+    s_goal = map_get_state(m, goal);
+
+    s_start->g = INFINITY;
+    s_start->rhs = INFINITY;
+    s_goal->g = INFINITY;
+    s_goal->rhs = 0.0f;
+
+    max_val = (double*) malloc(sizeof(double) * 2);
+    if (max_val == NULL) {
+        printf("Error allocating memory for max_val in fds_init()\n");
+        exit(EXIT_FAILURE);
+    }
+
+    max_val[0] = INFINITY;
+    max_val[1] = INFINITY;
+
+    h = new_heap(NULL, NULL, 0, compare_keys, compare_states, max_val);
+
+    heap_add(h, (void*) s_goal, (void*) key(s_goal, s_start));
+
+    fds = (Fds*) malloc(sizeof(Fds));
+    if (fds == NULL) {
+        printf("Error allocating memory for fds in fds_init()\n");
+        exit(EXIT_FAILURE);
+    }
+
+    fds->m = m;
+    fds->start = s_start;
+    fds->end = s_goal;
+    fds->OPEN = h;
+
+    return fds;
+}
+
+void fds_run(Fds* fds, Cell** changed_cells, int num_cells) {
+    ComputeShortestPath(fds);
     
+    if (num_cells > 0) {
+        for (int i = 0; i < num_cells; i++) {
+            UpdateState(fds, changed_cells[i]->s0);
+            UpdateState(fds, changed_cells[i]->s1);
+            UpdateState(fds, changed_cells[i]->s2);
+            UpdateState(fds, changed_cells[i]->s3);
+        }
+    }
 }
