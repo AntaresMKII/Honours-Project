@@ -137,10 +137,9 @@ Fds* fds_init(Vec3d start, Vec3d goal) {
 
     double *max_val;
 
-    m = malloc(sizeof(Map));
+    m = (Map*) malloc(sizeof(Map));
     if (m == NULL) {
-        printf("Error allocating memory for map in fds_init()\n");
-        exit(EXIT_FAILURE);
+        printf("Failure to allocate memory in fds_init!\n");
     }
 
     *m = map_create();
@@ -190,5 +189,61 @@ void fds_run(Fds* fds, Cell** changed_cells, int num_cells) {
             UpdateState(fds, changed_cells[i]->s2);
             UpdateState(fds, changed_cells[i]->s3);
         }
+    }
+}
+
+void fds_extract_path(Fds* fds, Vec3d curr_pos) {
+    State *curr_state, **nbrs;
+    Vec3d curr_pos_norm, curr_pos_frac, *waypoints;
+    int num_nbrs, min_idx, wp_num = 0;
+    double tmp, min_g = INFINITY;
+
+    waypoints = (Vec3d*) malloc(sizeof(Vec3d));
+    if (waypoints == NULL) {
+        printf("Failure to allocate memory in fds_extract_path\n");
+        exit(EXIT_FAILURE);
+    }
+
+    curr_pos_frac.x = modf(curr_pos.x, &curr_pos_norm.x);
+    curr_pos_frac.y = modf(curr_pos.y, &curr_pos_norm.y);
+
+    if (curr_pos_frac.x >= 0.5f) {
+        curr_pos_norm.x++;
+    }
+
+    if (curr_pos_frac.y >= 0.5f) {
+        curr_pos_norm.y++;
+    }
+
+    curr_state = map_get_state(fds->m, curr_pos_norm);
+
+    while (!states_are_equal(curr_state, fds->end)) {
+
+        nbrs = map_get_nbrs(fds->m, curr_state, &num_nbrs);
+
+        for (int i = 0; i < num_nbrs; i++) {
+            tmp = min(min_g, nbrs[i]->g);
+            if (min_g != tmp) {
+                min_idx = i;
+                min_g = tmp;
+            }
+        }
+
+        if (fabs(nbrs[min_idx]->v.x - curr_state->v.x) == 1.0f &&
+            fabs(nbrs[min_idx]->v.y - curr_state->v.y) == 1.0f) {
+            
+        }
+        else {
+            wp_num++;
+            waypoints = (Vec3d*) realloc(waypoints, wp_num);
+            if (waypoints == NULL) {
+                printf("Failure to reallocate waypoints\n");
+                exit(EXIT_FAILURE);
+            }
+
+            waypoints[wp_num -1] = nbrs[min_idx]->v;
+        }
+
+        curr_state = nbrs[min_idx];
     }
 }

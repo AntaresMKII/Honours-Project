@@ -117,7 +117,7 @@ double uav_get_pitch(Uav* uav);                                                 
 double uav_get_yaw(Uav* uav);                                                               ///< Returns the current yaw
 
 double uav_get_gps_altitude(Uav* uav);                                                      ///< Returns the current registered altitude
-double* uav_get_gps_pos(Uav* uav);                                                          ///< Returns the current gps position
+const double* uav_get_gps_pos(Uav* uav);                                                          ///< Returns the current gps position
 
 double uav_get_roll_velocity(Uav* uav);                                                     ///< Returns the roll velocity
 double uav_get_pitch_velocity(Uav* uav);                                                    ///< Returns the pitch velocity
@@ -126,7 +126,7 @@ double uav_get_yaw_velocity(Uav* uav);                                          
 double uav_get_heading(Uav* uav);                                                           ///< Returns the current heading in degrees
 
 int uav_get_radar_targets_num(Uav* uav);                                                    ///< Returns the number of trargets
-WbRadarTarget* uav_get_radar_targets(Uav* uav);                                             ///< Returns an array of tragets
+const WbRadarTarget* uav_get_radar_targets(Uav* uav);                                             ///< Returns an array of tragets
 int uav_get_obstacles(Uav* uav, WbRadarTarget* targets);                                    ///< Given an empty array of targets, this function will return the numebr of targets and the targets themselves
 
 /* Setters */
@@ -134,7 +134,8 @@ void uav_set_position(Uav* uav, Position position);                             
 
 /* Other methods */
 void uav_actuate_motors(Uav* uav, double roll, double pitch, double yaw, double altitude);  ///< Actuates the motors of the UAV
-void cm_run(Uav *uav, Position goal, double time);                                          ///< Runs the automated movement of the uav
-Position* cm_detect_obstacles(Uav *uav, int *num);                                          ///< Detects the obstacles and returns the number and the position of the obstacles
+void cm_run(Uav *uav, Position wp, double time);                                          ///< Runs the automated movement of the uav
+Vec3d* cm_detect_obstacles(Uav *uav, int *num);                                          ///< Detects the obstacles and returns the number and the position of the obstacles
+void cm_plan_path(Uav *uav);
 
 #endif // !UAV_H

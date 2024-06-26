@@ -14,7 +14,7 @@ void init_debug_file() {
         exit(EXIT_FAILURE);
     }
 
-    fprintf(file_ptr, "[%d] Controller strted\n", time);
+    fprintf(file_ptr, "[%d] Controller started\n", time);
 }
 
 void logvi(int val, char *name) {

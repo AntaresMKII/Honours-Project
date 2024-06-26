@@ -43,7 +43,7 @@ Tuple* map_get_connbrs(Map *m, State *s, int *num_nbrs);
 Cell** map_get_cells_from_states(Map *m, State *s1, State *s2, State *s3, int *num_cells);
 State* map_get_state(Map *m, Vec3d v);
 
-void map_set_cells_cost(Map *m, Vec3d v, double cost);
+Cell** map_set_cells_cost(Map *m, Vec3d v, double cost, int *num_cells);
 
 static inline int states_are_equal(State *s1, State *s2) {
     return s1->v.x == s2->v.x && s1->v.y == s2->v.y;

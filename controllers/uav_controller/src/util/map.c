@@ -8,7 +8,7 @@
 
 
 static inline Vec3d convert(Vec3d v) {
-    Vec3d u = {v.x + MAP_SIZE / 2.0f, MAP_SIZE / 2.0f - v.y, v.z};
+    Vec3d u = { v.x + MAP_SIZE / 2.0f, MAP_SIZE / 2.0f - v.y, v.z };
     return u;
 }
 
@@ -127,7 +127,7 @@ Cell** map_get_cells(Map *m, Vec3d v, int *num_cells) {
             printf("Failed to allocate Cell in map_get_cell");
             exit(EXIT_FAILURE);
         }
-        *rv = &(*m)[(int)idx.y][(int)idx.x];
+        *rv = &((*m)[(int)idx.y][(int)idx.x]);
         *num_cells = 1;
     }
     else if (frac.x == 0.0f && frac.y != 0.0f) {
@@ -137,8 +137,8 @@ Cell** map_get_cells(Map *m, Vec3d v, int *num_cells) {
             exit(EXIT_FAILURE);
         }
 
-        rv[0] = &(*m)[(int)idx.y][(int)idx.x-1];
-        rv[1] = &(*m)[(int)idx.y][(int)idx.x];
+        rv[0] = &((*m)[(int)idx.y][(int)idx.x-1]);
+        rv[1] = &((*m)[(int)idx.y][(int)idx.x]);
         *num_cells = 2;
     }
     else if (frac.x != 0.0f && frac.y == 0.0f) {
@@ -148,8 +148,8 @@ Cell** map_get_cells(Map *m, Vec3d v, int *num_cells) {
             exit(EXIT_FAILURE);
         }
 
-        rv[0] = &(*m)[(int)idx.y-1][(int)idx.x];
-        rv[1] = &(*m)[(int)idx.y][(int)idx.x];
+        rv[0] = &((*m)[(int)idx.y-1][(int)idx.x]);
+        rv[1] = &((*m)[(int)idx.y][(int)idx.x]);
         *num_cells = 2;
     }
     else {
@@ -159,10 +159,10 @@ Cell** map_get_cells(Map *m, Vec3d v, int *num_cells) {
             exit(EXIT_FAILURE);
         }
 
-        rv[0] = &(*m)[(int)idx.y-1][(int)idx.x-1];
-        rv[1] = &(*m)[(int)idx.y-1][(int)idx.x];
-        rv[2] = &(*m)[(int)idx.y][(int)idx.x-1];
-        rv[3] = &(*m)[(int)idx.y][(int)idx.x];
+        rv[0] = &((*m)[(int)idx.y-1][(int)idx.x-1]);
+        rv[1] = &((*m)[(int)idx.y-1][(int)idx.x]);
+        rv[2] = &((*m)[(int)idx.y][(int)idx.x-1]);
+        rv[3] = &((*m)[(int)idx.y][(int)idx.x]);
         *num_cells = 4;
     }
 
@@ -300,7 +300,6 @@ Tuple* map_get_connbrs(Map *m, State *s, int *num_nbrs) {
 Cell** map_get_cells_from_states(Map *m, State *s1, State *s2, State *s3, int *num_cells) {
     Cell **cells, **sel_cells, *tmp;
     int n_cells, j;
-    State *curr_state;
     
     cells = map_get_cells(m, s1->v, &n_cells);
  
@@ -360,13 +359,14 @@ State* map_get_state(Map *m, Vec3d v) {
     return NULL;
 }
 
-void map_set_cells_cost(Map *m, Vec3d v, double cost) {
+Cell** map_set_cells_cost(Map *m, Vec3d v, double cost, int *num_cells) {
     Cell** cells;
-    int num_cells;
 
-    cells = map_get_cells(m, v, &num_cells);
+    cells = map_get_cells(m, v, num_cells);
 
-    for (int i = 0; i < num_cells; i++) {
+    for (int i = 0; i < *num_cells; i++) {
         cells[i]->c = cost;
     }
+
+    return cells;
 }

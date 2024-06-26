@@ -11,6 +11,9 @@
 #include <stdlib.h>
 
 #include "../includes/uav.h"
+#include "includes/fds.h"
+
+//#define DEBUG
 
 #define CLAMP(val, min, max) ((val) < (min) ? (min) : ((val) > (max) ? (max) : (val)))
 
@@ -34,22 +37,22 @@ double compute_pitch_disturbance(double angle) {
 }
 
 // Given a goal compute the pitch and yaw distrubance to reach the goal
-int move_to_goal(Uav *uav, Position goal) {
+int move_to_waypoint(Uav *uav, Position wp) {
 
-    double angle = compute_angle(uav, goal);
+    double angle = compute_angle(uav, wp);
 
     uav->yaw_disturbance = MAX_YAW_DIST * angle / (2 * M_PI);
     uav->pitch_disturbance = compute_pitch_disturbance(angle);
 
     #ifdef DEBUG
-    double distance = sqrt(pow((goal.x - uav->pos.x),2) + pow((goal.y - uav->pos.y), 2));
+    double distance = sqrt(pow((wp.x - uav->pos.x),2) + pow((wp.y - uav->pos.y), 2));
     log2vf(angle, "Angle left", distance, "Distance left");
     #endif /* ifdef DEBUG */
 
     return 0;
 }
 
-Position obstacle_relative_pos(double obs_dist, double obs_azimuth) {
+Vec3d obstacle_relative_pos(double obs_dist, double obs_azimuth) {
     double alpha = obs_azimuth;
     double xo = cos(alpha) * obs_dist;
     double yo = sin(alpha) * obs_dist;
@@ -58,28 +61,17 @@ Position obstacle_relative_pos(double obs_dist, double obs_azimuth) {
         yo = yo * (-1.0f);
     }
 
-    Position p = {xo, yo, 0};
+    Vec3d p = {xo, yo, 0};
 
     return p;
 }
 
-Position rotate_pos(Position v, double alpha) {
-    double xp = v.x * cos(alpha) - v.y * sin(alpha);
-    double yp = v.x * sin(alpha) + v.y * cos(alpha);
-    Position p = { xp, yp, 0 };
-    return p;
-}
-
-Position translate_pos(Position p1, Position p2) {
-    Position pf = { p1.x + p2.x, p1.y + p2.y, 0 };
-    return pf;
-}
-
-Position* cm_detect_obstacles(Uav *uav, int *num) {
+Vec3d* cm_detect_obstacles(Uav *uav, int *num) {
     int target_num;
     WbRadarTarget *targets;
-    double heading, *gps_pos;
-    Position uav_pos = { 0 };
+    double heading;
+    const double *gps_pos;
+    Vec3d uav_pos = { 0 };
 
     target_num = uav_get_radar_targets_num(uav);
     targets = uav_get_radar_targets(uav);
@@ -92,7 +84,7 @@ Position* cm_detect_obstacles(Uav *uav, int *num) {
 
     heading = (2*M_PI) - heading;
 
-    Position *targets_pos = (Position *) realloc(targets_pos, sizeof(Position) * target_num);
+    Vec3d *targets_pos = (Vec3d *) malloc(sizeof(Vec3d) * target_num);
     if (targets_pos == NULL) {
         printf("Failed to allocate memeory in cm_detect_obstacle!\n");
         exit(EXIT_FAILURE);
@@ -100,8 +92,8 @@ Position* cm_detect_obstacles(Uav *uav, int *num) {
 
     for (int i = 0; i < target_num; i++) {
         targets_pos[i] = obstacle_relative_pos(targets[i].distance, targets[i].azimuth);
-        targets_pos[i] = rotate_pos(targets_pos[i], heading);
-        targets_pos[i] = translate_pos(uav_pos, targets_pos[i]);
+        targets_pos[i] = vec_rotate(targets_pos[i], heading);
+        targets_pos[i] = vec_translate(uav_pos, targets_pos[i]);
 
         #ifdef DEBUG
         logs("Obstacle detected at:");
@@ -114,12 +106,41 @@ Position* cm_detect_obstacles(Uav *uav, int *num) {
     return targets_pos;
 }
 
+void cm_plan_path(Uav *uav) {
+    Vec3d *obs_arr;
+    int obs_num = 0;
+    int num_cells = 0;
+    Cell **mod_cells, **curr_cells;
+
+    int mod_cells_num = 0;
+
+    obs_arr = cm_detect_obstacles(uav, &obs_num);
+
+    mod_cells = (Cell**) malloc(sizeof(Cell*) * obs_num * 4);
+    if (mod_cells == NULL) {
+        printf("Failed to allocate memory in cm_plan_path\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < obs_num; i++) {
+        curr_cells = map_set_cells_cost(uav->fds->m, obs_arr[i], 1.0f, &num_cells);
+
+        for (int j =0; j < num_cells; j++) {
+            mod_cells[mod_cells_num] = curr_cells[j];
+            mod_cells_num++;
+        }
+    }
+
+    fds_run(uav->fds, mod_cells, mod_cells_num);
+
+}
+
 // update variables in the UAV struct, compute the disturbance and actuate motors
-void cm_run(Uav *uav, Position goal, double time) {
+void cm_run(Uav *uav, Position wp, double time) {
 
     Position newPos;
 
-    double *gpsPos = uav_get_gps_pos(uav);
+    const double *gpsPos = uav_get_gps_pos(uav);
 
     newPos.x = gpsPos[0];
     newPos.y = gpsPos[1];
@@ -131,23 +152,18 @@ void cm_run(Uav *uav, Position goal, double time) {
 
     uav_set_position(uav, newPos);
 
-    if (fabs((uav->pos.x - goal.x)) < TARGET_PRECISION
-        && fabs((uav->pos.y - goal.y)) < TARGET_PRECISION) {
+    if (fabs((uav->pos.x - wp.x)) < TARGET_PRECISION
+        && fabs((uav->pos.y - wp.y)) < TARGET_PRECISION) {
         uav->target_reached = 1;
         #ifdef DEBUG 
         logs("Target Reached!");
         #endif /* ifdef DEBUG */
     }
 
-    if (uav->target_reached) {
-        uav->yaw_disturbance = 0.0;
-        uav->pitch_disturbance = 0.0;
-        goal.z = 0;
-    }
-    else if (newPos.z > (goal.z - 1) && time - uav->t > 0.01) {
-        move_to_goal(uav, goal); 
+    if (newPos.z > (wp.z - 1) && time - uav->t > 0.01 && !uav->target_reached) {
+        move_to_waypoint(uav, wp); 
         uav->t = wb_robot_get_time();
     }
 
-    uav_actuate_motors(uav, 0.0, uav->pitch_disturbance, uav->yaw_disturbance, goal.z);
+    uav_actuate_motors(uav, 0.0, uav->pitch_disturbance, uav->yaw_disturbance, wp.z);
 }

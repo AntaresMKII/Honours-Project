@@ -19,8 +19,8 @@ WorldInfo {
   }
 }
 Viewpoint {
-  orientation 0.12113483421948446 0.34841984133719833 -0.9294783300869256 0.22333338455617852
-  position -5.783020742825322 1.1067712987948601 0.8581869491320359
+  orientation -0.020279863422065048 0.2506469903745848 0.9678661133419979 0.4877635146166914
+  position -2.7562290909795077 -1.4192273771427466 0.7914801814762884
   near 0.2
   follow "Mavic 2 PRO"
   followSmoothness 0.2
@@ -37,12 +37,9 @@ Floor {
   }
 }
 Mavic2Pro {
-  hidden position_0_0 2.678004101854048e-09
-  hidden position_8_0 -6.239252357622905e-09
-  hidden position_9_0 -2.369542480878591e-09
-  translation -0.24647614306118368 -1.6365772333478563e-06 0.0657087278743049
+  translation 0 0 0.1
   rotation 1.618492392305777e-05 -0.9999999998687742 -7.070785142686753e-07 0.06974198959202069
-  controller "uav_controller"
+  controller "<extern>"
   bodySlot [
     Radar {
       maxRange 1000
@@ -69,41 +66,72 @@ Mavic2Pro {
   ]
 }
 Solid {
-  translation -6 5 1.5
+  translation 10 0 0
   children [
-    Shape {
+    DEF WALL Shape {
       appearance PBRAppearance {
         baseColor 1 0.333333 0
-        metalness 0.1
-      }
-      geometry Cylinder {
-        height 3
-        radius 0.1
-      }
-    }
-  ]
-  boundingObject Cylinder {
-    height 0.1
-    radius 0.05
-  }
-}
-Solid {
-  translation 1.4 -0.03 0.401902
-  rotation -0.7071067808198715 0.7071067815532236 -9.221648715080924e-12 2.7333764812198128e-08
-  children [
-    Shape {
-      appearance PBRAppearance {
-        baseColor 1 0.333333 0
-        metalness 0.1
+        metalness 0.5
       }
       geometry Box {
-        size 1 1 1
+        size 1 20 5
       }
     }
   ]
-  name "solid(1)"
-  boundingObject Box {
-    size 1 1 1
-  }
-  radarCrossSection 100
+  name "wall-1"
+  boundingObject USE WALL
+  radarCrossSection 200
+}
+Solid {
+  translation -10 0 0
+  children [
+    DEF WALL Shape {
+      appearance PBRAppearance {
+        baseColor 1 0.333333 0
+        metalness 0.5
+      }
+      geometry Box {
+        size 1 20 5
+      }
+    }
+  ]
+  name "wall-2"
+  boundingObject USE WALL
+  radarCrossSection 200
+}
+Solid {
+  translation 0 10 0
+  rotation 0 0 1 1.570796327
+  children [
+    DEF WALL Shape {
+      appearance PBRAppearance {
+        baseColor 1 0.333333 0
+        metalness 0.5
+      }
+      geometry Box {
+        size 1 20 5
+      }
+    }
+  ]
+  name "wall-3"
+  boundingObject USE WALL
+  radarCrossSection 200
+}
+Solid {
+  translation 0 -10 0
+  rotation 0 0 1 1.570796327
+  children [
+    DEF WALL Shape {
+      appearance PBRAppearance {
+        baseColor 1 0.333333 0
+        metalness 0.5
+      }
+      geometry Box {
+        size 1 20 5
+      }
+    }
+  ]
+  name "wall-4"
+  boundingObject USE WALL
+  radarCrossSection 200
 }

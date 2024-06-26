@@ -89,7 +89,7 @@ double uav_get_gps_altitude(Uav* uav){
 }
 
 /* Get UAV GPS coordinates */
-double* uav_get_gps_pos(Uav* uav){
+const double* uav_get_gps_pos(Uav* uav){
     return wb_gps_get_values(uav->gps);
 }
 
@@ -177,7 +177,7 @@ int uav_get_radar_targets_num(Uav *uav) {
 }
 
 // Return the array of detected targets by the radar
-WbRadarTarget* uav_get_radar_targets(Uav* uav) {
+const WbRadarTarget* uav_get_radar_targets(Uav* uav) {
     return wb_radar_get_targets(uav->radar);
 }
 
