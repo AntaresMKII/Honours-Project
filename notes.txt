@@ -42,3 +42,6 @@ account for possible momentum
 === OBSTACLE AVOIDANCE ===
 Field D*
 http://robots.stanford.edu/isrr-papers/final/final-23.pdf
+
+== ISSUES ==
+Talk about the bug you found in the doc of Webots

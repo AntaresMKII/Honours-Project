@@ -361,11 +361,14 @@ State* map_get_state(Map *m, Vec3d v) {
 
 Cell** map_set_cells_cost(Map *m, Vec3d v, double cost, int *num_cells) {
     Cell** cells;
+    int n;
 
     cells = map_get_cells(m, v, num_cells);
 
     for (int i = 0; i < *num_cells; i++) {
-        cells[i]->c = cost;
+        if (cost > cells[i]->c) {
+            cells[i]->c = cost;
+        }
     }
 
     return cells;

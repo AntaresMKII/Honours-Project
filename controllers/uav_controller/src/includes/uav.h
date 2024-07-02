@@ -108,6 +108,18 @@ typedef struct uav
     Fds *fds; ///< Pointer to the field D* global variables
 } Uav;
 
+///Packet
+typedef union {
+    struct {
+        unsigned char sender_id;
+        unsigned char receiver_id;
+        unsigned char m_num;
+        unsigned char type;
+        unsigned char size;
+    };
+    unsigned char message[5];
+} Message;
+
 /// UAV initialization function
 void uav_init(Uav* uav, int timestep);
 
@@ -134,8 +146,8 @@ void uav_set_position(Uav* uav, Position position);                             
 
 /* Other methods */
 void uav_actuate_motors(Uav* uav, double roll, double pitch, double yaw, double altitude);  ///< Actuates the motors of the UAV
-void cm_run(Uav *uav, Position wp, double time);                                          ///< Runs the automated movement of the uav
+int cm_run(Uav *uav, Vec3d wp, double target_alt, double time);                                          ///< Runs the automated movement of the uav
 Vec3d* cm_detect_obstacles(Uav *uav, int *num);                                          ///< Detects the obstacles and returns the number and the position of the obstacles
-void cm_plan_path(Uav *uav);
+Vec3d* cm_plan_path(Uav *uav, int *wps_num);
 
 #endif // !UAV_H

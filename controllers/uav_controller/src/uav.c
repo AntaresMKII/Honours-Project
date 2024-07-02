@@ -165,7 +165,7 @@ void uav_actuate_motors(Uav* uav, double roll, double pitch, double yaw, double 
 double uav_get_heading(Uav* uav){
     const double *north = wb_compass_get_values(uav->compass);
     double rad = atan2(north[1], north[0]);
-    double heading = (rad - 1.5708) / M_PI * 180.0;
+    double heading = (rad / M_PI) * 180.0;
     if (heading < 0.0)
         heading = heading + 360.0;
     return heading;

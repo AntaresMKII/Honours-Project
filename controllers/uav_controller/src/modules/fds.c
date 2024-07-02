@@ -102,6 +102,8 @@ void UpdateState(Fds *fds, State *s) {
     if (s->g != s->rhs) {
         heap_add(fds->OPEN, (void*) s, (void *) key(s, fds->start));
     }
+
+    s->visited = 1;
 }
 
 void ComputeShortestPath(Fds *fds) {
@@ -125,6 +127,8 @@ void ComputeShortestPath(Fds *fds) {
             }
             UpdateState(fds, s);
         }
+
+        s->visited = 1;
     }
 }
 
@@ -192,10 +196,10 @@ void fds_run(Fds* fds, Cell** changed_cells, int num_cells) {
     }
 }
 
-void fds_extract_path(Fds* fds, Vec3d curr_pos) {
+Vec3d* fds_extract_path(Fds* fds, int *vec_num) {
     State *curr_state, **nbrs;
-    Vec3d curr_pos_norm, curr_pos_frac, *waypoints;
-    int num_nbrs, min_idx, wp_num = 0;
+    Vec3d *waypoints;
+    int num_nbrs, min_idx = 0, wp_num = 0;
     double tmp, min_g = INFINITY;
 
     waypoints = (Vec3d*) malloc(sizeof(Vec3d));
@@ -204,18 +208,7 @@ void fds_extract_path(Fds* fds, Vec3d curr_pos) {
         exit(EXIT_FAILURE);
     }
 
-    curr_pos_frac.x = modf(curr_pos.x, &curr_pos_norm.x);
-    curr_pos_frac.y = modf(curr_pos.y, &curr_pos_norm.y);
-
-    if (curr_pos_frac.x >= 0.5f) {
-        curr_pos_norm.x++;
-    }
-
-    if (curr_pos_frac.y >= 0.5f) {
-        curr_pos_norm.y++;
-    }
-
-    curr_state = map_get_state(fds->m, curr_pos_norm);
+    curr_state = fds->start;
 
     while (!states_are_equal(curr_state, fds->end)) {
 
@@ -223,27 +216,27 @@ void fds_extract_path(Fds* fds, Vec3d curr_pos) {
 
         for (int i = 0; i < num_nbrs; i++) {
             tmp = min(min_g, nbrs[i]->g);
-            if (min_g != tmp) {
+            if (min_g != tmp && nbrs[i]->g == nbrs[i]->rhs) {
                 min_idx = i;
                 min_g = tmp;
             }
         }
 
-        if (fabs(nbrs[min_idx]->v.x - curr_state->v.x) == 1.0f &&
-            fabs(nbrs[min_idx]->v.y - curr_state->v.y) == 1.0f) {
-            
+        
+        wp_num++;
+        waypoints = (Vec3d*) realloc(waypoints, sizeof(Vec3d) * wp_num);
+        if (waypoints == NULL) {
+            printf("Failure to reallocate waypoints\n");
+            exit(EXIT_FAILURE);
         }
-        else {
-            wp_num++;
-            waypoints = (Vec3d*) realloc(waypoints, wp_num);
-            if (waypoints == NULL) {
-                printf("Failure to reallocate waypoints\n");
-                exit(EXIT_FAILURE);
-            }
 
-            waypoints[wp_num -1] = nbrs[min_idx]->v;
-        }
+        waypoints[wp_num -1] = nbrs[min_idx]->v;
 
         curr_state = nbrs[min_idx];
+        min_g = INFINITY;
     }
+
+    *vec_num = wp_num;
+
+    return waypoints;
 }

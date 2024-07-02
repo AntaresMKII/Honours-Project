@@ -17,6 +17,7 @@ void UpdateState(Fds *fds, State *s);
 void ComputeShortestPath(Fds *fds);
 Fds* fds_init(Vec3d start, Vec3d goal);
 void fds_run(Fds* fds, Cell** changed_cells, int num_cells);
+Vec3d* fds_extract_path(Fds* fds, int *vec_num);
 
 
 #endif // !FDS_H

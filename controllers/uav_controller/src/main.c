@@ -2,6 +2,7 @@
 #include <math.h>
 
 #include "includes/uav.h"
+#include "includes/od_test.h"
 #include "modules/includes/fds.h"
 #include "util/includes/map.h"
 #include "util/includes/vec.h"
@@ -13,7 +14,7 @@
 Uav uav;
 
 void set_start_and_goal(Uav *uav) {
-  double *d_start = uav_get_gps_pos(uav);
+  const double *d_start = uav_get_gps_pos(uav);
   
   Vec3d goal = { GOAL_X, GOAL_Y, 0 };
   Vec3d start = { 0 };
@@ -42,21 +43,31 @@ int init() {
   }
   
   set_start_and_goal(&uav);
+
+  add_obst(uav.fds->m);
   
   return timestep;
 }
 
 void main_loop(int timestep) {
-  Position next_wp = { GOAL_X, GOAL_Y, TARGT_ALT };
-  Vec3d *obs_list;
-  int obs_num;
+  Vec3d *wps_list;
+  int wps_num = -1;
+  int curr_wp = 0;
+  int wp_reached = 0;
   
   printf("Running main loop\n");
   
-  while (wb_robot_step(timestep) != -1) {
+  while (wb_robot_step(timestep) != -1 && curr_wp != wps_num) {
     const double time = wb_robot_get_time();
-    cm_plan_path(&uav);
-    cm_run(&uav, next_wp, time);
+    wps_list = cm_plan_path(&uav, &wps_num);
+    wp_reached = cm_run(&uav, wps_list[curr_wp], TARGT_ALT, time);
+    if (wp_reached) {
+      curr_wp++;
+      if (curr_wp != wps_num)
+        printf("Waypoint reached! Next waypoint: (%f, %f)\n", wps_list[curr_wp].x, wps_list[curr_wp].y);
+      else
+       printf("Goal Reached!\n");
+    }
   };
 }
 
