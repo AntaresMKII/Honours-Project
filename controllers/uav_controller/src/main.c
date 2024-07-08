@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 
 #include "includes/uav.h"
 #include "includes/od_test.h"
@@ -15,7 +16,12 @@
 Uav uav;
 
 void set_id(Uav *uav, Vec3d start) {
-  uav->id = dtouc(start.x + start.y);
+  srand(start.x);
+  int r = (rand() % 100) + 1;
+  srand(start.y);
+  for (int i = 0; i < r; i++) {
+    uav->id = (rand() % 255) + 1;
+  }
   printf("%d\n", uav->id);
 }
 

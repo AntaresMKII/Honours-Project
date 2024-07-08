@@ -205,7 +205,7 @@ void uav_set_position(Uav* uav, Position position) {
 void uav_send_msg(Uav *uav, const MHead m) {
     int status;
     do {
-        status = wb_emitter_send(uav->emitter, (void*) m.msg, 2);
+        status = wb_emitter_send(uav->emitter, (void*) m.msg, M_SIZE);
     }while (!status);
 }
 
@@ -217,7 +217,7 @@ MHead uav_receive_msg(Uav *uav, int *queue_len) {
 
     if (*queue_len > 0) {
         c = (MHead*) wb_receiver_get_data(uav->receiver);
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < M_SIZE; i++) {
             m.msg[i] = c[i];
         }
         wb_receiver_next_packet(uav->receiver);

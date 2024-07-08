@@ -67,7 +67,8 @@ typedef struct Position {
 enum Uav_State {
     INIT,
     RUN,
-    END
+    END,
+    FOLLOW
 };
 
 /// The UAV structure containing the UAV data.
@@ -116,6 +117,9 @@ typedef struct uav
 
     /* Networking */
     unsigned char id;
+    unsigned char *f_id;
+    int f_id_num;
+    unsigned char l_id;
 } Uav;
 
 /// UAV initialization function

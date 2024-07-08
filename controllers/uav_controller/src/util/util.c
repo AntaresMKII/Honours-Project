@@ -64,5 +64,5 @@ unsigned char dtouc(double d) {
 
     conv.d = d;
 
-    return conv.c[0] + conv.c[1] + conv.c[2] + conv.c[3] + conv.c[4] + conv.c[5] + conv.c[6] + conv.c[7];
+    return conv.c[6] - conv.c[7];
 }
