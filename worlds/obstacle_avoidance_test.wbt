@@ -19,8 +19,8 @@ WorldInfo {
   }
 }
 Viewpoint {
-  orientation -0.2083395733387683 0.4096733191717286 0.8881229609349367 1.0398812215080395
-  position -5.429291142006769 -8.066606770763457 6.078090620114506
+  orientation -0.581160962872383 0.5696524451721233 0.5811609303305459 2.105985239440126
+  position 3.883505603293064 -0.03003315358351286 52.687230657380724
   near 0.2
   follow "Mavic 2 PRO"
   followSmoothness 0.2
@@ -37,8 +37,8 @@ Floor {
   }
 }
 Mavic2Pro {
-  translation 0 0 0.1
-  controller "<extern>"
+  translation -5 0 0.1
+  controller "uav_controller"
   bodySlot [
     Radar {
       maxRange 5
@@ -161,20 +161,4 @@ Solid {
   ]
   name "goal"
   boundingObject USE GOAL
-}
-Solid {
-  translation -2 1 0.25
-  children [
-    DEF OBS2 Shape {
-      appearance PBRAppearance {
-        baseColor 1 0 0
-        metalness 0.1
-      }
-      geometry Box {
-        size 0.5 0.5 0.5
-      }
-    }
-  ]
-  name "solid(1)"
-  boundingObject USE OBS2
 }

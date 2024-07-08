@@ -63,6 +63,12 @@ typedef struct Position {
     double yaw;
 } Position;
 
+enum Uav_State {
+    INIT,
+    RUN,
+    END
+};
+
 /// The UAV structure containing the UAV data.
 /** This data structure contains all device tags
 * to interface with the Webots robot. It also
@@ -100,25 +106,13 @@ typedef struct uav
     double yaw_disturbance;         ///< Computed yaw disturbance
 
     int target_reached;             ///< Traged reached flag
-
-    /* Communication */
-    struct comm_module comm_mod;    ///< Communication module structure
-    
+ 
     /* Path planning */
     Fds *fds; ///< Pointer to the field D* global variables
+    
+    /* State */
+    char state;
 } Uav;
-
-///Packet
-typedef union {
-    struct {
-        unsigned char sender_id;
-        unsigned char receiver_id;
-        unsigned char m_num;
-        unsigned char type;
-        unsigned char size;
-    };
-    unsigned char message[5];
-} Message;
 
 /// UAV initialization function
 void uav_init(Uav* uav, int timestep);

@@ -14,6 +14,8 @@
 /* Initialization of the UAV */
 void uav_init(Uav* uav, int timestep){
 
+    uav->state = INIT;
+
     // Initialize devices
     uav->camera     = wb_robot_get_device("camera");            wb_camera_enable(uav->camera, timestep);
     uav->imu        = wb_robot_get_device("inertial unit");     wb_inertial_unit_enable(uav->imu, timestep);

@@ -49,24 +49,38 @@ int init() {
   return timestep;
 }
 
-void main_loop(int timestep) {
+void run() {
+  const double time = wb_robot_get_time();
+
+  static int curr_wp = 0;
+
   Vec3d *wps_list;
   int wps_num = -1;
-  int curr_wp = 0;
   int wp_reached = 0;
-  
+
+  wps_list = cm_plan_path(&uav, &wps_num);
+  wp_reached = cm_run(&uav, wps_list[curr_wp], TARGT_ALT, time);
+  if (wp_reached) {
+    curr_wp++;
+    if (curr_wp == wps_num)
+      uav.state = END;
+  }
+}
+
+void main_loop(int timestep) {
+    
   printf("Running main loop\n");
-  
-  while (wb_robot_step(timestep) != -1 && curr_wp != wps_num) {
-    const double time = wb_robot_get_time();
-    wps_list = cm_plan_path(&uav, &wps_num);
-    wp_reached = cm_run(&uav, wps_list[curr_wp], TARGT_ALT, time);
-    if (wp_reached) {
-      curr_wp++;
-      if (curr_wp != wps_num)
-        printf("Waypoint reached! Next waypoint: (%f, %f)\n", wps_list[curr_wp].x, wps_list[curr_wp].y);
-      else
-       printf("Goal Reached!\n");
+
+  while (wb_robot_step(timestep) != -1) {
+    switch (uav.state) {
+      case INIT:
+        uav.state = RUN;
+        break;
+      case RUN:
+        run();
+        break;
+      default:
+        return;
     }
   };
 }
