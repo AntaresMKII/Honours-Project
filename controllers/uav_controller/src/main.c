@@ -5,6 +5,7 @@
 #include "includes/od_test.h"
 #include "modules/includes/fds.h"
 #include "util/includes/map.h"
+#include "util/includes/util.h"
 #include "util/includes/vec.h"
 
 #define GOAL_X 5.0f
@@ -12,6 +13,11 @@
 #define TARGT_ALT 2.0f
 
 Uav uav;
+
+void set_id(Uav *uav, Vec3d start) {
+  uav->id = dtouc(start.x + start.y);
+  printf("%d\n", uav->id);
+}
 
 void set_start_and_goal(Uav *uav) {
   const double *d_start = uav_get_gps_pos(uav);
@@ -23,6 +29,8 @@ void set_start_and_goal(Uav *uav) {
   modf(d_start[1], &start.y);
   
   uav->fds = fds_init(start, goal);
+
+  set_id(uav, start);
 }
 
 int init() {

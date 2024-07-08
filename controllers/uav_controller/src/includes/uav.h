@@ -112,6 +112,9 @@ typedef struct uav
     
     /* State */
     char state;
+
+    /* Networking */
+    unsigned char id;
 } Uav;
 
 /// UAV initialization function

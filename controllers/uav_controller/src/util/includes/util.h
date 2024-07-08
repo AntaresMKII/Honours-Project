@@ -20,4 +20,6 @@ void logs(char *str);
 double to_rad(double alpha);
 double to_deg(double alpha);
 
+unsigned char dtouc(double d);
+
 #endif // !UTIL_H

@@ -53,3 +53,16 @@ double to_deg(double alpha) {
 double to_rad(double alpha) {
     return alpha / 180.0f * M_PI;
 }
+
+unsigned char dtouc(double d) {
+    union conv {
+        double d;
+        unsigned char c[8];
+    };
+
+    union conv conv;
+
+    conv.d = d;
+
+    return conv.c[0] + conv.c[1] + conv.c[2] + conv.c[3] + conv.c[4] + conv.c[5] + conv.c[6] + conv.c[7];
+}
