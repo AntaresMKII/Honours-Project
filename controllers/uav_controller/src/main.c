@@ -82,6 +82,7 @@ void main_loop(int timestep) {
   while (wb_robot_step(timestep) != -1) {
     switch (uav.state) {
       case INIT:
+        net_elect_leader(&uav, timestep);
         uav.state = RUN;
         break;
       case RUN:

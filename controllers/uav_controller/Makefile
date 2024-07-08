@@ -65,7 +65,7 @@
 ###
 ###-----------------------------------------------------------------------------
 
-MOD = src/modules/control_module.c src/modules/fds.c
+MOD = src/modules/control_module.c src/modules/fds.c src/modules/net.c
 UTIL = src/util/util.c src/util/map.c src/util/heap.c
 
 C_SOURCES = src/main.c src/uav.c src/od_test.c $(MOD) $(UTIL)

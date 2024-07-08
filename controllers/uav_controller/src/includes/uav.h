@@ -32,6 +32,7 @@
 #include "../util/includes/util.h"
 #include "../modules/includes/comm_module.h"
 #include "../modules/includes/fds.h"
+#include "../modules/includes/net.h"
 
 // Uncomment for debug functionality
 //#define DEBUG
@@ -147,4 +148,10 @@ int cm_run(Uav *uav, Vec3d wp, double target_alt, double time);                 
 Vec3d* cm_detect_obstacles(Uav *uav, int *num);                                          ///< Detects the obstacles and returns the number and the position of the obstacles
 Vec3d* cm_plan_path(Uav *uav, int *wps_num);
 
+void uav_send_msg(Uav *uav, const MHead m);
+MHead uav_receive_msg(Uav *uav, int *queue_len);
+int uav_get_msg_num(Uav *uav);
+
+void net_elect_leader(Uav *uav, int timestep);
+void uav_wait(int timestep, double x);
 #endif // !UAV_H

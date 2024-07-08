@@ -7,6 +7,7 @@
 
 #include "includes/uav.h"
 #include "modules/includes/fds.h"
+#include "modules/includes/net.h"
 #include "util/includes/vec.h"
 
 #define CLAMP(val, min, max) ((val) < (min) ? (min) : ((val) > (max) ? (max) : (val)))
@@ -198,4 +199,44 @@ Position uav_get_position(Uav* uav) {
 // Set UAV position
 void uav_set_position(Uav* uav, Position position) {
     uav->pos = position;
+}
+
+// send a message to other uavs
+void uav_send_msg(Uav *uav, const MHead m) {
+    int status;
+    do {
+        status = wb_emitter_send(uav->emitter, (void*) m.msg, 2);
+    }while (!status);
+}
+
+// receives messages from other uavs
+MHead uav_receive_msg(Uav *uav, int *queue_len) {
+    MHead m;
+    unsigned char *c;
+    *queue_len = wb_receiver_get_queue_length(uav->receiver);
+
+    if (*queue_len > 0) {
+        c = (MHead*) wb_receiver_get_data(uav->receiver);
+        for (int i = 0; i < 2; i++) {
+            m.msg[i] = c[i];
+        }
+        wb_receiver_next_packet(uav->receiver);
+        *queue_len--;
+    }
+
+    return m;
+}
+
+// returns the number of messages
+int uav_get_msg_num(Uav *uav) {
+   return wb_receiver_get_queue_length(uav->receiver); 
+}
+
+// wait for x seconds
+void uav_wait(int timestep, double x) {
+    int t = wb_robot_get_time();
+    while (wb_robot_step(timestep) != -1) {
+        if (wb_robot_get_time() - t > x)
+        break;
+    }
 }

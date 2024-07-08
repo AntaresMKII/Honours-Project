@@ -64,6 +64,35 @@ Mavic2Pro {
     }
   ]
 }
+Mavic2Pro {
+  translation -6.15 -1.5 0.2
+  name "Mavic 2 PRO(1)"
+  controller "uav_controller"
+  bodySlot [
+    Radar {
+      maxRange 5
+      horizontalFieldOfView 1.57
+    }
+    Receiver {
+      channel 1
+      baudRate 256
+      bufferSize 256
+    }
+    Emitter {
+      range 100
+      channel 1
+      baudRate 256
+      bufferSize 256
+    }
+  ]
+  cameraSlot [
+    Camera {
+      width 400
+      height 240
+      near 0.2
+    }
+  ]
+}
 Solid {
   translation 10 0 0
   children [
