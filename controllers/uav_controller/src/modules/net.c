@@ -7,14 +7,7 @@ void net_elect_leader(Uav *uav, int timestep) {
    Message m;
     Message r_m;
     int n;
-    unsigned char max_id = uav->id;
-
-    uav->f_id_num = 0;
-    uav->f_id = (unsigned char*) malloc(1);
-    if (uav->f_id == NULL) {
-        printf("Failure to allocate memory in net_elect_leader!\n");
-        exit(EXIT_FAILURE);
-    }
+    unsigned char max_id = uav->id; 
 
     m.head.s_id = uav->id;
     m.head.r_id = 0;
@@ -31,13 +24,7 @@ void net_elect_leader(Uav *uav, int timestep) {
         if (n != 0) {
             if ((r_m.head.r_id == 0 || r_m.head.r_id == uav->id) && r_m.head.type == ID) {
                max_id = (max_id > r_m.head.s_id) ? max_id : r_m.head.s_id;
-                uav->f_id_num++;
-                uav->f_id = realloc(uav->f_id, uav->f_id_num);
-                if (uav->f_id == NULL) {
-                    printf("Failure to allocate memory in net_elect_leader!\n");
-                    exit(EXIT_FAILURE);
-                }
-                uav->f_id[uav->f_id_num - 1] = r_m.head.s_id;
+                uav->f_num++;
             }
         }
     }
@@ -59,7 +46,14 @@ void net_share_init_pos(Uav *uav, int timestep) {
     }
     else {
         Message m;
-        int n;
+        int n, i = 0;
+
+        uav->followers = (Follower*) malloc(sizeof(Follower) * uav->f_num);
+        if (uav->followers == NULL) {
+            printf("Failed to allocate memory in net_share_init_pos.\n");
+            exit(EXIT_FAILURE);
+        }
+
         uav_wait(timestep, 1.0f);
         
         n = uav_get_msg_num(uav);
@@ -68,7 +62,10 @@ void net_share_init_pos(Uav *uav, int timestep) {
             m = uav_receive_msg(uav, &n);
             if (n != 0) {
                 if (m.head.r_id == uav->id && m.head.type == POS) {
-
+                    uav->followers[i].id = m.head.s_id;
+                    uav->followers[i].pos.x = m.data.x;
+                    uav->followers[i].pos.y = m.data.y;
+                    i++;
                 }
             }
         }

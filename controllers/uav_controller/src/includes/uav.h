@@ -72,13 +72,17 @@ enum Uav_State {
     F_WAIT
 };
 
+typedef struct {
+    unsigned char id;
+    Vec3d pos;
+} Follower;
+
 /// The UAV structure containing the UAV data.
 /** This data structure contains all device tags
 * to interface with the Webots robot. It also
 * contains other varaibles needed in multiple functions
 */
-typedef struct uav
-{
+typedef struct uav {
     /* Devices */
     WbDeviceTag camera;             ///< The camera device tag (unused)
     WbDeviceTag imu;                ///< The inertial reference unit device tag
@@ -109,18 +113,19 @@ typedef struct uav
     double yaw_disturbance;         ///< Computed yaw disturbance
 
     int target_reached;             ///< Traged reached flag
- 
+
     /* Path planning */
-    Fds *fds; ///< Pointer to the field D* global variables
+    Fds *fds;                       ///< Pointer to the field D* global variables
     
     /* State */
     char state;
 
     /* Networking */
-    unsigned char id;
-    unsigned char *f_id;
-    int f_id_num;
+    unsigned char id; 
     unsigned char l_id;
+
+    Follower *followers;
+    int f_num = 0;
 } Uav;
 
 /// UAV initialization function
