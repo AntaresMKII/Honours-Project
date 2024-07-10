@@ -22,7 +22,6 @@ void set_id(Uav *uav, Vec3d start) {
   for (int i = 0; i < r; i++) {
     uav->id = (rand() % 255) + 1;
   }
-  printf("%d\n", uav->id);
 }
 
 void set_start_and_goal(Uav *uav) {
@@ -89,11 +88,15 @@ void main_loop(int timestep) {
     switch (uav.state) {
       case INIT:
         net_elect_leader(&uav, timestep);
-        uav.state = RUN;
+        uav.state = (uav.id == uav.l_id) ? RUN : F_WAIT;
+        net_share_init_pos(&uav, timestep);
         break;
       case RUN:
         run();
         break;
+      case F_WAIT:
+      case F_RUN:
+      break;
       default:
         return;
     }

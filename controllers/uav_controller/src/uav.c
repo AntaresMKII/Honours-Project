@@ -9,6 +9,7 @@
 #include "modules/includes/fds.h"
 #include "modules/includes/net.h"
 #include "util/includes/vec.h"
+#include <stdio.h>
 
 #define CLAMP(val, min, max) ((val) < (min) ? (min) : ((val) > (max) ? (max) : (val)))
 
@@ -202,23 +203,23 @@ void uav_set_position(Uav* uav, Position position) {
 }
 
 // send a message to other uavs
-void uav_send_msg(Uav *uav, const MHead m) {
+void uav_send_msg(Uav *uav, const Message m) {
     int status;
     do {
-        status = wb_emitter_send(uav->emitter, (void*) m.msg, M_SIZE);
+        status = wb_emitter_send(uav->emitter, (void*) m.bytes, M_SIZE);
     }while (!status);
 }
 
 // receives messages from other uavs
-MHead uav_receive_msg(Uav *uav, int *queue_len) {
-    MHead m;
+Message uav_receive_msg(Uav *uav, int *queue_len) {
+    Message m;
     unsigned char *c;
     *queue_len = wb_receiver_get_queue_length(uav->receiver);
 
     if (*queue_len > 0) {
-        c = (MHead*) wb_receiver_get_data(uav->receiver);
+        c = (unsigned char*) wb_receiver_get_data(uav->receiver);
         for (int i = 0; i < M_SIZE; i++) {
-            m.msg[i] = c[i];
+            m.bytes[i] = c[i];
         }
         wb_receiver_next_packet(uav->receiver);
         *queue_len--;

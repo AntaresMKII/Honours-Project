@@ -68,7 +68,8 @@ enum Uav_State {
     INIT,
     RUN,
     END,
-    FOLLOW
+    F_RUN,
+    F_WAIT
 };
 
 /// The UAV structure containing the UAV data.
@@ -152,10 +153,11 @@ int cm_run(Uav *uav, Vec3d wp, double target_alt, double time);                 
 Vec3d* cm_detect_obstacles(Uav *uav, int *num);                                          ///< Detects the obstacles and returns the number and the position of the obstacles
 Vec3d* cm_plan_path(Uav *uav, int *wps_num);
 
-void uav_send_msg(Uav *uav, const MHead m);
-MHead uav_receive_msg(Uav *uav, int *queue_len);
+void uav_send_msg(Uav *uav, const Message m);
+Message uav_receive_msg(Uav *uav, int *queue_len);
 int uav_get_msg_num(Uav *uav);
 
 void net_elect_leader(Uav *uav, int timestep);
 void uav_wait(int timestep, double x);
+void net_share_init_pos(Uav *uav, int timestep);
 #endif // !UAV_H
