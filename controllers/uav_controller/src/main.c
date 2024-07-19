@@ -72,11 +72,29 @@ void run() {
   int wp_reached = 0;
 
   wps_list = cm_plan_path(&uav, &wps_num);
+  net_send_wp(&uav, wps_list[curr_wp], curr_wp);
   wp_reached = cm_run(&uav, wps_list[curr_wp], TARGT_ALT, time);
   if (wp_reached) {
     curr_wp++;
     if (curr_wp == wps_num)
       uav.state = END;
+  }
+}
+
+void follower_wait() {
+  const double time = wb_robot_get_time();
+  cm_run(&uav, uav.fds->start->v, TARGT_ALT, time); 
+}
+
+void follower_run() {
+  const double time = wb_robot_get_time();
+
+  static Vec3d wp;
+
+  net_recieve_wp(&uav, &wp);
+
+  if (uav.state == F_RUN) {
+    cm_run(&uav, wp, TARGT_ALT, time);
   }
 }
 
@@ -95,8 +113,10 @@ void main_loop(int timestep) {
         run();
         break;
       case F_WAIT:
+        follower_wait();
       case F_RUN:
-      break;
+        follower_run();
+        break;
       default:
         return;
     }

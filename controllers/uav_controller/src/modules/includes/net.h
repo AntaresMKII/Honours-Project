@@ -7,7 +7,8 @@
 
 enum MType {
     ID,
-    POS
+    POS,
+    WP
 };
 
 typedef union {

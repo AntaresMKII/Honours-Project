@@ -241,3 +241,25 @@ void uav_wait(int timestep, double x) {
         break;
     }
 }
+
+// peek at next msg
+int uav_peek_msg(Uav *uav) {
+    Message m;
+    unsigned char *c;
+
+    int q_len = wb_receiver_get_queue_length(uav->receiver);
+
+    if (q_len > 0) {
+        c = (unsigned char*) wb_receiver_get_data(uav->receiver);
+        for (int i = 0; i < M_SIZE; i++) {
+            m.bytes[i] = c[i];
+        }
+        if (m.head.r_id == uav->id) {
+            return 1; 
+        }
+        else {
+            wb_receiver_next_packet(uav->receiver);
+            return 0;
+        }
+    }
+}

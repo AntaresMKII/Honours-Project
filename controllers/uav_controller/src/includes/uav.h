@@ -75,6 +75,7 @@ enum Uav_State {
 typedef struct {
     unsigned char id;
     Vec3d pos;
+    int wp_num;
 } Follower;
 
 /// The UAV structure containing the UAV data.
@@ -125,7 +126,7 @@ typedef struct uav {
     unsigned char l_id;
 
     Follower *followers;
-    int f_num = 0;
+    int f_num;
 } Uav;
 
 /// UAV initialization function
@@ -165,4 +166,8 @@ int uav_get_msg_num(Uav *uav);
 void net_elect_leader(Uav *uav, int timestep);
 void uav_wait(int timestep, double x);
 void net_share_init_pos(Uav *uav, int timestep);
+void net_send_wp(Uav *uav, Vec3d wp, int curr_wp);
+int uav_peek_msg(Uav *uav);
+void net_recieve_wp(Uav *uav, Vec3d *wp);
+
 #endif // !UAV_H

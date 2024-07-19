@@ -41,6 +41,11 @@
 
 \usepackage{graphicx}
 
+\usepackage[autostyle=true]{csquotes}
+\usepackage[backend=biber,style=authoryear]{biblatex}
+
+\addbibresource{report.bib}
+
 \begin{document}
 
 %----------------------------------------------------------------------------------------
@@ -130,6 +135,13 @@ This project uses Webots (http://www.cyberbotics.com), an open-source mobile rob
 \listoffigures
 
 \chapter{Introduction}
-Test
+There are many situation where cooperation between members of a group is necessary in
+order to solve a specific problem. For example, we might wish to move a heavy object
+that require its weight to be balanced, or we have a large surface area that we wish
+to explore. These problems can be solved using a swarm of robotic systems.
+Multi-robot or swarm robotic systems consist of a large number of small and simple
+autonomous robots, each having limited communication/sensing capability and
+computational resources \autocite{HO17}.
 
+\printbibliography
 \end{document}
