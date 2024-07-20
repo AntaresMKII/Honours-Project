@@ -44,6 +44,8 @@
 \usepackage[autostyle=true]{csquotes}
 \usepackage[backend=biber,style=authoryear]{biblatex}
 
+\usepackage{parskip}
+
 \addbibresource{report.bib}
 
 \begin{document}
@@ -135,13 +137,33 @@ This project uses Webots (http://www.cyberbotics.com), an open-source mobile rob
 \listoffigures
 
 \chapter{Introduction}
-There are many situation where cooperation between members of a group is necessary in
-order to solve a specific problem. For example, we might wish to move a heavy object
-that require its weight to be balanced, or we have a large surface area that we wish
-to explore. These problems can be solved using a swarm of robotic systems.
-Multi-robot or swarm robotic systems consist of a large number of small and simple
-autonomous robots, each having limited communication/sensing capability and
-computational resources \autocite{HO17}.
+
+Cooperation among different individuals in a group is often necessary to solve complex problems
+that are otherwise harder or impossible to complete for a singular individual. This concept is
+true in the field of robotics, where robotic swarms systems, which are systems composed of
+numerous small and limited robots \autocite{HO17}, are a crucial area of study. Due to the early
+stage of development of this field, there are not many currently existing applications, however
+there exists many research projects to test the capabilities of swarm algorithms \autocite{MS20}.
+Despite the lack of representation in the industry sector, multi-robot systems have become of
+interest recently due to their abilities to resist failures and damages, adaptability to new
+environments and low costs \autocite{HO17}.
+
+
+A specific problem in swarm robotics, is the pattern formation problem, which consists of
+"getting a group of robots to form and stay in a specific formation, like a wedge or a chain,
+and maintaining that formation" \autocite{LS22}. The robots in the swarm need to coordinate
+to maintain a specific shape in order to achieve the desired goal. In this process, different
+methods of controlling the swarm can be used, for example the election of a leader or the 
+imposition of a certain set of behaviors for each member. There is also a 
+distinction between centralized and decentralized pattern formation, where centralized pattern
+formation is performed when there exists a centralized unit that coordinates the individual
+robots \autocite{HO17}.
+
+
+Why is this good
+
+
+Explain the aims of the project and the report
 
 \printbibliography
 \end{document}
