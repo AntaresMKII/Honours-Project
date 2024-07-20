@@ -148,7 +148,6 @@ Despite the lack of representation in the industry sector, multi-robot systems h
 interest recently due to their abilities to resist failures and damages, adaptability to new
 environments and low costs \autocite{HO17}.
 
-
 A specific problem in swarm robotics, is the pattern formation problem, which consists of
 "getting a group of robots to form and stay in a specific formation, like a wedge or a chain,
 and maintaining that formation" \autocite{LS22}. The robots in the swarm need to coordinate
@@ -159,11 +158,28 @@ distinction between centralized and decentralized pattern formation, where centr
 formation is performed when there exists a centralized unit that coordinates the individual
 robots \autocite{HO17}.
 
+In this project we will explore a decentralized and distributed solution to the pattern formation problem.
+A distributed approach was chosen because of their robustness to failure, due to their
+built-in redundancy since each robot in the swarm receives the same role \autocite{HO17}.
+Which is advantageous compared to a centralized, non-distributed approach as it
+mitigates the possibility of a single point of failure.
 
-Why is this good
 
+\section{Swarms of Unmanned Aerial Vehicles}
 
-Explain the aims of the project and the report
+A swarm of Unmanned Aerial Vehicles is a swarm of robots where each robot is capable of flight using
+a set of rotors. These swarms have multiple uses. They are commonly used in military applications, but
+they are also used for civilian applications, such as aerial surveys, disaster management, environment
+mapping, search and rescue and for leisure \autocite{TA19}.
+
+\section{Objectives}
+
+The objective of this project is to provide a distributed solution to the pattern formation problem, meaning
+build a system of multiple robots capable of positioning themselves in a specific shape and maintain this
+shape while navigating an environment dotted by obstacles. This will be achieved using obstacle detection
+and avoidance techniques, as well as distributed system principles, such as leader election, and computer
+network principles. For this project we chose to use unmanned aerial vehicles to demonstrate the efficacy
+of the solution.
 
 \printbibliography
 \end{document}

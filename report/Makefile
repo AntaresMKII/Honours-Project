@@ -1,9 +1,12 @@
 all:
 	pdflatex report.tex
 
-clear:
+clean:
 	rm *.aux
 	rm *.log
-	rm *.pdf
 	rm *.lof
 	rm *.toc
+	rm *.bbl
+	rm *.bcf
+	rm *.blg
+	rm *.run.xml
