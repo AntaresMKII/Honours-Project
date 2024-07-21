@@ -3,8 +3,8 @@
 - [x] Automated Flight using PID
 - [x] Obstacle detection using radar
 - [x] Obstacle Avoidance
-- [ ] Inter-UAV Communication
+- [x] Inter-UAV Communication
 - [x] Leader Election
-- [ ] Communication Protocol
+- [x] Communication Protocol
 - [ ] UAV Separation
 - [ ] Formation Flight
