@@ -161,7 +161,7 @@ robots \autocite{HO17}.
 In this project we will explore a decentralized and distributed solution to the pattern formation problem.
 A distributed approach was chosen because of their robustness to failure, due to their
 built-in redundancy since each robot in the swarm receives the same role \autocite{HO17}.
-Which is advantageous compared to a centralized, non-distributed approach as it
+This is advantageous compared to a centralized, non-distributed approach as it
 mitigates the possibility of a single point of failure.
 
 
@@ -170,7 +170,12 @@ mitigates the possibility of a single point of failure.
 A swarm of Unmanned Aerial Vehicles is a swarm of robots where each robot is capable of flight using
 a set of rotors. These swarms have multiple uses. They are commonly used in military applications, but
 they are also used for civilian applications, such as aerial surveys, disaster management, environment
-mapping, search and rescue and for leisure \autocite{TA19}.
+mapping, search and rescue and for leisure \autocite{TA19}. These are applications that would benefit
+from pattern formation, as we can direct the swarm to take an optimal shape for its use case. For 
+example, we can choose a shape to best cover an area while performing an aerial survey or environment
+mapping, or adopt a chain-like formation to establish communication between two points \autocite{MS20}
+which can be deployed at a site of a natural disaster to aid in search and rescue efforts.
+
 
 \section{Objectives}
 
@@ -179,7 +184,15 @@ build a system of multiple robots capable of positioning themselves in a specifi
 shape while navigating an environment dotted by obstacles. This will be achieved using obstacle detection
 and avoidance techniques, as well as distributed system principles, such as leader election, and computer
 network principles. For this project we chose to use unmanned aerial vehicles to demonstrate the efficacy
-of the solution.
+of the solution. Similar work being done includes \autocite{HC21}, where a hierarchical approach is applied
+to formation control of fixed wing UAVs, by breaking up the swarm into several smaller groups headed by a 
+leader.
+
+
+\chapter{Title goes here}
+
+
+
 
 \printbibliography
 \end{document}
