@@ -1,5 +1,6 @@
 #include "includes/net.h"
 #include "../includes/uav.h"
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -63,8 +64,9 @@ void net_share_init_pos(Uav *uav, int timestep) {
             if (n != 0) {
                 if (m.head.r_id == uav->id && m.head.type == POS) {
                     uav->followers[i].id = m.head.s_id;
-                    uav->followers[i].pos.x = m.data.x;
-                    uav->followers[i].pos.y = m.data.y;
+                    uav->followers[i].pos.x = m.data.x - uav->fds->start->v.x;
+                    uav->followers[i].pos.y = m.data.y - uav->fds->start->v.y;
+
                     i++;
                 }
             }
@@ -76,23 +78,26 @@ void net_share_init_pos(Uav *uav, int timestep) {
 void net_send_wp(Uav *uav, Vec3d wp, int curr_wp) {
     Vec3d l_init_pos = uav->fds->start->v;
     Vec3d diff;
+    //const double *curr_pos;
+    //double tmp;
 
     for (int i = 0; i < uav->f_num; i++) {
         if (uav->followers[i].wp_num == curr_wp) {
             continue;
         }
 
-        Message m;
-        diff.x = uav->followers[i].pos.x - l_init_pos.x;
-        diff.y = uav->followers[i].pos.y - l_init_pos.y;
+        //curr_pos = uav_get_gps_pos(uav);
 
+        Message m;
         m.head.s_id = uav->id;
         m.head.r_id = uav->followers[i].id;
         m.head.type = WP;
-        m.data.x = wp.x + diff.x;
-        m.data.y = wp.y + diff.y;
+        m.data.x = uav->followers[i].wps[curr_wp].x;
+        m.data.y = uav->followers[i].wps[curr_wp].y;
 
         uav->followers[i].wp_num = curr_wp;
+
+        printf("%d : Wp sent (%f,%f) to %d\n", uav->id, m.data.x, m.data.y, m.head.r_id);
 
         uav_send_msg(uav, m);
     }
@@ -111,6 +116,7 @@ void net_recieve_wp(Uav *uav, Vec3d *wp) {
                 uav->state = F_RUN;
                 wp->x = m.data.x;
                 wp->y = m.data.y;
+                printf("%d : Wp received (%f,%f) from %d\n", uav->id, m.data.x, m.data.y, m.head.s_id);
             }
         }
     }

@@ -12,6 +12,7 @@
 
 #include "../includes/uav.h"
 #include "includes/fds.h"
+#include "../util/includes/util.h"
 
 //#define DEBUG
 
@@ -93,6 +94,70 @@ Vec3d* cm_detect_obstacles(Uav *uav, int *num) {
 
     *num = target_num;
     return targets_pos;
+}
+
+void cm_followers_path(Uav *uav, Vec3d *wps, int wps_num) {
+    Vec3d prev_wp, diff;
+    double angle = 0;
+
+    for (int i = 0; i < uav->f_num; i++) {
+        uav->followers[i].wps = (Vec3d*) malloc(sizeof(Vec3d) * wps_num);
+        if (uav->followers[i].wps == NULL) {
+            printf("Failed to allocate memory in cm_followers_path()\n");
+        }
+
+        for (int j = 0; j < wps_num; j++) {
+            if (j == 0) {
+                prev_wp = uav->fds->start->v;
+            }
+            else {
+                prev_wp = wps[j-1];
+            }
+
+            diff.x = wps[j].x - prev_wp.x;
+            diff.y = wps[j].y - prev_wp.y;
+
+            if (diff.y == 0) {
+                if (diff.x > 0) {
+                    angle = 0;
+                }
+                else if (diff.x < 0) {
+                    angle = M_PI;
+                }
+                else { // this condition should never happen
+                    printf("ERROR! Next waypoint equal to current waypoint!\n");
+                }
+            }
+            else if (diff.x == 0) {
+                if (diff.y > 0) {
+                    angle = 0.5f * M_PI;
+                }
+                else if (diff.y < 0) {
+                    angle = -0.5f * M_PI;
+                }
+                else { // this condition should never happen
+                    printf("ERROR! Next waypoint equal to current waypoint!\n");
+                }
+            }
+            else {
+                if (diff.x > 0 && diff.y > 0) {
+                    angle = 0.25f * M_PI;
+                }
+                else if (diff.x < 0 && diff.y > 0) {
+                    angle = 0.75f * M_PI;
+                }
+                else if (diff.x < 0 && diff.y < 0) {
+                    angle = 1.25f * M_PI;
+                }
+                else {
+                    angle = 1.75f * M_PI;
+                }
+            }
+
+            uav->followers[i].wps[j] = vec_rotate(uav->followers[i].pos, angle);
+            uav->followers[i].wps[j] = vec_translate(uav->followers[i].wps[j], wps[j]);
+        }
+    }
 }
 
 Vec3d* cm_plan_path(Uav *uav, int *wps_num) {

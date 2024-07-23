@@ -32,7 +32,6 @@ static inline Vec3d vec_rotate(Vec3d v, double alpha) {
     double yp = v.x * sin(alpha) + v.y * cos(alpha);
     Vec3d p = { xp, yp, 0 };
     return p;
-
 }
 
 static inline Vec3d vec_translate(Vec3d v, Vec3d u) {

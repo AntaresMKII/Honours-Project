@@ -76,6 +76,7 @@ typedef struct {
     unsigned char id;
     Vec3d pos;
     int wp_num;
+    Vec3d *wps;
 } Follower;
 
 /// The UAV structure containing the UAV data.
@@ -169,5 +170,6 @@ void net_share_init_pos(Uav *uav, int timestep);
 void net_send_wp(Uav *uav, Vec3d wp, int curr_wp);
 int uav_peek_msg(Uav *uav);
 void net_recieve_wp(Uav *uav, Vec3d *wp);
+void cm_followers_path(Uav *uav, Vec3d *wps, int wps_num);
 
 #endif // !UAV_H

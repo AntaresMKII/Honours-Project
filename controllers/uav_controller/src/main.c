@@ -22,6 +22,8 @@ void set_id(Uav *uav, Vec3d start) {
   for (int i = 0; i < r; i++) {
     uav->id = (rand() % 255) + 1;
   }
+
+  printf("Assigned id: %d to uav at pos (%f,%f)\n", uav->id, start.x, start.y);
 }
 
 void set_start_and_goal(Uav *uav) {
@@ -29,10 +31,25 @@ void set_start_and_goal(Uav *uav) {
   
   Vec3d goal = { GOAL_X, GOAL_Y, 0 };
   Vec3d start = { 0 };
+  double rest_x, rest_y;
 
-  modf(d_start[0], &start.x);
-  modf(d_start[1], &start.y);
-  
+  rest_x = modf(d_start[0], &start.x);
+  rest_y = modf(d_start[1], &start.y);
+
+  if (rest_x >= 0.5) {
+    start.x++;
+  }
+  else if (rest_x <= -0.5) {
+    start.x--;
+  }
+
+  if (rest_y >= 0.5) {
+    start.y++;
+  }
+  else if (rest_y <= -0.5) {
+    start.y--;
+  }
+ 
   uav->fds = fds_init(start, goal);
 
   set_id(uav, start);
@@ -72,10 +89,12 @@ void run() {
   int wp_reached = 0;
 
   wps_list = cm_plan_path(&uav, &wps_num);
+  cm_followers_path(&uav, wps_list, wps_num);
   net_send_wp(&uav, wps_list[curr_wp], curr_wp);
   wp_reached = cm_run(&uav, wps_list[curr_wp], TARGT_ALT, time);
   if (wp_reached) {
     curr_wp++;
+    printf("%d : Next Waypoint: (%f,%f)\n", uav.id, wps_list[curr_wp].x, wps_list[curr_wp].y);
     if (curr_wp == wps_num)
       uav.state = END;
   }

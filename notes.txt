@@ -45,3 +45,24 @@ http://robots.stanford.edu/isrr-papers/final/final-23.pdf
 
 == ISSUES ==
 Talk about the bug you found in the doc of Webots
+
+== Formation ==
+Early apporach of having leader compute the path to take and communicate to the followers where they should position themselves
+
+More decentralized approach
+- followers position is communicated to leader
+- leader computes angle and distance and sends this info to the followers
+- leaders computes path to take
+- communicates one waypoint at a time to followers
+- followers compute their position relative to this point
+
+An even better approach
+Predefined shape that is rotated and translated assuming the leader position to be at (0,0)
+- Translation, simply use leader position
+- Rotation:
+	let a be the angle of the shape
+	- if leader is facing +x then a = 0
+	- if leader is facing -x then a = pi
+	- if leader is facing +y then a = 0.5 pi
+	- if leader is facing -y then a = -0.5 pi
+	- if we are at an angle because we are traversing a cell from fds then add 0.25 pi to one of the previous angles
