@@ -8,7 +8,8 @@
 enum MType {
     ID,
     POS,
-    WP
+    WP,
+    NEXT_WP
 };
 
 typedef union {
@@ -25,6 +26,7 @@ typedef union {
         double x;
         double y;
     };
+    int wp_num;
     unsigned char bytes[MD_SIZE];
 } MData;
 

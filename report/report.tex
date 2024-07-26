@@ -46,6 +46,8 @@
 
 \usepackage{parskip}
 
+\usepackage{svg}
+
 \addbibresource{report.bib}
 
 \begin{document}
@@ -116,7 +118,7 @@
 	%------------------------------------------------
 	
 	\vfill\vfill
-	\includegraphics[width=0.5\textwidth]{B_Logo_V-RGBRedBlackonLight150_130821.png}\\[1cm] % Include a department/university logo - this will require the graphicx package
+	\includegraphics[width=0.5\textwidth]{img/B_Logo_V-RGBRedBlackonLight150_130821.png}\\[1cm] % Include a department/university logo - this will require the graphicx package
 	 
 	%----------------------------------------------------------------------------------------
 	
@@ -191,20 +193,82 @@ leader.
 
 \chapter{Methodology}
 
-In this chapter we will focus on methods used in reaching the objectives of this project. This chapter
-is subdivided in multiple sections, where each section covers the particulars of each part of the 
-project.
+In this chapter we will explore the method used in and considered for this project. Since this project
+contains multiple sub-problems we decided to divide this chapter into four sections.
 
-\section{Automated movement of UAVs and PID Controller}
+\section{Automated flight}
 
-The first and most fundamental part of the project is the automated movement of the UAVs. 
-This means that given a UAV it should be possible for it to move seamlessly without
-any input from a user to a given waypoint. A waypoint in this case is simply a set of
-two-dimensional coordinates in the world.
+The first consideration for this project is about the autonomous flight of the UAVs, meaning that there 
+should not be any input from the user regarding the flight control. This problem can then be broken down
+into two components: the control algorithm that controls the ability of the UAV to fly and the navigation
+algorithm that controls the direction of flight.
 
-In order to achieve this we used a common technique used in robotics, a PID Controller. 
-Short for proportional-integral-derivative controller
+\subsection{Control Algorithm}
 
+Flight controllers can be subdivided into two categories: linear controllers and non-linear controllers.
+Linear controllers use linear methods to control flight, which includes conventional controllers such as
+PID, $H_{\infty}$ controller, gain scheduling and Linear Quadratic Regulator. While non-linear controller
+are derived from the original dynamic model of the UAVs and arose to overcome shortcomings of linear
+controllers. They are generally harder to implement. Some examples are Feedback linearization, backstepping,
+sliding mode control, adaptive control, and model predictive control. \autocite{NH20}
+
+For this project we settled on linear controller due to their simplicity to implement, in particular
+we considered the PID controller and the LQR controller.
+
+\subsubsection{PID Control}
+
+The Proportional Integral Derivative controller is the most common controller used in industrial settings
+due to its usefulness and ease of implementation. \autocite{IL23} The controller is composed by a proportional
+element, an integral element and a derivative element, that represent the present, past and future error value\autocite{AM09}.
+
+\newpage
+
+\begin{figure}
+	\begin{center}
+		\includesvg{img/pid_img}
+	\end{center}
+	\caption{Diagram of a conventional PID controller}\label{fig:pid}
+\end{figure}
+
+The controller first computes the error at a specific time $t$ ($e(t)$) using Eq. \ref{eq:pid-err}.
+
+\begin{equation}
+	e(t) = r(t) - y(t)
+	\label{eq:pid-err}
+\end{equation}
+
+Where $r(t)$ is the set value and $y(t)$ is the real value of the process \autocite{AM09}. 
+Form the computed error the controller then finds a control factor $u(t)$ using a proportional
+coefficient ($K_p$), an integral coefficient ($K_I$) and a derivative coefficient ($K_D$) 
+using Eq. \ref{eq:pid-u} \autocite{NH20}.
+
+\begin{equation}
+	u(t) = K_p e(t) + K_I \int^t_0 e(t) \mathrm{d} t + K_D \frac{\mathrm{d} e(t)}{\mathrm{d}t}
+	\label{eq:pid-u}
+\end{equation}
+
+In this project we decided to implement a PID controller due to the ease of implementation and the 
+higher number of resources available at our disposal.
+
+\subsubsection{LQR Control}
+
+The other option considered, is the Linear-Quadratic Regulator controller (LQR controller), which is the 
+optimal linear controller to operate a dynamic system at minimum cost \autocite{NH20}.
+
+\begin{equation}
+	J_{LQR} = \int^\infty_0 y_i^T(t) Q y_i (t) + u_i^T (t) R u_i (t) \mathrm{d}t
+	\label{eq:lqr-mc}
+\end{equation}
+
+Eq. \ref{eq:lqr-mc} computes the minimum quadratic cost ($J_{LQR}$) from the control input $u_i$ and control
+output $y_i$, using two weight matrices ($Q$ and $R$) \autocite{NH20}.
+
+
+\section{Obstacle Detection}
+
+\section{Obstacle Avoidance}
+
+\section{Pattern Formation}
 
 
 \printbibliography

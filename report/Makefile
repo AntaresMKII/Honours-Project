@@ -1,5 +1,5 @@
 all:
-	pdflatex report.tex
+	pdflatex --shell-escape report.tex
 
 clean:
 	rm *.aux

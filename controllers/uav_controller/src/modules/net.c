@@ -75,18 +75,37 @@ void net_share_init_pos(Uav *uav, int timestep) {
 }
 
 // Compute the wayponts for the followers relative to their initial positions
-void net_send_wp(Uav *uav, Vec3d wp, int curr_wp) {
+void net_send_wp(Uav *uav, int curr_wp) {
     Vec3d l_init_pos = uav->fds->start->v;
     Vec3d diff;
-    //const double *curr_pos;
-    //double tmp;
+    Message r_m;
+    int m_num;
+
+    while (uav_get_msg_num(uav) > 0) {
+        r_m = uav_receive_msg(uav, &m_num);
+        if (r_m.head.r_id == uav->id) {
+            switch (r_m.head.type) {
+                case NEXT_WP:
+                    for (int i = 0; i < uav->f_num; i++) {
+                        if (uav->followers[i].id == r_m.head.s_id) {
+                            uav->followers[i].wp_num = r_m.data.wp_num;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
     for (int i = 0; i < uav->f_num; i++) {
         if (uav->followers[i].wp_num == curr_wp) {
             continue;
         }
+        else if (uav->followers[i].wp_num > curr_wp) {
+            curr_wp = uav->followers[i].wp_num;
+        }
 
-        //curr_pos = uav_get_gps_pos(uav);
 
         Message m;
         m.head.s_id = uav->id;
@@ -120,4 +139,14 @@ void net_recieve_wp(Uav *uav, Vec3d *wp) {
             }
         }
     }
+}
+
+void net_ask_next_wp(Uav *uav, int curr_wp) {
+    Message m;
+    m.head.s_id = uav->id;
+    m.head.r_id = uav->l_id;
+    m.head.type = NEXT_WP;
+    m.data.wp_num = curr_wp;
+
+    uav_send_msg(uav, m);
 }

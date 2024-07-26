@@ -167,9 +167,10 @@ int uav_get_msg_num(Uav *uav);
 void net_elect_leader(Uav *uav, int timestep);
 void uav_wait(int timestep, double x);
 void net_share_init_pos(Uav *uav, int timestep);
-void net_send_wp(Uav *uav, Vec3d wp, int curr_wp);
+void net_send_wp(Uav *uav, int curr_wp);
 int uav_peek_msg(Uav *uav);
 void net_recieve_wp(Uav *uav, Vec3d *wp);
 void cm_followers_path(Uav *uav, Vec3d *wps, int wps_num);
+void net_ask_next_wp(Uav *uav, int curr_wp);
 
 #endif // !UAV_H

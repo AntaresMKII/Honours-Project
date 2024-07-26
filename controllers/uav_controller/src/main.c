@@ -90,7 +90,7 @@ void run() {
 
   wps_list = cm_plan_path(&uav, &wps_num);
   cm_followers_path(&uav, wps_list, wps_num);
-  net_send_wp(&uav, wps_list[curr_wp], curr_wp);
+  net_send_wp(&uav, curr_wp);
   wp_reached = cm_run(&uav, wps_list[curr_wp], TARGT_ALT, time);
   if (wp_reached) {
     curr_wp++;
@@ -109,11 +109,18 @@ void follower_run() {
   const double time = wb_robot_get_time();
 
   static Vec3d wp;
+  static int curr_wp = 0;
+
+  int wp_reaced = 0;
 
   net_recieve_wp(&uav, &wp);
 
   if (uav.state == F_RUN) {
-    cm_run(&uav, wp, TARGT_ALT, time);
+    wp_reaced = cm_run(&uav, wp, TARGT_ALT, time);
+    if (wp_reaced) {
+      curr_wp++;
+      //net_ask_next_wp(&uav, curr_wp);
+    }
   }
 }
 
