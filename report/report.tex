@@ -48,6 +48,8 @@
 
 \usepackage{svg}
 
+\usepackage{algorithm,algorithmicx,algpseudocode}
+
 \addbibresource{report.bib}
 
 \begin{document}
@@ -219,7 +221,7 @@ we considered the PID controller and the LQR controller.
 
 The Proportional Integral Derivative controller is the most common controller used in industrial settings
 due to its usefulness and ease of implementation. \autocite{IL23} The controller is composed by a proportional
-element, an integral element and a derivative element, that represent the present, past and future error value\autocite{AM09}.
+element, an integral element and a derivative element, that represent the present, past and future error value\autocite{AM09}. It is usually designed in the structure represented in Fig. \ref{fig:pid}.
 
 \newpage
 
@@ -263,10 +265,89 @@ optimal linear controller to operate a dynamic system at minimum cost \autocite{
 Eq. \ref{eq:lqr-mc} computes the minimum quadratic cost ($J_{LQR}$) from the control input $u_i$ and control
 output $y_i$, using two weight matrices ($Q$ and $R$) \autocite{NH20}.
 
+\subsection{Navigation Algorithm}
+
+For the navigation algorithm we used a simple algorithm where given a waypoint, we compute the 
+derivative component of the PID algorithm. This can be achieved with the following algorithm.
+
+\newpage
+
+% \usepackage{algorithm,algorithmicx,algpseudocode}
+\begin{algorithm}
+	\floatname{algorithm}{Algorithm\footnotemark}
+	\algrenewcommand\algorithmicrequire{\textbf{Input: }}
+	\algrenewcommand\algorithmicensure{\textbf{Output: }}
+	\caption{Simple algorithm for UAV navigation using PID}\label{alg:nav}
+	\begin{algorithmic}[1]
+		\Require $u, v, Y$
+		\Ensure $Y_d, P_d$
+		\State $\alpha \gets ((\mathrm{atan2}(u_y - v_y, u_x - v_x) - Y) + 2 \pi) \mathrm{mod} (2 \pi)$
+		\If{$\alpha > \pi$ }
+		\State $\alpha \gets \alpha - 2 \pi$
+		\EndIf
+		\State $Y_d \gets K_{Yd_{max}} \frac{\alpha}{2\pi}$
+		\State $P_d \gets \log(|\alpha|)$
+		\If{$P_d < K_{Pd_{max}}$}
+		\State $P_d \gets K_{Pd_{max}}$
+		\ElsIf{$P_d > 0.1$}
+		\State $P_d \gets 0.1$
+		\EndIf
+		\State \textbf{return} $Y_d, P_d$
+	\end{algorithmic}
+\end{algorithm}
+
+\footnotetext{Adapted from \autocite{CB23} source code}
+
+Where $u$ and $v$ are vectors representing the UAV position and the waypoint position, $Y$ is the current 
+yaw angle of the UAV, $Y_d$ and $P_d$ are the yaw angle disturbance and the pitch angle disturbance
+respectively, and $K_{Yd_{max}}$ and $K_{Pd_{max}}$ are the maximum allowed disturbance of the yaw and 
+pitch respectively.
 
 \section{Obstacle Detection}
 
 \section{Obstacle Avoidance}
+
+Once obstacles are detected, the UAVs should be capable of avoiding them and navigate between them 
+until a goal is reached. As explained above, the navigation algorithm used in this project computes
+the trajectory to take to reach a specific waypoint, so we can define the path the UAVs have to take
+as a list of waypoints. If we restrict the waypoints as being intersections of cells in a grid then
+we can abstract this grid as being a graph. Thus, what we wish to do, in this case, is to find a path
+from a starting node to a predefined end node, or search the graph for a specific node. 
+
+There exist many algorithms capable of solving this problem, with the most popular being A*.
+
+
+\subsection{A*}
+
+The most obvious and popular solution is the A* algorithm, which improves on Dijikstra's algorithm
+by using heuristics to decide which node should be considered next \autocite{ADA}. However, since we 
+are working in an unknown environment where the UAVs gain more knowledge of the obstacles locations as
+they progress, the path needs to be re-planned each time a new obstacle is found. This can become
+computationally expansive as we need to execute A* multiple times. 
+
+\subsection{Path Planning in Partially-Known Environments with D*}
+
+In conditions where the UAVs do not have complete information about their surroundings it is 
+advantageous to use an algorithm that assumes the possibility of potential changes in costs of the nodes. 
+One of such algorithms is D*. 
+
+D* is capable of generating optimal paths for sensor equipped robots with a map of the environment that 
+can be complete, partial or empty. The algorithm formulates the path planning process as a set of states,
+that represent potential robot locations, connected by directional arcs each with an associated cost. The 
+algorithm maintains a list of states which cost has changed over time, and each time a cost is changed
+the affected states are added onto the list. Instead of re-planning the whole path, D* adjusts the path
+from the states where a change in cost happened and subsequent states. Thus, it operates faster in real-life
+scenarios than an algorithm that re-plans the whole trajectory each time a new obstacle is found. \autocite{AS94}
+
+Despite its advantage over other algorithms, it is still possible to improve over D*. For example, D* Lite 
+claims to be as efficient if not better than D* but with a simpler implementation \autocite{SK05}.
+
+\subsection{Field D*: Improving D* Lite Using Interpolation}
+
+Field D* improves over D* and D* Lite by including interpolation in order to minimize the number of
+unnecessary turns. It achieves this by shifting the states from being at the center of cells to being
+at the vertices.
+
 
 \section{Pattern Formation}
 
