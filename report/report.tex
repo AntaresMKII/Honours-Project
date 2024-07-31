@@ -50,6 +50,8 @@
 
 \usepackage{algorithm,algorithmicx,algpseudocode}
 
+\usepackage{amsmath}
+
 \addbibresource{report.bib}
 
 \begin{document}
@@ -344,9 +346,76 @@ claims to be as efficient if not better than D* but with a simpler implementatio
 
 \subsection{Field D*: Improving D* Lite Using Interpolation}
 
-Field D* improves over D* and D* Lite by including interpolation in order to minimize the number of
-unnecessary turns. It achieves this by shifting the states from being at the center of cells to being
-at the vertices.
+For this project we decided to implement Field D*, due to its promises of minimizing unnecessary turns and
+generating less expensive paths than D* and D* Lite. Field D* achieves this by using interpolation in the 
+computation of the cost of the path. \autocite{DF06}
+
+Most path planning algorithms that use a grid as underlying graph compute the cost of a node $s$, $g(s)$, using 
+Eq. \ref{eq:fds-gs1}.
+
+\begin{equation}
+	g(s) = \underset{s' \in nbrs(s)}{\mathrm{min}} [c(s,s') + g(s')]
+	\label{eq:fds-gs1}
+\end{equation}
+
+Where $nbrs(s)$ is the set of neighbors of node $s$, $c(s,s')$ is the cost of traversing the edge between $s$ and
+$s'$, and $g(s')$ is the path cost of $s'$. This assumes that the only possible path is a straight line between
+the nodes, resulting in limitations as described by \autocite{DF06}. In order to overcome these limitations,
+Field D* finds an approximation of the cost of the path to any cell boundary node $s_b$ using linear interpolation.
+To do this, the algorithm assumes that the nodes of the graph are not located at the center of the cells but rather
+at the vertices \autocite{DF06}. It then follows Algorithm \ref{alg:fds-cc} to compute the path cost, $v_s$, of a node $s$ given
+two of its neighbors $s_a$ and $s_b$.
+
+Field D* is not a faster algorithm than D* Lite, with a planning time 1.7 times slower than its non-interpolation-based counterpart, 
+but it offers a more economical path, $96\%$ as costly as D* Lite on average \autocite{DF06}. Its path generation efficiency makes
+this algorithm competitive in some settings where minimizing the path cost is the main goal, for example in situation where the 
+cost factor is the amount of fuel required to traverse an area.
+
+% \usepackage{algorithm,algorithmicx,algpseudocode}
+\begin{algorithm}
+	\floatname{algorithm}{Algorithm}
+	\algrenewcommand\algorithmicrequire{\textbf{Input: }}
+	\algrenewcommand\algorithmicensure{\textbf{Output: }}
+	\caption{Field D* path cost computation procedure by \autocite{DF06}}\label{alg:fds-cc}
+	\begin{algorithmic}[1]
+		\Require $s, s_a, s_b$
+		\Ensure $v_s$ 
+		\If{$s_a$ is diagonal neighbor of $s$ }
+		\State $s_1 \gets s_b$ 
+		\State $s_2 \gets s_a$
+		\Else
+		\State $s_1 \gets s_a$ 
+		\State $s_2 \gets s_b$ 
+		\EndIf
+		\State $c$ is traversal cost of cell with corners $s, s_1, s_2$ 
+		\State $b$ is traversal cost of cell with corners $s, s_1$ but not $s_2$.
+		\If{$\mathrm{min}(c,b) = \infty$}
+		\State $v_s \gets \infty$
+		\ElsIf{$g(s_1) \le g(s_2)$}
+		\State $v_s \gets \mathrm{min}(c,b) + g(s_1)$
+		\Else
+		\State $f \gets g(s_1) - g(s_2)$ 
+		\If{$f \le b$}
+		\If{$c \le f$}
+		\State $v_s \gets c \sqrt{2} + g(s_2)$
+		\Else
+		\State $y \gets \mathrm{min}\left(\frac{f}{\sqrt{c^s - f^s}}, 1\right)$
+		\State $v_s \gets c \sqrt{1 + y^2} + f(1 - y) + g(s_2)$
+		\EndIf
+		\Else
+		\If{$c \le b$}
+		\State $v_s \gets c \sqrt{2} + g(s_2)$
+		\Else 
+		\State $x \gets 1 - \mathrm{min}\left(\frac{b}{\sqrt{c^2 - b^2}},1\right)$
+		\State $v_s \gets c \sqrt{1 + (1-x)^2} + bx + g(s_2)$
+		\EndIf
+		\EndIf
+		\EndIf
+		\State \textbf{return} $v_s$
+	\end{algorithmic}
+\end{algorithm}
+
+
 
 
 \section{Pattern Formation}
