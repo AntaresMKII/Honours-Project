@@ -52,6 +52,8 @@
 
 \usepackage{amsmath}
 
+\usepackage{subcaption}
+
 \addbibresource{report.bib}
 
 \begin{document}
@@ -141,6 +143,8 @@ This project uses Webots (http://www.cyberbotics.com), an open-source mobile rob
 \tableofcontents
 
 \listoffigures
+
+\listofalgorithms
 
 \chapter{Introduction}
 
@@ -307,6 +311,78 @@ pitch respectively.
 
 \section{Obstacle Detection}
 
+There exist a wide array of sensors used in obstacle detections, some of these include passive
+sensors like cameras and infrared sensors, and active sensors like lidar, radar and ladar. 
+Passive sensors absorb energy, like light or infrared waves, to create a picture of the 
+environment while active sensors emit their own energy then collect the reflection emitted
+by the environment. Active sensors are better suited for our application, as they do not
+depend on atmospheric conditions or lighting condition to operate. However, active sensors
+are prone to interference from other sources of electromagnetic waves. \autocite{4432828}
+For this project we decided to equip the UAVs with radar to detect obstacles. 
+
+Webots offers a simulation of a radar sensor which detects targets in the environment and 
+provides their distance from the sensor, the power received back from the target, the speed relative 
+to the sensor, and the horizontal angle (the azimuth) between the target and the sensor \autocite{Webots}.
+However, simply knowing this information about the obstacle is not sufficient as we need to find
+its position in order to avoid it.
+
+\subsection{Target Coordinates Extraction}
+
+To compute the position of a target we simply need its distance from the sensor, $d$, and the azimuth, 
+$\alpha$ from the values returned from Webots API. Assuming that the UAV position is located at the origin,
+the distance between the UAV and the target can be considered a vector with magnitude $d$ and the 
+azimuth is the angle between the distance vector and the direction vector of the UAV. We call these
+vectors $v$ and $u$ respectively. Thus, what we are trying to find is $v = \begin{bmatrix} v_x \\ v_y \end{bmatrix}$.
+
+Given that we have two vectors and the angle between them, we can then find their dot product, where
+$\parallel v \parallel = d$, using Eq. \ref{eq:dotp}.
+\begin{equation}
+	u . v = \parallel u \parallel \parallel v \parallel \cos \alpha = u_x v_x + u_y v_y
+	\label{eq:dotp}
+\end{equation}
+
+Assuming $u$ is a unit vector, since $u$ is the direction of the UAV then the angle $\beta$ between the vector $u$
+and the x-axis can be calculated from the heading of the UAV. Thus, we can compute the components of $u$ using Eq. 
+\ref{eq:u-comp-1} and Eq. \ref{eq:u-comp-2}. 
+
+\begin{align}
+	u_x &= \cos \beta
+	\label{eq:u-comp-1} \\
+	u_y &= \sin \beta
+	\label{eq:u-comp-2}
+\end{align}
+
+Therefore, we can rewrite Eq. \ref{eq:dotp} combined with the values of $u_x$ and $u_y$ resulting in Eq. \ref{eq:comb}. 
+
+\begin{equation}
+	\parallel v \parallel \cos \alpha =  v_x \cos \beta +  v_y \sin \beta
+	\label{eq:comb}
+\end{equation}
+
+Similarly to $u$, we can also find the components of $v$ using the angle between $v$ and the x-axis, $\gamma$ which
+is equal to $\beta - \alpha$. Using this angle we can write an equation to find the components of $v$. 
+
+\begin{equation}
+	\tan \gamma = \frac{v_y}{v_x}
+	\label{eq:v-comp}
+\end{equation}
+
+Eq. \ref{eq:v-comp} can then be written in terms of $v_y$ resulting in Eq. \ref{eq:vy}. 
+
+\begin{equation}
+	v_y = v_x \tan \gamma
+	\label{eq:vy}
+\end{equation}
+
+Finally, we can combine Eq. \ref{eq:comb} with Eq. \ref{eq:vy} to create one equation to find the x component of $v$. 
+\begin{equation}
+	v_x = \frac{d \cos \alpha}{\cos \beta + \tan \gamma \sin \beta}
+	\label{eq:vx}
+\end{equation}
+
+Solving Eq. \ref{eq:vx} and Eq. \ref{eq:vy} it will produce the coordinates of the target relative to the UAV. 
+From there it is simply necessary to translate the vector $v$ by the UAV position.
+
 \section{Obstacle Avoidance}
 
 Once obstacles are detected, the UAVs should be capable of avoiding them and navigate between them 
@@ -350,6 +426,21 @@ For this project we decided to implement Field D*, due to its promises of minimi
 generating less expensive paths than D* and D* Lite. Field D* achieves this by using interpolation in the 
 computation of the cost of the path. \autocite{DF06}
 
+\begin{figure}
+	\begin{center}
+		\begin{subfigure}{0.5\textwidth}\centering
+			\includesvg{img/fds_cell_img.svg}
+			\caption{Representation used by standard algorithms}\label{fig:fds-cell-1}
+		\end{subfigure}
+		\begin{subfigure}{0.4\textwidth}\centering
+			\includesvg{img/fds_cell_img2.svg}
+			\caption{Representation used by Field D*}\label{fig:fds-cell-2}
+		\end{subfigure}
+	\end{center}
+	\caption{Representation of nodes positioning in standard path planning algorithms and field D*}\label{fig:fds-cell}
+\end{figure}
+
+
 Most path planning algorithms that use a grid as underlying graph compute the cost of a node $s$, $g(s)$, using 
 Eq. \ref{eq:fds-gs1}.
 
@@ -362,8 +453,8 @@ Where $nbrs(s)$ is the set of neighbors of node $s$, $c(s,s')$ is the cost of tr
 $s'$, and $g(s')$ is the path cost of $s'$. This assumes that the only possible path is a straight line between
 the nodes, resulting in limitations as described by \autocite{DF06}. In order to overcome these limitations,
 Field D* finds an approximation of the cost of the path to any cell boundary node $s_b$ using linear interpolation.
-To do this, the algorithm assumes that the nodes of the graph are not located at the center of the cells but rather
-at the vertices \autocite{DF06}. It then follows Algorithm \ref{alg:fds-cc} to compute the path cost, $v_s$, of a node $s$ given
+To do this, the algorithm assumes that the nodes of the graph are not located at the center of the cells as shown in Fig. \ref{fig:fds-cell-1} but rather
+at the vertices as shown in Fig. \ref{fig:fds-cell-2} \autocite{DF06}. It then follows Algorithm \ref{alg:fds-cc} to compute the path cost, $v_s$, of a node $s$ given
 two of its neighbors $s_a$ and $s_b$.
 
 Field D* is not a faster algorithm than D* Lite, with a planning time 1.7 times slower than its non-interpolation-based counterpart, 
@@ -419,6 +510,7 @@ cost factor is the amount of fuel required to traverse an area.
 
 
 \section{Pattern Formation}
+
 
 
 \printbibliography

@@ -74,7 +74,7 @@ int init() {
   
   set_start_and_goal(&uav);
 
-  add_obst(uav.fds->m);
+  //add_obst(uav.fds->m);
   
   return timestep;
 }

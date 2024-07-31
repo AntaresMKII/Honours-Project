@@ -53,14 +53,16 @@ int move_to_waypoint(Uav *uav, Vec3d wp) {
     return 0;
 }
 
-Vec3d obstacle_relative_pos(double obs_dist, double obs_azimuth) {
-    double alpha = obs_azimuth;
-    double yo = cos(alpha) * obs_dist;
-    double xo = sin(alpha) * obs_dist;
+Vec3d compute_target_pos(double alpha, double theta, double v_mag) {
+    Vec3d v;
+    double beta = alpha - theta;
 
-    Vec3d p = {xo, yo, 0};
+    theta = theta < 0 ? theta * -1 : theta;
 
-    return p;
+    v.x = v_mag * cos(theta) / (cos(alpha) + sin(alpha) * tan(beta));
+    v.y = v.x * tan(beta);
+
+    return v;
 }
 
 Vec3d* cm_detect_obstacles(Uav *uav, int *num) {
@@ -85,11 +87,13 @@ Vec3d* cm_detect_obstacles(Uav *uav, int *num) {
         exit(EXIT_FAILURE);
     }
 
+    heading -= 0.5 * M_PI;
+    heading *= -1;
+
     for (int i = 0; i < target_num; i++) {
-        targets_pos[i] = obstacle_relative_pos(targets[i].distance, targets[i].azimuth);
-        targets_pos[i] = vec_rotate(targets_pos[i], -1.0f * (heading - 1.570796327f));
-        printf("(%f,%f)\n", targets_pos[i].x, targets_pos[i].y);
-        //targets_pos[i] = vec_translate(targets_pos[i], uav_pos);
+        targets_pos[i] = compute_target_pos(heading, targets[i].azimuth, targets[i].distance);
+        targets_pos[i].x += uav_pos.x;
+        targets_pos[i].y += uav_pos.y;
     }
 
     *num = target_num;
@@ -171,7 +175,7 @@ Vec3d* cm_plan_path(Uav *uav, int *wps_num) {
 
     int mod_cells_num = 0;
 
-    //obs_arr = cm_detect_obstacles(uav, &obs_num); 
+    obs_arr = cm_detect_obstacles(uav, &obs_num);
 
     mod_cells = (Cell**) malloc(sizeof(Cell*) * 4);
     if (mod_cells == NULL) {
