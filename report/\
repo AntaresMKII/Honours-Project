@@ -132,17 +132,15 @@
 
 %----------------------------------------------------------------------------------------
 
-\chapter*{Abstract}
+\section*{Abstract}
 Abstract goes here!
 
-\chapter*{Acknowledgements}
+\section*{Acknowledgements}
 This project uses Webots (http://www.cyberbotics.com), an open-source mobile robot simulation software developed by Cyberbotics Ltd.
 
 \tableofcontents
 
 \listoffigures
-
-\listoftables
 
 \listofalgorithms
 
@@ -528,165 +526,30 @@ from the leader but also depending on the expected heading the leader will have.
 result is expected to look similar to Fig. \ref{fig:pf-1} where the structure of
 the formation is not changed when a turn occurs. 
 
-Let $\theta$ be the angle between
+Let $\Theta$ be the angle between
 the leader UAV direction and the x-axis, we can use this angle as rotation angle for 
 the formation. We cannot find the precise heading of the leader UAV due to possible
 variance in the real path the UAVs will take, but we can approximate this value given
 two waypoints. Let $v$ and $w$ be the current and next waypoints for the leader UAV. 
 If we compute the difference of these two waypoints we can find what direction the 
-UAV is facing when reaching this waypoint. We show these approximations in Tab. \ref{tab:approx},
-where $+$ is a positive difference or $w_x > v_x$, $-$ is a negative difference or $w_x < v_x$
-and $0$ is no difference or $w_x = v_x$\footnote{Note: in this example we use the x components of $v$ and $w$, 
-but the principle is the same for the y components.}.
+UAV is facing when reaching this waypoint. We show these approximations in Tab. \ref{tab:approx}
 
 \begin{table}
-	\caption{Approximations of $\theta$ based on difference of $w - v$}\label{tab:approx}
+	\caption{Approximations of $\Theta$ based on difference of $w - v$}\label{tab:approx}
 	\begin{center}
-		\begin{tabular}[c]{r|r|c}
+		\begin{tabular}[c]{l|l|l}
 			\hline
 			\multicolumn{1}{c|}{\textbf{$\Delta x$}} & 
 			\multicolumn{1}{c|}{\textbf{$\Delta y$}} &
-			\multicolumn{1}{c}{Approx. \textbf{$\theta$}} \\
+			\multicolumn{1}{c}{\textbf{$\Theta$}} \\
 			\hline
 			\hline
-			$+$ & $0$ & $0$ \\
-			\hline
-			$0$ & $+$ & $\frac{1}{2}\pi$ \\
-			\hline
-			$-$ & $0$ & $\pi$ \\
-			\hline
-			$0$ & $-$ & $\frac{3}{2}\pi$ \\
-			\hline
-			$+$ & $+$ & $\frac{1}{4}\pi$ \\
-			\hline
-			$-$ & $+$ & $\frac{3}{4}\pi$ \\
-			\hline
-			$-$ & $-$ & $\frac{5}{4}\pi$ \\
-			\hline
-			$+$ & $-$ & $-\frac{1}{4}\pi$ \\
-			\hline
+			$+1$ & $0$ & $0$ \\
+			$0$ & $+1$ & $\frac{1}{2}\pi$
 		\end{tabular}
 	\end{center}
 \end{table}
 
-Once we found the value of $\theta$ we transform the orientation of the formation using a rotation matrix
-as shown in Eq. \ref{eq:rot-mat}.
-
-\begin{equation}
-	R = \begin{bmatrix} \cos \theta & -\sin \theta \\ \sin \theta & \cos \theta \end{bmatrix}
-	\label{eq:rot-mat}
-\end{equation}
-
-Once the formation is rotated it is then translated with respect of the leader waypoint.
-
-
-\chapter{Program Structure and Inter-UAV communication}
-
-In this chapter we will explore in more detail the program we designed to illustrate our 
-solution to the pattern formation problem.
-
-\section{Program Structure}
-
-The program is composed by three phases: an initialization, where all variables and parameters
-are initialized, a main loop, where all movements and inter-UAV communication happens, and a 
-final clean-up phase. Each UAV's phase is independent of other UAVs and dictated by a state 
-variable that can assume one of the values presented in Table \ref{tab:states}. The state 
-also serves to determine weather a UAV has been elected leader or not during the execution
-of the program. 
-
-\begin{table}
-	\caption{Possible values of the state}\label{tab:states}
-	\begin{center}
-		\begin{tabular}[t]{l|l}
-			\hline
-			\multicolumn{1}{c|}{\textbf{State value}} & 
-			\multicolumn{1}{c}{\textbf{Description}} \\
-			\hline 
-			\texttt{INIT} & The UAV is in the initialization phase \\
-			\hline
-			\texttt{RUN} & The UAV is in the main loop phase and has been elected leader \\
-			\hline
-			\texttt{END} & The goal was reached, and the UAV is in the clean-up phase \\
-			\hline
-			\texttt{F\_RUN} & The UAV is in the main loop and has not been elected leader \\
-			\hline
-			\texttt{F\_WAIT} & The UAV is waiting on instructions from the leader, and it is not the leader \\
-			\hline
-		\end{tabular}
-	\end{center}
-\end{table}
-
-A full overview of the program structure is available in Fig. \ref{fig:flowchart}.
-
-\begin{figure}
-	\begin{center}
-		\includesvg{img/flowchart.svg}
-	\end{center}
-	\caption{The flowchart diagram of the program}\label{fig:flowchart}
-\end{figure}
-
-\section{Inter-UAV communication}
-
-In order for the UAVs to cooperate together we equipped each UAV with a transmitter and a 
-receiver to send messages to each other. The content of these messages varies depending
-on the phase of the program but are generally used to send either the UAV identifier, used
-for leader election and for message routing, their initial position, used by the leader
-to determine the shape of the formation, and the waypoint the followers need to fly to next. 
-Each message is a packet composed of two parts: a header and message. The header contains
-metadata necessary to route the message to the correct UAV and the type of message, while 
-the message part contains the content of the message which is usually a set of coordinates. 
-A diagram of the packet is shown in Fig. \ref{fig:packet}.
-
-\begin{figure}[h]
-	\begin{center}
-		\includesvg{img/packet.svg}
-	\end{center}
-	\caption{Diagram of a message. The diagram is 16 bits in width.}\label{fig:packet}
-\end{figure}
-
-The header is 4 bytes in size, each field in the header occupy a space of 1 byte, including an 
-unused byte. The data part of the message has a maximum size of 16 bytes, however it is only 
-used in messages carrying information about the position of the UAV and waypoints. There are 
-additional four bytes of padding between the header and the data.
-
-To keep the network simple and decrease the number of failures, all UAVs are connected to each 
-other in a complete network as shown in Fig. \ref{fig:net}.
-
-\begin{figure}
-	\begin{center}
-		\includesvg{img/net.svg}
-	\end{center}
-	\caption{Network topology diagram}\label{fig:net}
-\end{figure}
-
-\subsection{Leader Election}
-
-To implement the pattern formation we need one of the UAVs to become a leader and plan the path. 
-To achieve this we decided to implement the FloodMax algorithm for leader election. This is a 
-simple algorithm that allows leader election in any network as long as the diameter of the network, $D$,
-is known, achieving this in a number of rounds equal to the diameter of the network \autocite{EK23}. 
-This is particularly effective in our case as the diameter of a complete network is 1. See Algorithm
-\ref{alg:floodmax} for the steps of FloodMax.
-
-% \usepackage{algorithm,algorithmicx,algpseudocode}
-\begin{algorithm}
-	\floatname{algorithm}{Algorithm}
-	\algrenewcommand\algorithmicrequire{\textbf{Input: }}
-	\algrenewcommand\algorithmicensure{\textbf{Output: }}
-	\caption{FloodMax Algorithm}\label{alg:floodmax}
-	\begin{algorithmic}[1]
-		\Require $D$
-		\State Each node maintains a record of the highest ID it has seen so far 
-		\State At each round the node propagates this maximum to all neighboring nodes
-		\State After $D$ rounds if the maximum recorded is equal to the node ID the node elects itself as leader
-	\end{algorithmic}
-\end{algorithm}
-
-
-\chapter{Results}
-
-
-\chapter{Conclusion}
 
 \printbibliography
 \end{document}
