@@ -19,8 +19,8 @@ WorldInfo {
   }
 }
 Viewpoint {
-  orientation -0.5715671262201594 0.5773116005405007 0.5831143422226843 2.0770509134130712
-  position 11.439504138866676 -0.341795967810699 37.310881172183315
+  orientation -0.5773502691896258 0.5773502691896258 0.5773502691896258 2.0944
+  position 10.543026461972186 -1.645662958375607 34.726949028460766
   near 0.2
   follow "Mavic 2 PRO"
   followSmoothness 0.2
@@ -36,6 +36,9 @@ Mavic2Pro {
   controller "<extern>"
   bodySlot [
     Radar {
+      minRange 0
+      maxRange 10
+      horizontalFieldOfView 0.25
     }
     Receiver {
       channel 1
@@ -94,7 +97,24 @@ Solid {
   radarCrossSection 100
 }
 Solid {
-  translation 4 2.9 2.5
+  translation 10 -3.38 2.5
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0 0
+        metalness 0
+      }
+      geometry DEF OBS Box {
+        size 2 2 5
+      }
+    }
+  ]
+  name "obstacle(3)"
+  boundingObject USE OBS
+  radarCrossSection 100
+}
+Solid {
+  translation 4 0 2.5
   children [
     Shape {
       appearance PBRAppearance {
@@ -107,6 +127,23 @@ Solid {
     }
   ]
   name "obstacle(1)"
+  boundingObject USE OBS2
+  radarCrossSection 10
+}
+Solid {
+  translation 16 0 2.5
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0 0
+        metalness 0
+      }
+      geometry DEF OBS2 Box {
+        size 0.5 0.5 5
+      }
+    }
+  ]
+  name "obstacle(2)"
   boundingObject USE OBS2
   radarCrossSection 10
 }

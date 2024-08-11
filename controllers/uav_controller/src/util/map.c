@@ -338,20 +338,38 @@ Cell** map_get_cells_from_states(Map *m, State *s1, State *s2, State *s3, int *n
 State* map_get_state(Map *m, Vec3d v) {
     Cell** cells;
     int num_cells;
+    Vec3d rest, u;
 
-    cells = map_get_cells(m, v, &num_cells);
+    rest.x = modf(v.x, &u.x);
+    rest.y = modf(v.y, &u.y);
+
+    if (rest.x > 0.5) {
+        u.x++;
+    }
+    else if (rest.x < -0.5){
+        u.x--;
+    }
+
+    if (rest.y > 0.5) {
+        u.y++;
+    }
+    else if (rest.y < -0.5){
+        u.y--;
+    }
+
+    cells = map_get_cells(m, u, &num_cells);
 
     for (int i = 0; i < num_cells; i++) {
-        if (vec_equal(v, cells[i]->s0->v)) {
+        if (vec_equal(u, cells[i]->s0->v)) {
             return cells[i]->s0; 
         }
-        else if (vec_equal(v, cells[i]->s1->v)) {
+        else if (vec_equal(u, cells[i]->s1->v)) {
             return cells[i]->s1; 
         }
-        else if (vec_equal(v, cells[i]->s2->v)) {
+        else if (vec_equal(u, cells[i]->s2->v)) {
             return cells[i]->s2; 
         }
-        else if (vec_equal(v, cells[i]->s3->v)) {
+        else if (vec_equal(u, cells[i]->s3->v)) {
             return cells[i]->s3; 
         }
     }
@@ -360,16 +378,26 @@ State* map_get_state(Map *m, Vec3d v) {
 }
 
 Cell** map_set_cells_cost(Map *m, Vec3d v, double cost, int *num_cells) {
-    Cell** cells;
+    Cell** cells, **changed;
     Vec3d u;
+    int num = 0;
 
     cells = map_get_cells(m, v, num_cells);
+
+    changed = (Cell**) malloc(sizeof(Cell*) * *num_cells);
+    if (changed == NULL) {
+        exit(EXIT_FAILURE);
+    }
 
     for (int i = 0; i < *num_cells; i++) {
         if (cost > cells[i]->c) {
             cells[i]->c = cost;
+            changed[num] = cells[i];
+            num++;
         }
     }
 
-    return cells;
+    *num_cells = num;
+
+    return changed;
 }

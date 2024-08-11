@@ -74,7 +74,7 @@ int init() {
   
   set_start_and_goal(&uav);
 
-  //add_obst(uav.fds->m);
+  add_obst(uav.fds->m);
   
   return timestep;
 }
@@ -105,20 +105,24 @@ void run() {
 void run() {
   const double time = wb_robot_get_time();
 
+  static int n = 0;
+
   Vec3d *wps_list;
   State *s;
   int wps_num = 0;
   int wp_reached = 0;
 
   wps_list = cm_plan_path(&uav, &wps_num);
-  cm_followers_path(&uav, wps_list, wps_num);
-  net_send_wp(&uav, wps_num - 2);
-  wp_reached = cm_run(&uav, wps_list[wps_num - 2], TARGT_ALT, time);
+  //cm_followers_path(&uav, wps_list, wps_num);
+  //net_send_wp(&uav, wps_num - 2);
+  wp_reached = cm_run(&uav, wps_list[n], TARGT_ALT, time);
   if (wp_reached) {
-    s = map_get_state(uav.fds->m, wps_list[wps_num - 2]);
-    uav.fds->start = s;
+    //s = map_get_state(uav.fds->m, wps_list[0]);
+    //uav.fds->start = s;
     printf("Waypoint reached!\n");
-    if (states_are_equal(uav.fds->start, uav.fds->end)) {
+    n++;
+    //if (states_are_equal(uav.fds->start, uav.fds->end)) {
+    if (n == wps_num) {
       printf("Goal reached!\n");
       uav.state = END;
     }

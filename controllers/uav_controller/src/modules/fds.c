@@ -100,6 +100,14 @@ void UpdateState(Fds *fds, State *s) {
             vs = compute_cost(fds, s, connbrs[i].fst, connbrs[i].snd);
             if (vs < s->rhs) {
                 s->rhs = vs;
+                if (fabs(connbrs[i].fst->v.x - s->v.x) == 1 && fabs(connbrs[i].fst->v.y - s->v.y) == 1) {
+                    s->s1 = connbrs[i].snd;
+                    s->s2 = connbrs[i].fst;
+                }
+                else {
+                    s->s1 = connbrs[i].fst;
+                    s->s2 = connbrs[i].snd;
+                }
             }
         }
     }
@@ -197,9 +205,66 @@ void fds_run(Fds* fds, Cell** changed_cells, int num_cells) {
             UpdateState(fds, changed_cells[i]->s1);
             UpdateState(fds, changed_cells[i]->s0);
         }
+        ComputeShortestPath(fds);
     }
 }
 
 Vec3d* fds_extract_path(Fds* fds, int *wp_num) {
+    State *s;
+    Cell **cells;
+    Vec3d next_wp, *wps;
+    double f, c, b, y;
+    int num_cells = 0;
 
+    s = fds->start;
+
+    wps = (Vec3d*) malloc(sizeof(Vec3d));
+    if (wps == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    *wp_num = 0;
+
+    while (!states_are_equal(s, fds->end)) {
+        cells = map_get_cells_from_states(fds->m, s, s->s1, s->s2, &num_cells);
+        c = cells[0]->c;
+        b = cells[1]->c;
+        f = s->s1->g - s->s2->g;
+
+        if (f <= 0) {
+            // next wp is at s1
+            next_wp = s->s1->v;
+        }
+        else if (f > b) {
+            // next wp is at s2
+            next_wp = s->s2->v;
+        }
+        else {
+            // next wp is at some point sy
+            y = min(f / sqrt(pow(c, 2) - pow(f, 2)), 1);
+            next_wp.x = s->s1->v.x;
+            if (s->s1->v.y - s->s2->v.y < 0) {
+                next_wp.y = s->s1->v.y + y;
+            }
+            else {
+                next_wp.y = s->s1->v.y - y;
+            }
+        }
+
+        *wp_num += 1;
+
+        wps = (Vec3d*) realloc(wps, sizeof(Vec3d) * *wp_num);
+
+        wps[*wp_num - 1].x = next_wp.x;
+        wps[*wp_num - 1].y = next_wp.y;
+
+        if (s->s1->g < s->s2->g) {
+            s = s->s1;
+        }
+        else {
+            s = s->s2;
+        }
+    }
+
+    return wps;
 }

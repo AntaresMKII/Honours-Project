@@ -4,7 +4,7 @@
 
 void add_obst(Map *m) {
   Vec3d obs = { 4.0f, 0, 0 };
-  Vec3d obs1 = { 4.0f, 0, 0 };
+  Vec3d obs1 = { 10.0f, 0, 0 };
   int num_cells, n;
   Cell **cells;
 

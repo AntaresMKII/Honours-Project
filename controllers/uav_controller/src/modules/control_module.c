@@ -187,7 +187,7 @@ Vec3d* cm_plan_path(Uav *uav, int *wps_num) {
     }
 
     for (int i = 0; i < obs_num; i++) {
-        curr_cells = map_set_cells_cost(uav->fds->m, obs_arr[i], 100, &num_cells);
+        curr_cells = map_set_cells_cost(uav->fds->m, obs_arr[i], 2, &num_cells);
 
         for (int j = 0; j < num_cells; j++) {
             mod_cells_num++;
