@@ -8,11 +8,13 @@
 #ifndef FDS_TYPES_H
 #define FDS_TYPES_H
 
-typedef struct {
+typedef struct State {
     Vec3d v;
     double rhs;
     double g;
     char visited;
+    struct State *s1;
+    struct State *s2;
 } State;
 
 typedef struct {

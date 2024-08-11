@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "includes/fds.h"
+#include "../util/includes/util.h"
 
 #define min(a,b) a < b ? a : b
 
@@ -51,8 +52,8 @@ double compute_cost(Fds *fds, State *s, State *sa, State *sb) {
     c = cells[0]->c;
     b = cells[1]->c;
 
-    if (min(c, b) == 1.0f) {
-        vs = 1.0f;
+    if (min(c, b) == INFINITY) {
+        vs = INFINITY;
     }
     else if (s1->g <= s2->g) {
         vs = min(c, b) + s1->g;
@@ -85,15 +86,21 @@ double compute_cost(Fds *fds, State *s, State *sa, State *sb) {
 void UpdateState(Fds *fds, State *s) {
     Tuple *connbrs;
     int num_nbrs;
+    double vs;
 
     if (!s->visited) {
         s->g = INFINITY;
+        s->visited = 1;
     }
 
     if (!states_are_equal(s, fds->end)) {
         connbrs = map_get_connbrs(fds->m, s, &num_nbrs);
+        s->rhs = INFINITY;
         for (int i = 0; i < num_nbrs; i++) {
-            s->rhs = min(s->rhs, compute_cost(fds, s, connbrs[i].fst, connbrs[i].snd));
+            vs = compute_cost(fds, s, connbrs[i].fst, connbrs[i].snd);
+            if (vs < s->rhs) {
+                s->rhs = vs;
+            }
         }
     }
 
@@ -102,8 +109,6 @@ void UpdateState(Fds *fds, State *s) {
     if (s->g != s->rhs) {
         heap_add(fds->OPEN, (void*) s, (void *) key(s, fds->start));
     }
-
-    s->visited = 1;
 }
 
 void ComputeShortestPath(Fds *fds) {
@@ -113,6 +118,7 @@ void ComputeShortestPath(Fds *fds) {
     while ((compare_keys(get_root_key(fds->OPEN), key(fds->start, fds->start))) || fds->start->g != fds->start->rhs) {
         s = (State*) pop_root_val(fds->OPEN);
         nbrs = map_get_nbrs(fds->m, s, &num_nbrs);
+        s->visited = 1;
 
         if (s->g > s->rhs) {
             s->g = s->rhs;
@@ -127,8 +133,6 @@ void ComputeShortestPath(Fds *fds) {
             }
             UpdateState(fds, s);
         }
-
-        s->visited = 1;
     }
 }
 
@@ -188,55 +192,14 @@ void fds_run(Fds* fds, Cell** changed_cells, int num_cells) {
     
     if (num_cells > 0) {
         for (int i = 0; i < num_cells; i++) {
-            UpdateState(fds, changed_cells[i]->s0);
-            UpdateState(fds, changed_cells[i]->s1);
-            UpdateState(fds, changed_cells[i]->s2);
             UpdateState(fds, changed_cells[i]->s3);
+            UpdateState(fds, changed_cells[i]->s2);
+            UpdateState(fds, changed_cells[i]->s1);
+            UpdateState(fds, changed_cells[i]->s0);
         }
     }
 }
 
-Vec3d* fds_extract_path(Fds* fds, int *vec_num) {
-    State *curr_state, **nbrs;
-    Vec3d *waypoints;
-    int num_nbrs, min_idx = 0, wp_num = 0;
-    double tmp, min_g = INFINITY;
+Vec3d* fds_extract_path(Fds* fds, int *wp_num) {
 
-    waypoints = (Vec3d*) malloc(sizeof(Vec3d));
-    if (waypoints == NULL) {
-        printf("Failure to allocate memory in fds_extract_path\n");
-        exit(EXIT_FAILURE);
-    }
-
-    curr_state = fds->start;
-
-    while (!states_are_equal(curr_state, fds->end)) {
-
-        nbrs = map_get_nbrs(fds->m, curr_state, &num_nbrs);
-
-        for (int i = 0; i < num_nbrs; i++) {
-            tmp = min(min_g, nbrs[i]->g);
-            if (min_g != tmp && nbrs[i]->g == nbrs[i]->rhs) {
-                min_idx = i;
-                min_g = tmp;
-            }
-        }
-
-        
-        wp_num++;
-        waypoints = (Vec3d*) realloc(waypoints, sizeof(Vec3d) * wp_num);
-        if (waypoints == NULL) {
-            printf("Failure to reallocate waypoints\n");
-            exit(EXIT_FAILURE);
-        }
-
-        waypoints[wp_num -1] = nbrs[min_idx]->v;
-
-        curr_state = nbrs[min_idx];
-        min_g = INFINITY;
-    }
-
-    *vec_num = wp_num;
-
-    return waypoints;
 }

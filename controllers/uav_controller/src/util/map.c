@@ -26,7 +26,7 @@ Map map_create() {
         }
 
         for (int j = 0; j < MAP_SIZE; j++) {
-            m[i][j].c = 0.0f;
+            m[i][j].c = 1.0f;
             if (i == 0 && j == 0) {
                 m[i][j].s0 = (State*) malloc(sizeof(State));
                 m[i][j].s0->v.x = -1 * (MAP_SIZE / 2.0f);
@@ -159,8 +159,8 @@ Cell** map_get_cells(Map *m, Vec3d v, int *num_cells) {
             exit(EXIT_FAILURE);
         }
 
-        rv[0] = &((*m)[(int)idx.y-1][(int)idx.x-1]);
-        rv[1] = &((*m)[(int)idx.y-1][(int)idx.x]);
+        rv[1] = &((*m)[(int)idx.y-1][(int)idx.x-1]);
+        rv[0] = &((*m)[(int)idx.y-1][(int)idx.x]);
         rv[2] = &((*m)[(int)idx.y][(int)idx.x-1]);
         rv[3] = &((*m)[(int)idx.y][(int)idx.x]);
         *num_cells = 4;
@@ -182,14 +182,14 @@ State** map_get_nbrs(Map *m, State *s, int *num_nbrs) {
             printf("Unable to allocate memory in map_get_nbrs\n");
         }
 
-        nbrs[0] = cells[0]->s0;
+        nbrs[0] = cells[0]->s2;
         nbrs[1] = cells[0]->s1;
         nbrs[2] = cells[1]->s1;
-        nbrs[3] = cells[1]->s2;
-        nbrs[4] = cells[3]->s2;
-        nbrs[5] = cells[3]->s3;
-        nbrs[6] = cells[2]->s3;
-        nbrs[7] = cells[2]->s0;
+        nbrs[3] = cells[1]->s0;
+        nbrs[4] = cells[2]->s0;
+        nbrs[5] = cells[2]->s3;
+        nbrs[6] = cells[3]->s3;
+        nbrs[7] = cells[3]->s2;
 
         *num_nbrs = 8;
     }
@@ -299,7 +299,7 @@ Tuple* map_get_connbrs(Map *m, State *s, int *num_nbrs) {
 
 Cell** map_get_cells_from_states(Map *m, State *s1, State *s2, State *s3, int *num_cells) {
     Cell **cells, **sel_cells, *tmp;
-    int n_cells, j;
+    int n_cells, j; 
     
     cells = map_get_cells(m, s1->v, &n_cells);
  
@@ -361,7 +361,7 @@ State* map_get_state(Map *m, Vec3d v) {
 
 Cell** map_set_cells_cost(Map *m, Vec3d v, double cost, int *num_cells) {
     Cell** cells;
-    int n;
+    Vec3d u;
 
     cells = map_get_cells(m, v, num_cells);
 

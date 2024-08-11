@@ -2,9 +2,9 @@
 
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/Floor.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/SandyGround.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/dji/mavic/protos/Mavic2Pro.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/Floor.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/Asphalt.proto"
 
 WorldInfo {
   info [
@@ -19,8 +19,8 @@ WorldInfo {
   }
 }
 Viewpoint {
-  orientation -0.5610559080224009 0.5336819561937902 0.6327715525419333 2.0579689871898874
-  position -0.249196028463321 -3.181394245348364 24.449998609654294
+  orientation -0.5715671262201594 0.5773116005405007 0.5831143422226843 2.0770509134130712
+  position 11.439504138866676 -0.341795967810699 37.310881172183315
   near 0.2
   follow "Mavic 2 PRO"
   followSmoothness 0.2
@@ -30,190 +30,83 @@ TexturedBackground {
 }
 TexturedBackgroundLight {
 }
+Mavic2Pro {
+  translation 0 0 0.1
+  rotation 2.9595424017543272e-05 -0.9999999995613612 1.1782927695336017e-06 0.0697052283504933
+  controller "<extern>"
+  bodySlot [
+    Radar {
+    }
+    Receiver {
+      channel 1
+      baudRate 256
+    }
+    Emitter {
+      range 100
+      channel 1
+      baudRate 256
+    }
+  ]
+  cameraSlot [
+    Camera {
+      width 400
+      height 240
+      near 0.2
+    }
+  ]
+}
 Floor {
   size 400 400
   tileSize 6 6
-  appearance SandyGround {
+  appearance Asphalt {
   }
 }
-Mavic2Pro {
-  translation -5 0 0.1
-  rotation 2.9595424017543272e-05 -0.9999999995613612 1.1782927695336017e-06 0.0697052283504933
-  controller "uav_controller"
-  bodySlot [
-    Radar {
-      maxRange 5
-      horizontalFieldOfView 1.57
-    }
-    Receiver {
-      channel 1
-      baudRate 256
-    }
-    Emitter {
-      range 100
-      channel 1
-      baudRate 256
-    }
-  ]
-  cameraSlot [
-    Camera {
-      width 400
-      height 240
-      near 0.2
-    }
-  ]
-}
-Mavic2Pro {
-  translation -8 1 0.1
-  rotation 2.9595424017543272e-05 -0.9999999995613612 1.1782927695336017e-06 0.0697052283504933
-  name "Mavic 2 PRO(2)"
-  controller "uav_controller"
-  bodySlot [
-    Radar {
-      maxRange 5
-      horizontalFieldOfView 1.57
-    }
-    Receiver {
-      channel 1
-      baudRate 256
-    }
-    Emitter {
-      range 100
-      channel 1
-      baudRate 256
-    }
-  ]
-  cameraSlot [
-    Camera {
-      width 400
-      height 240
-      near 0.2
-    }
-  ]
-}
-Mavic2Pro {
-  translation -8 -2 0.1
-  rotation -9.31134933657665e-06 -0.9999997323589336 -0.0007315704752027855 0.06974200826236683
-  name "Mavic 2 PRO(1)"
-  controller "uav_controller"
-  bodySlot [
-    Radar {
-      maxRange 5
-      horizontalFieldOfView 1.57
-    }
-    Receiver {
-      channel 1
-      baudRate 256
-    }
-    Emitter {
-      range 100
-      channel 1
-      baudRate 256
-    }
-  ]
-  cameraSlot [
-    Camera {
-      width 400
-      height 240
-      near 0.2
-    }
-  ]
-}
 Solid {
-  translation 10 0 0
+  translation 20 0 0.1
   children [
-    DEF WALL Shape {
-      appearance PBRAppearance {
-        baseColor 1 0.333333 0
-        metalness 0.5
-      }
-      geometry Box {
-        size 1 20 5
-      }
-    }
-  ]
-  name "wall-1"
-  boundingObject USE WALL
-}
-Solid {
-  translation -10 0 0
-  children [
-    DEF WALL Shape {
-      appearance PBRAppearance {
-        baseColor 1 0.333333 0
-        metalness 0.5
-      }
-      geometry Box {
-        size 1 20 5
-      }
-    }
-  ]
-  name "wall-2"
-  boundingObject USE WALL
-}
-Solid {
-  translation 0 10 0
-  rotation 0 0 1 1.570796327
-  children [
-    DEF WALL Shape {
-      appearance PBRAppearance {
-        baseColor 1 0.333333 0
-        metalness 0.5
-      }
-      geometry Box {
-        size 1 20 5
-      }
-    }
-  ]
-  name "wall-3"
-  boundingObject USE WALL
-}
-Solid {
-  translation 0 -10 0
-  rotation 0 0 1 1.570796327
-  children [
-    DEF WALL Shape {
-      appearance PBRAppearance {
-        baseColor 1 0.333333 0
-        metalness 0.5
-      }
-      geometry Box {
-        size 1 20 5
-      }
-    }
-  ]
-  name "wall-4"
-  boundingObject USE WALL
-}
-Solid {
-  translation 2 2 1.5
-  children [
-    DEF OBS Shape {
-      appearance PBRAppearance {
-        baseColor 1 0 0
-        metalness 0.1
-      }
-      geometry Box {
-        size 1 1 3
-      }
-    }
-  ]
-  boundingObject USE OBS
-  radarCrossSection 5
-}
-Solid {
-  translation 5 5 0
-  children [
-    DEF GOAL Shape {
+    Shape {
       appearance PBRAppearance {
         baseColor 1 1 0
-        metalness 0.1
       }
-      geometry Box {
+      geometry DEF GOAL Box {
         size 1 1 0.1
       }
     }
   ]
   name "goal"
   boundingObject USE GOAL
+}
+Solid {
+  translation 10 0 2.5
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0 0
+        metalness 0
+      }
+      geometry DEF OBS Box {
+        size 2 2 5
+      }
+    }
+  ]
+  name "obstacle"
+  boundingObject USE OBS
+  radarCrossSection 100
+}
+Solid {
+  translation 4 2.9 2.5
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0 0
+        metalness 0
+      }
+      geometry DEF OBS2 Box {
+        size 0.5 0.5 5
+      }
+    }
+  ]
+  name "obstacle(1)"
+  boundingObject USE OBS2
+  radarCrossSection 10
 }

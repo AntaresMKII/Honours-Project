@@ -9,8 +9,8 @@
 #include "util/includes/util.h"
 #include "util/includes/vec.h"
 
-#define GOAL_X 5.0f
-#define GOAL_Y 5.0f
+#define GOAL_X 20.0f
+#define GOAL_Y 0.0f
 #define TARGT_ALT 2.0f
 
 Uav uav;
@@ -78,13 +78,13 @@ int init() {
   
   return timestep;
 }
-
+/*
 void run() {
-  const double time = wb_robot_get_time();
 
   static int curr_wp = 0;
 
   Vec3d *wps_list;
+  State* s;
   int wps_num = -1;
   int wp_reached = 0;
 
@@ -93,10 +93,35 @@ void run() {
   net_send_wp(&uav, curr_wp);
   wp_reached = cm_run(&uav, wps_list[curr_wp], TARGT_ALT, time);
   if (wp_reached) {
+    s = map_get_state(uav.fds->m, wps_list[curr_wp]);
+    s->visited = 1;
     curr_wp++;
     printf("%d : Next Waypoint: (%f,%f)\n", uav.id, wps_list[curr_wp].x, wps_list[curr_wp].y);
     if (curr_wp == wps_num)
       uav.state = END;
+  }
+}
+*/
+void run() {
+  const double time = wb_robot_get_time();
+
+  Vec3d *wps_list;
+  State *s;
+  int wps_num = 0;
+  int wp_reached = 0;
+
+  wps_list = cm_plan_path(&uav, &wps_num);
+  cm_followers_path(&uav, wps_list, wps_num);
+  net_send_wp(&uav, wps_num - 2);
+  wp_reached = cm_run(&uav, wps_list[wps_num - 2], TARGT_ALT, time);
+  if (wp_reached) {
+    s = map_get_state(uav.fds->m, wps_list[wps_num - 2]);
+    uav.fds->start = s;
+    printf("Waypoint reached!\n");
+    if (states_are_equal(uav.fds->start, uav.fds->end)) {
+      printf("Goal reached!\n");
+      uav.state = END;
+    }
   }
 }
 

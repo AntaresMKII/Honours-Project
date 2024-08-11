@@ -14,7 +14,7 @@
 #include "includes/fds.h"
 #include "../util/includes/util.h"
 
-//#define DEBUG
+#define DEBUG
 
 #define CLAMP(val, min, max) ((val) < (min) ? (min) : ((val) > (max) ? (max) : (val)))
 
@@ -88,12 +88,20 @@ Vec3d* cm_detect_obstacles(Uav *uav, int *num) {
     }
 
     heading -= 0.5 * M_PI;
-    heading *= -1;
+    heading *=  -1;
 
     for (int i = 0; i < target_num; i++) {
         targets_pos[i] = compute_target_pos(heading, targets[i].azimuth, targets[i].distance);
         targets_pos[i].x += uav_pos.x;
         targets_pos[i].y += uav_pos.y;
+        #ifdef DEBUG
+        logs("---=== Obstacle Detected! ===---");
+        log2vf(targets[i].azimuth, "Alpha: ", targets[i].distance, "Distance: ");
+        log2vf(heading, "Beta: ", heading - targets[i].azimuth, "Gamma: ");
+        log2vf(targets_pos[i].x, "Vx: ", targets_pos[i].y, "Vy: ");
+        #endif /* ifdef DEBUG
+                logs("---=== Obstacle Detected! ===---");
+         */
     }
 
     *num = target_num;
@@ -110,16 +118,11 @@ void cm_followers_path(Uav *uav, Vec3d *wps, int wps_num) {
             printf("Failed to allocate memory in cm_followers_path()\n");
         }
 
-        for (int j = 0; j < wps_num; j++) {
-            if (j == 0) {
-                prev_wp = uav->fds->start->v;
-            }
-            else {
-                prev_wp = wps[j-1];
-            }
+        for (int j = wps_num - 2; j >= 0; j--) {
+            prev_wp = wps[j+1];
 
-            diff.x = wps[j].x - prev_wp.x;
-            diff.y = wps[j].y - prev_wp.y;
+            diff.x = prev_wp.x - wps[j].x;
+            diff.y = prev_wp.y - wps[j].y;
 
             if (diff.y == 0) {
                 if (diff.x > 0) {
@@ -177,18 +180,23 @@ Vec3d* cm_plan_path(Uav *uav, int *wps_num) {
 
     obs_arr = cm_detect_obstacles(uav, &obs_num);
 
-    mod_cells = (Cell**) malloc(sizeof(Cell*) * 4);
+    mod_cells = (Cell**) malloc(sizeof(Cell*));
     if (mod_cells == NULL) {
         printf("Failed to allocate memory in cm_plan_path\n");
         exit(EXIT_FAILURE);
     }
 
     for (int i = 0; i < obs_num; i++) {
-        curr_cells = map_set_cells_cost(uav->fds->m, obs_arr[i], 1.0f, &num_cells);
+        curr_cells = map_set_cells_cost(uav->fds->m, obs_arr[i], 100, &num_cells);
 
-        for (int j =0; j < num_cells; j++) {
-            mod_cells[mod_cells_num] = curr_cells[j];
+        for (int j = 0; j < num_cells; j++) {
             mod_cells_num++;
+            mod_cells = (Cell**) realloc(mod_cells, sizeof(Cell*) * mod_cells_num);
+            if (mod_cells == NULL) {
+                printf("Failed to reallocate memory in cm_plan_path\n");
+                exit(EXIT_FAILURE);
+            }
+            mod_cells[mod_cells_num - 1] = curr_cells[j];
         }
     }
 
