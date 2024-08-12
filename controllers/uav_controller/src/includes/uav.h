@@ -173,4 +173,7 @@ void net_recieve_wp(Uav *uav, Vec3d *wp);
 void cm_followers_path(Uav *uav, Vec3d *wps, int wps_num);
 void net_ask_next_wp(Uav *uav, int curr_wp);
 
+void uav_cleanup(Uav *uav);
+void fds_cleanup(Fds *fds);
+
 #endif // !UAV_H

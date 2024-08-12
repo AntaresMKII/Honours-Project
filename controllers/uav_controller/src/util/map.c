@@ -260,6 +260,8 @@ State** map_get_nbrs(Map *m, State *s, int *num_nbrs) {
         *num_nbrs = 3;
     }
 
+    free(cells);
+
     return nbrs;
 }
 
@@ -293,6 +295,8 @@ Tuple* map_get_connbrs(Map *m, State *s, int *num_nbrs) {
             } 
         }
     }
+
+    free(nbrs);
 
     return tuple_arr;
 }
@@ -330,6 +334,8 @@ Cell** map_get_cells_from_states(Map *m, State *s1, State *s2, State *s3, int *n
         }
 
     }
+
+    free(cells);
 
     *num_cells = j;
     return sel_cells;
@@ -374,6 +380,8 @@ State* map_get_state(Map *m, Vec3d v) {
         }
     }
 
+    free(cells);
+
     return NULL;
 }
 
@@ -402,6 +410,8 @@ Cell** map_set_cells_cost(Map *m, Vec3d v, double cost, int *num_cells) {
         }
     }
 
+    free(cells);
+
     n = k;
 
     for (int i = 0; i < n * 4; i++) {
@@ -428,6 +438,7 @@ Cell** map_set_cells_cost(Map *m, Vec3d v, double cost, int *num_cells) {
             changed[n+acc+j] = cells[j];
         }
         acc += k;
+        free(cells);
     }
 
     *num_cells = n + acc;
@@ -458,4 +469,24 @@ Cell** map_set_cells_cost_old(Map *m, Vec3d v, double cost, int *num_cells) {
     *num_cells = num;
 
     return changed;
+}
+
+void map_cleanup(Map *m) {
+    for (int i = 0; i < MAP_SIZE; i++) {
+        for (int j = 0; j < MAP_SIZE; j++) { 
+            free((*m)[i][j].s0);
+            if (j+1 == MAP_SIZE) {
+                free((*m)[i][j].s1);
+            }
+            if (i+1 == MAP_SIZE) {
+                free((*m)[i][j].s3);
+            }
+            if (i+1 == MAP_SIZE && j+1 == MAP_SIZE) {
+                free((*m)[i][j].s2);
+            }
+        }
+        free((*m)[i]);
+    }
+    free(*m);
+    free(m);
 }

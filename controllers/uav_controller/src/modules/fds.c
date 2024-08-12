@@ -79,10 +79,9 @@ double compute_cost(Fds *fds, State *s, State *sa, State *sb) {
             }
         }
     }
-
-    return vs;
+    free(cells);
+    return vs; 
 }
-
 void UpdateState(Fds *fds, State *s) {
     Tuple *connbrs;
     int num_nbrs;
@@ -110,6 +109,7 @@ void UpdateState(Fds *fds, State *s) {
                 }
             }
         }
+        free(connbrs);
     }
 
     heap_remove(fds->OPEN, (void*) s);
@@ -117,14 +117,18 @@ void UpdateState(Fds *fds, State *s) {
     if (s->g != s->rhs) {
         heap_add(fds->OPEN, (void*) s, (void *) key(s, fds->start));
     }
+
 }
 
 void ComputeShortestPath(Fds *fds) {
     State *s, **nbrs;
+    NODE n;
     int num_nbrs;
 
     while ((compare_keys(get_root_key(fds->OPEN), key(fds->start, fds->start))) || fds->start->g != fds->start->rhs) {
-        s = (State*) pop_root_val(fds->OPEN);
+        n = pop_root(fds->OPEN);
+        s = (State*) n.val;
+        free(n.key);
         nbrs = map_get_nbrs(fds->m, s, &num_nbrs);
         s->visited = 1;
 
@@ -141,7 +145,10 @@ void ComputeShortestPath(Fds *fds) {
             }
             UpdateState(fds, s);
         }
+
+        free(nbrs);
     }
+
 }
 
 Fds* fds_init(Vec3d start, Vec3d goal) {
@@ -264,7 +271,13 @@ Vec3d* fds_extract_path(Fds* fds, int *wp_num) {
         else {
             s = s->s2;
         }
+        free(cells);
     }
 
     return wps;
+}
+
+void fds_cleanup(Fds *fds) {
+    map_cleanup(fds->m);
+    heap_destroy(fds->OPEN);
 }

@@ -162,11 +162,15 @@ Vec3d* cm_plan_path(Uav *uav, int *wps_num) {
             }
             mod_cells[mod_cells_num - 1] = curr_cells[j];
         }
+        free(curr_cells);
     }
 
     fds_run(uav->fds, mod_cells, mod_cells_num);
 
     wps = fds_extract_path(uav->fds, wps_num);
+
+    free(mod_cells);
+    free(obs_arr);
 
     return wps;
 }

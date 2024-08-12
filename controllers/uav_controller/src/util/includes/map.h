@@ -49,4 +49,6 @@ static inline int states_are_equal(State *s1, State *s2) {
     return s1->v.x == s2->v.x && s1->v.y == s2->v.y;
 }
 
+void map_cleanup(Map *m);
+
 #endif // !MAP_H

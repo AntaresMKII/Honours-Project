@@ -8,7 +8,7 @@
 #include "util/includes/util.h"
 #include "util/includes/vec.h"
 
-#define GOAL_X 20.0f
+#define GOAL_X 2.0f
 #define GOAL_Y 0.0f
 #define TARGT_ALT 2.0f
 
@@ -123,6 +123,7 @@ void run() {
       uav.state = END;
     }
   }
+  free(wps_list);
 }
 
 void follower_wait() {
@@ -162,6 +163,7 @@ void main_loop(int timestep) {
         break;
       case RUN:
         run();
+        uav.state = END;
         break;
       case F_WAIT:
         follower_wait();
@@ -176,6 +178,7 @@ void main_loop(int timestep) {
 
 void clean_up() {
   printf("Cleaninig up\n");
+  uav_cleanup(&uav);
   wb_robot_cleanup();
   cleanup_debug_file();
 }

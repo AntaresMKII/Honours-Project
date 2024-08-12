@@ -156,12 +156,17 @@ int heap_add(HEAP* h, void* val, void* key) {
 }
 
 void heap_destroy(HEAP* h) {
+    for (int i = 0; i < h->arr_len; i++) {
+        //free(h->arr[i].val);
+        //free(h->arr[i].key);
+    }
     free(h->arr);
     free(h);
 }
 
 char heap_remove(HEAP *h, void* val) {
     int i;
+    NODE n;
     for (i = 0; i < h->h_len; i++) {
         if(val_comp(h->arr[i].val, val))
             break;
@@ -176,7 +181,9 @@ char heap_remove(HEAP *h, void* val) {
         i--;
     }
 
-    heap_extract(h);
+    n = heap_extract(h);
+
+    free(n.key);
 
     return 1;
 }

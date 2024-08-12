@@ -6,10 +6,8 @@
 */
 
 #include "includes/uav.h"
-#include "modules/includes/fds.h"
 #include "modules/includes/net.h"
-#include "util/includes/vec.h"
-#include <stdio.h>
+#include <stdlib.h>
 
 #define CLAMP(val, min, max) ((val) < (min) ? (min) : ((val) > (max) ? (max) : (val)))
 
@@ -262,4 +260,10 @@ int uav_peek_msg(Uav *uav) {
             return 0;
         }
     }
+}
+
+void uav_cleanup(Uav *uav) {
+    fds_cleanup(uav->fds);
+    free(uav->fds);
+    free(uav->followers);
 }
