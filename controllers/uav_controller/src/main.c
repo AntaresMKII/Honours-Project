@@ -113,8 +113,8 @@ void run() {
   int wp_reached = 0;
 
   wps_list = cm_plan_path(&uav, &wps_num);
-  //cm_followers_path(&uav, wps_list, wps_num);
-  //net_send_wp(&uav, wps_num - 2);
+  cm_followers_path(&uav, wps_list, wps_num);
+  net_send_wp(&uav, n);
   wp_reached = cm_run(&uav, wps_list[n], TARGT_ALT, time);
   if (wp_reached) {
     //s = map_get_state(uav.fds->m, wps_list[0]);

@@ -243,7 +243,7 @@ The controller first computes the error at a specific time $t$ ($e(t)$) using Eq
 \end{equation}
 
 Where $r(t)$ is the set value and $y(t)$ is the real value of the process \autocite{AM09}. 
-Form the computed error the controller then finds a control factor $u(t)$ using a proportional
+From the computed error the controller then finds a control factor $u(t)$ using a proportional
 coefficient ($K_p$), an integral coefficient ($K_I$) and a derivative coefficient ($K_D$) 
 using Eq. (\ref{eq:pid-u}) \autocite{NH20}.
 
@@ -312,7 +312,7 @@ sensors like cameras and infrared sensors, and active sensors like lidar, radar 
 Passive sensors absorb energy, like light or infrared waves, to create a picture of the 
 environment while active sensors emit their own energy then collect the reflection emitted
 by the environment. Active sensors are better suited for our application, as they do not
-depend on atmospheric conditions or lighting condition to operate. However, active sensors
+depend on atmospheric conditions or lighting conditions to operate. However, active sensors
 are prone to interference from other sources of electromagnetic waves. \autocite{4432828}
 For this project we decided to equip the UAVs with radar to detect obstacles. 
 
@@ -399,7 +399,7 @@ The most obvious and popular solution is the A* algorithm, which improves on Dij
 by using heuristics to decide which node should be considered next \autocite{ADA}. However, since we 
 are working in an unknown environment where the UAVs gain more knowledge of the obstacles locations as
 they progress, the path needs to be re-planned each time a new obstacle is found. This can become
-computationally expansive as we need to execute A* multiple times. 
+computationally expensive as we need to execute A* multiple times. 
 
 \subsection{Path Planning in Partially-Known Environments with D*}
 
@@ -506,6 +506,101 @@ cost factor is the amount of fuel required to traverse an area.
 
 \newpage
 
+\subsection{Map of the Environment}
+
+In order for Field D* to function it requires access to a \emph{"map"} of the environment
+where the cost of each cell and states are stored. This map is, essentially, a grid shaped
+graph, where each vertex is connected to eight neighbors, four adjacent and four diagonal. 
+The node and its four adjacent neighbors form a cell, which has a specific traversal cost which
+is grater than zero. The cost to traverse an edge from a vertex to one of its adjacent neighbors
+is equal to the lowest traversal cost of the cells around the edge. While to traverse an edge
+from a vertex to a diagonal neighbor, the cost is $c \sqrt{2}$, where $c$ is the traversal cost
+of the cell the edge lies into, as shown in \autocite{DF06}. The map is used to compute the 
+cost required to reach the goal, and it does not represent the movements the UAV can execute. 
+
+% \usepackage{algorithm,algorithmicx,algpseudocode}
+\begin{algorithm}
+	\floatname{algorithm}{Algorithm}
+	\algrenewcommand\algorithmicrequire{\textbf{Input: }}
+	\algrenewcommand\algorithmicensure{\textbf{Output: }}
+	\caption{Field D* main loop}\label{alg:fds-loop}
+	\begin{algorithmic}[1]
+		\Require $M$, $s_{start}$, $s_{goal}$, $OPEN$, $C_{changed}$
+		\Ensure $W$
+		\For{$x \in C_{changed}$}
+			\For{$s \in x$}
+				\State \Call{UpdateNode}{$s'$}
+			\EndFor
+		\EndFor
+		\While{$\mathrm{min}_{s \in OPEN}(key(s)) < key(s_{start})$ \textbf{or} $rhs(s_{start}) = g(s_{start}))$}
+			\State $s \gets OPEN.pop()$
+			\State $nbrs(s) \gets M.getNbrs(s)$
+			\If{$g(s) > rhs(s)$}
+				\State $g(s) \gets rhs(s)$ 
+				\For{$\forall s' \in nbrs(s)$}
+					\State \Call{UpdateNode}{$s'$}
+				\EndFor
+			\Else
+				\State $g(s) \gets \infty$
+				\For{$\forall s' \in nbrs(s) \cup \{s\}$}
+					\State \Call{UpdateNode}{$s'$}
+				\EndFor
+
+			\EndIf
+		\EndWhile
+		\State $W \gets $ ExtractPath($M$, $s_{start}$, $s_{goal}$)
+		\State \textbf{return} $W$
+	\end{algorithmic}
+\end{algorithm}
+
+In our project we decided to encode the map as a two--dimensional array, where each element is 
+a cell containing four states. Using pointers we made such that each cell can share its states
+with neighboring cells, so we can avoid duplicate states. To extract states and cells from the 
+map we developed query functions and other utility functions. 
+
+At the beginning of the program, the map is created, and its values are set to a predetermined
+default. All traversal costs are set to one and all states are given default values specified 
+by Field D*, meaning that for each state $s$ the values $g(s)$, which is the path cost of 
+that state, and $rhs(s)$ which is the one-step lookahead path cost of $s$. We, then,
+identify the starting state ($s_{start}$) and the goal state ($s_{goal}$), from the 
+initial GPS position of the UAV and a predefined set of coordinates respectively. We further
+initialize Filed D* by setting the value of $rhs(s_{goal})$ to zero, create a priority queue
+named $OPEN$, and we insert $s_{goal}$ into the queue $OPEN$. Finally, we can compute the 
+shortest path using Field D*, as shown in Algorithm \ref{alg:fds-loop}, where $M$ is
+the map, $C_{changed}$ is the set of cells whose traversal cost changed and $W$ is the 
+set of coordinates that are points on the shortest path in order.
+
+% \usepackage{algorithm,algorithmicx,algpseudocode}
+\begin{algorithm}
+	\floatname{algorithm}{Algorithm}
+	\algrenewcommand\algorithmicrequire{\textbf{Input: }}
+	\algrenewcommand\algorithmicensure{\textbf{Output: }}
+	\caption{UpdateNode function}\label{alg:upnode}
+	\begin{algorithmic}[1]
+		\Require $M$, $s_{goal}$, $OPEN$
+		\Function{UpdateNode}{$s$}
+			\If{$s$ was not visited before}
+			\State $g(s) \gets \infty$
+			\EndIf
+			\If{$s \ne s_{goal}$}
+			\State $connbrs(s) \gets M.getConnbrs(s)$
+			\For{$\forall (s', s'') \in connbrs(s)$}
+				\State $c \gets$ \Call{ComputeCost}{$s$, $s'$, $s''$}
+				\If{$c < rhs(s)$}
+				\State $rhs(s) \gets c$ 
+				\EndIf
+			\EndFor
+			\EndIf
+			\If{$s \in OPEN$}
+			\State $OPEN.remove(s)$ 
+			\EndIf
+			\If{$g(s) \ne rhs(s)$}
+			\State $OPEN.insert(s, key(s))$ 
+			\EndIf
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
 \section{Pattern Formation}
 
 The central aspect of this project is pattern formation, which we already
@@ -595,7 +690,7 @@ The program is composed by three phases: an initialization, where all variables 
 are initialized, a main loop, where all movements and inter-UAV communication happens, and a 
 final clean-up phase. Each UAV's phase is independent of other UAVs and dictated by a state 
 variable that can assume one of the values presented in Table \ref{tab:states}. The state 
-also serves to determine weather a UAV has been elected leader or not during the execution
+also serves to determine whether a UAV has been elected leader or not during the execution
 of the program. 
 
 \begin{table}
@@ -669,7 +764,7 @@ To implement the pattern formation we need one of the UAVs to become a leader an
 To achieve this we decided to implement the FloodMax algorithm for leader election. This is a 
 simple algorithm that allows leader election in any network as long as the diameter of the network, $D$,
 is known, achieving this in a number of rounds equal to the diameter of the network \autocite{EK23}. 
-This is particularly effective in our case as the diameter of a complete network is 1. See Algorithm
+This is particularly effective in our case, as the diameter of a complete network is 1. See Algorithm
 \ref{alg:floodmax} for the steps of FloodMax.
 
 % \usepackage{algorithm,algorithmicx,algpseudocode}
@@ -722,7 +817,7 @@ This issue causes the formation to "stretch" and each follower UAV disperse in a
 different direction which is not desired behavior. We believe that this issue is
 caused by the followers reaching the waypoint provided by the leader before the 
 leader reaches its own. Since the follower has no new waypoint provided it will then 
-wonder off until a new waypoint is communicated by the leader. This is less than
+wander off until a new waypoint is communicated by the leader. This is less than
 ideal and more work is needed to resolve this issue.
 
 \chapter{Conclusion}

@@ -20,7 +20,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation -0.5773502691896258 0.5773502691896258 0.5773502691896258 2.0944
-  position 10.543026461972186 -1.645662958375607 34.726949028460766
+  position 5.728018081586534 -0.06471163724341696 38.2221431411917
   near 0.2
   follow "Mavic 2 PRO"
   followSmoothness 0.2
@@ -33,7 +33,36 @@ TexturedBackgroundLight {
 Mavic2Pro {
   translation 0 0 0.1
   rotation 2.9595424017543272e-05 -0.9999999995613612 1.1782927695336017e-06 0.0697052283504933
-  controller "<extern>"
+  controller "uav_controller"
+  bodySlot [
+    Radar {
+      minRange 0
+      maxRange 10
+      horizontalFieldOfView 0.25
+    }
+    Receiver {
+      channel 1
+      baudRate 256
+    }
+    Emitter {
+      range 100
+      channel 1
+      baudRate 256
+    }
+  ]
+  cameraSlot [
+    Camera {
+      width 400
+      height 240
+      near 0.2
+    }
+  ]
+}
+Mavic2Pro {
+  translation -3.07195 -3.21301e-07 0.118876
+  rotation 2.9595424017543272e-05 -0.9999999995613612 1.1782927695336017e-06 0.0697052283504933
+  name "Mavic 2 PRO(1)"
+  controller "uav_controller"
   bodySlot [
     Radar {
       minRange 0
