@@ -120,7 +120,6 @@ void run() {
     //if (states_are_equal(uav.fds->start, uav.fds->end)) {
     if (n == wps_num) {
       printf("Goal reached!\n");
-      uav.state = END;
     }
   }
   free(wps_list);
