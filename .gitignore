@@ -52,6 +52,8 @@ Mkfile.old
 dkms.conf
 
 uav_debug.txt
+core.*
+buid/
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
