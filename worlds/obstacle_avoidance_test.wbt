@@ -20,7 +20,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation -0.5773502691896258 0.5773502691896258 0.5773502691896258 2.0944
-  position 5.728018081586534 -0.06471163724341696 38.2221431411917
+  position 3.988459517009025 -0.4067081951249196 22.348476031534876
   near 0.2
   follow "Mavic 2 PRO"
   followSmoothness 0.2
@@ -31,7 +31,7 @@ TexturedBackground {
 TexturedBackgroundLight {
 }
 Mavic2Pro {
-  translation 2.1398e-07 -1.39 0.0999999
+  translation 0 -2 0.1
   rotation 2.9595424017543272e-05 -0.9999999995613612 1.1782927695336017e-06 0.0697052283504933
   controller "uav_controller"
   bodySlot [
@@ -59,7 +59,7 @@ Mavic2Pro {
   ]
 }
 Mavic2Pro {
-  translation 0.1 1.06 0.2
+  translation 0 1 0.1
   rotation 2.9595424017543272e-05 -0.9999999995613612 1.1782927695336017e-06 0.0697052283504933
   name "Mavic 2 PRO(3)"
   controller "uav_controller"
@@ -88,7 +88,7 @@ Mavic2Pro {
   ]
 }
 Mavic2Pro {
-  translation -2.52333 -1.39 0.157183
+  translation -3 -2 0.157183
   rotation 2.9595424017543272e-05 -0.9999999995613612 1.1782927695336017e-06 0.0697052283504933
   name "Mavic 2 PRO(1)"
   controller "uav_controller"
@@ -117,7 +117,7 @@ Mavic2Pro {
   ]
 }
 Mavic2Pro {
-  translation -2.42333 0.97 0.257183
+  translation -3 1 0.257183
   rotation 2.9595424017543272e-05 -0.9999999995613612 1.1782927695336017e-06 0.0697052283504933
   name "Mavic 2 PRO(2)"
   controller "uav_controller"

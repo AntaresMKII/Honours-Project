@@ -14,7 +14,7 @@
 #include "includes/fds.h"
 #include "../util/includes/util.h"
 
-#define DEBUG
+//#define DEBUG
 
 #define CLAMP(val, min, max) ((val) < (min) ? (min) : ((val) > (max) ? (max) : (val)))
 
@@ -111,6 +111,8 @@ Vec3d* cm_detect_obstacles(Uav *uav, int *num) {
 void cm_followers_path(Uav *uav, Vec3d *wps, int wps_num) {
     Vec3d prev_wp = uav->fds->start->v;
     double angle = 0;
+    Cell **cells;
+    int num_cells = 0;
 
     for (int i = 0; i < uav->f_num; i++) {
         uav->followers[i].wps = (Vec3d*) malloc(sizeof(Vec3d) * wps_num);

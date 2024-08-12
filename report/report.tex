@@ -1,3 +1,6 @@
+% report.tex
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Academic Title Page
 % LaTeX Template
@@ -601,6 +604,79 @@ set of coordinates that are points on the shortest path in order.
 	\end{algorithmic}
 \end{algorithm}
 
+\subsection{Path Extraction}
+
+The last step in the obstacle avoidance is to extract the path the UAVs will fly from the map. 
+Since we are using Field D*, to extract the path we begin at the start node and iteratively 
+compute the boundary point to move to next \autocite{DF06}. We compute such point depending on
+the g-value of the two consecutive neighbors of the current node, $s$. Given $f = g(s_1) - g(s_2)$,
+where $s_1$ and $s_2$ are consecutive neighbors of $s$, we have three different cases as
+shown in \autocite{DF06}:
+
+\begin{enumerate}
+	\item If $f \le 0$ then $s_1$ is the least expensive boundary point to move to next. 
+	\item If $f > b$, where $b$ is the cost of the cell with vertices nodes $s$ ans $s_1$, then
+		the least expensive path involves moving for a certain distance $x$ and then moving
+		straight to node $s_2$. The value of $x$ can be found by interpolation using Eq. (\ref{eq:pe-x})
+		using the cost of the cell containing $s$, $s_1$ and $s_2$, as $c$.
+		\begin{equation}
+			x = 1 - \mathrm{min}\left(\frac{b}{c^2 - b^2},1\right)
+			\label{eq:pe-x}
+		\end{equation}
+	\item Otherwise, the least expensive path is a direct path to some point $s_y$ located on the 
+		$s_1s_2$ edge at a certain distance $y$ from $s_1$. Similarly to the previous case,
+		the value of $y$ can be found through interpolation using Eq. (\ref{eq:pe-y}).
+		\begin{equation}
+			y = \mathrm{min}\left(\frac{f}{c^2 - f^2},1\right)
+			\label{eq:pe-y}
+		\end{equation}
+\end{enumerate}
+
+Due to limitations in the UAV precision in its movements, we decided to alter case 2 slightly by
+not computing the distance $x$ and simply directing the UAV to fly straight to $s_2$ through the 
+cell. 
+
+Once a waypoint has been identified we continue the computation by choosing the node with lowest
+g-value between $s_1$ and $s_2$, and iterate until the current state is equal to the goal state. 
+Algorithm \ref{alg:pe} is the complete path extraction procedure used in the project.
+
+% \usepackage{algorithm,algorithmicx,algpseudocode}
+\begin{algorithm}
+	\floatname{algorithm}{Algorithm}
+	\algrenewcommand\algorithmicrequire{\textbf{Input: }}
+	\algrenewcommand\algorithmicensure{\textbf{Output: }}
+	\caption{Path extraction algorithm for Field D*}\label{alg:pe}
+	\begin{algorithmic}[1]
+		\Require $M$,$s_{start}$,$s_{goal}$
+		\Ensure $W$
+		\Function{ExtractPath}{$M$,$s_{start}$,$s_{goal}$}
+		\State $s \gets s_{start}$ 
+		\While{$s \ne s_{goal}$}
+			\State $(c,d) \gets M.getCellsFromStates(s,s_1(s),s_2(s))$
+			\State $f \gets g(s_1(s)) - g(s_2(s))$ 
+			\If{$f \le 0$}
+				\State $W.add(s_1(s))$ 
+			\ElsIf{$f > b$}
+				\State $W.add(s_2(s))$
+			\Else
+				\State $y \gets \mathrm{min}\left(\frac{f}{c^2 - f^2},1\right)$ 
+				\State $s_y \gets s_1(s) + y$
+				\State $W.add(s_y)$
+			\EndIf
+
+			\If{$g(s_1(s)) < g(s_2(s))$}
+			\State $s \gets s_1(s)$
+			\Else
+			\State $s \gets s_2(s)$
+			\EndIf
+		\EndWhile
+		\State \textbf{return} $W$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+\newpage
+
 \section{Pattern Formation}
 
 The central aspect of this project is pattern formation, which we already
@@ -678,6 +754,36 @@ as shown in Eq. (\ref{eq:rot-mat}).
 
 Once the formation is rotated it is then translated with respect of the leader waypoint.
 
+However, this solution works only if the robots are restricted to specific headings, which
+we found that this is not the case in our project. The use of interpolation in path planning
+means that $\theta$ can be of any value. Thus, to make the formation more accurate we decided
+to take a more proactive approach in computing the value of the angle. As pointed above, $\theta$ 
+is the angle between the UAV direction and the x-axis, so it can be computed with ease.
+Let $u$ and $v$ be the current and next waypoint respectively, then 
+$\hat{w} = \begin{bmatrix} v_x - u_x \\ v_y - u_y \end{bmatrix}$ is the distance vector between
+$u$ and $v$ and has magnitude $\parallel \hat{w} \parallel = \sqrt{(v_x - u_x)^2 + (v_y - u_y)^2}$.
+Using a vector parallel to the x-axis $\hat{x}$ we can compute the dot product of these two vectors
+using Eq. (\ref{eq:dot-wx}), which is arranged with respect of $\theta$ as in Eq. (\ref{eq:theta-wx}).
+
+\begin{equation}
+	\hat{w} . \hat{x} = \parallel \hat{w} \parallel \parallel \hat{x} \parallel \cos \theta = \hat{x}_x \hat{w}_x + \hat{x}_y \hat{w}_y
+	\label{eq:dot-wx}
+\end{equation}
+
+\begin{equation}
+	\theta = \arccos \left(\frac{\hat{x}_x \hat{w}_x + \hat{x}_y \hat{w}_y}{\parallel \hat{w} \parallel \parallel \hat{x} \parallel}\right)
+	\label{eq:theta-wx}
+\end{equation}
+
+Replacing in the components of $\hat{x}$ and $\hat{w}$ we get Eq. (\ref{eq:theta-new}). 
+
+\begin{equation}
+	\theta = \arccos \left(\frac{v_x - u_x}{\sqrt{(v_x - u_x)^2 + (v_y - u_y)^2}}\right)
+	\label{eq:theta-new}
+\end{equation}
+
+After this step we simply rotate and translate using $\theta$ and $u$. This method is more advantageous than
+the one we explained above as it is not limited to a finite predefined amounts of headings.
 
 \chapter{Program Structure and Inter-UAV communication}
 

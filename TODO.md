@@ -7,4 +7,4 @@
 - [x] Leader Election
 - [x] Communication Protocol
 - [ ] UAV Separation
-- [ ] Formation Flight
+- [x] Formation Flight
