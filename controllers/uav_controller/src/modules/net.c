@@ -102,11 +102,7 @@ void net_send_wp(Uav *uav, int curr_wp) {
         if (uav->followers[i].wp_num == curr_wp) {
             continue;
         }
-        else if (uav->followers[i].wp_num > curr_wp) {
-            curr_wp = uav->followers[i].wp_num;
-        }
-
-
+        
         Message m;
         m.head.s_id = uav->id;
         m.head.r_id = uav->followers[i].id;

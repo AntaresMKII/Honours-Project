@@ -31,7 +31,7 @@ TexturedBackground {
 TexturedBackgroundLight {
 }
 Mavic2Pro {
-  translation 0 0 0.1
+  translation 2.1398e-07 -1.39 0.0999999
   rotation 2.9595424017543272e-05 -0.9999999995613612 1.1782927695336017e-06 0.0697052283504933
   controller "uav_controller"
   bodySlot [
@@ -59,9 +59,67 @@ Mavic2Pro {
   ]
 }
 Mavic2Pro {
-  translation -3.07195 -3.21301e-07 0.118876
+  translation 0.1 1.06 0.2
+  rotation 2.9595424017543272e-05 -0.9999999995613612 1.1782927695336017e-06 0.0697052283504933
+  name "Mavic 2 PRO(3)"
+  controller "uav_controller"
+  bodySlot [
+    Radar {
+      minRange 0
+      maxRange 10
+      horizontalFieldOfView 0.25
+    }
+    Receiver {
+      channel 1
+      baudRate 256
+    }
+    Emitter {
+      range 100
+      channel 1
+      baudRate 256
+    }
+  ]
+  cameraSlot [
+    Camera {
+      width 400
+      height 240
+      near 0.2
+    }
+  ]
+}
+Mavic2Pro {
+  translation -2.52333 -1.39 0.157183
   rotation 2.9595424017543272e-05 -0.9999999995613612 1.1782927695336017e-06 0.0697052283504933
   name "Mavic 2 PRO(1)"
+  controller "uav_controller"
+  bodySlot [
+    Radar {
+      minRange 0
+      maxRange 10
+      horizontalFieldOfView 0.25
+    }
+    Receiver {
+      channel 1
+      baudRate 256
+    }
+    Emitter {
+      range 100
+      channel 1
+      baudRate 256
+    }
+  ]
+  cameraSlot [
+    Camera {
+      width 400
+      height 240
+      near 0.2
+    }
+  ]
+}
+Mavic2Pro {
+  translation -2.42333 0.97 0.257183
+  rotation 2.9595424017543272e-05 -0.9999999995613612 1.1782927695336017e-06 0.0697052283504933
+  name "Mavic 2 PRO(2)"
   controller "uav_controller"
   bodySlot [
     Radar {
@@ -126,7 +184,7 @@ Solid {
   radarCrossSection 100
 }
 Solid {
-  translation 10 -3.38 2.5
+  translation 100 -3.38 2.5
   children [
     Shape {
       appearance PBRAppearance {
@@ -143,7 +201,7 @@ Solid {
   radarCrossSection 100
 }
 Solid {
-  translation 4 0 2.5
+  translation 40 0 2.5
   children [
     Shape {
       appearance PBRAppearance {
@@ -160,7 +218,7 @@ Solid {
   radarCrossSection 10
 }
 Solid {
-  translation 16 0 2.5
+  translation 160 0 2.5
   children [
     Shape {
       appearance PBRAppearance {

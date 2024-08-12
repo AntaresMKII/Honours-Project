@@ -73,9 +73,6 @@ int init() {
   }
   
   set_start_and_goal(&uav);
-
-  add_obst(uav.fds->m);
-  
   return timestep;
 }
 /*
@@ -119,8 +116,8 @@ void run() {
   if (wp_reached) {
     //s = map_get_state(uav.fds->m, wps_list[0]);
     //uav.fds->start = s;
-    printf("Waypoint reached!\n");
     n++;
+    printf("Waypoint reached! Next wp: (%f, %f)\n", wps_list[n].x, wps_list[n].y);
     //if (states_are_equal(uav.fds->start, uav.fds->end)) {
     if (n == wps_num) {
       printf("Goal reached!\n");

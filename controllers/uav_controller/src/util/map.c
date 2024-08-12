@@ -378,6 +378,64 @@ State* map_get_state(Map *m, Vec3d v) {
 }
 
 Cell** map_set_cells_cost(Map *m, Vec3d v, double cost, int *num_cells) {
+    Cell **cells, **changed;
+    int n = 0, acc = 0, k = 0;
+    Vec3d u;
+
+    cells = map_get_cells(m, v, &n);
+
+    changed = (Cell**) malloc(sizeof(Cell*));
+    if (changed == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (cost > cells[i]->c) {
+            cells[i]->c = cost;
+            k += 1;
+            changed = (Cell**) realloc(changed, sizeof(changed) * k);
+            if (changed == NULL) {
+                exit(EXIT_FAILURE);
+            }
+
+            changed[k - 1] = cells[i];
+        }
+    }
+
+    n = k;
+
+    for (int i = 0; i < n * 4; i++) {
+        switch (i % 4) {
+        case 0:
+            u = changed[i/4]->s0->v;
+            break;
+        case 1:
+            u = changed[i/4]->s1->v;
+            break;
+        case 2:
+            u = changed[i/4]->s2->v;
+            break;
+        default:
+            u = changed[i/4]->s3->v;
+            break;
+        }
+        cells = map_set_cells_cost(m, u, cost / 2.0f, &k);
+        changed = (Cell**) realloc(changed, sizeof(Cell*) * (n + acc + k));
+        if (changed == NULL) {
+            exit(EXIT_FAILURE);
+        }
+        for (int j = 0; j < k; j++) {
+            changed[n+acc+j] = cells[j];
+        }
+        acc += k;
+    }
+
+    *num_cells = n + acc;
+
+    return changed;
+}
+
+Cell** map_set_cells_cost_old(Map *m, Vec3d v, double cost, int *num_cells) {
     Cell** cells, **changed;
     Vec3d u;
     int num = 0;
