@@ -1,0 +1,62 @@
+\doxysubsection{controllers/uav\+\_\+controller/src/modules/includes/net.h File Reference}
+\hypertarget{net_8h}{}\label{net_8h}\index{controllers/uav\_controller/src/modules/includes/net.h@{controllers/uav\_controller/src/modules/includes/net.h}}
+\doxysubsubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+union \mbox{\hyperlink{unionMHead}{MHead}}
+\item 
+union \mbox{\hyperlink{unionMData}{MData}}
+\item 
+union \mbox{\hyperlink{unionMessage}{Message}}
+\end{DoxyCompactItemize}
+\doxysubsubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{net_8h_a2bb7a68d2f200fa53636c1fd70f2e63c}\label{net_8h_a2bb7a68d2f200fa53636c1fd70f2e63c} 
+\#define {\bfseries MH\+\_\+\+SIZE}~3
+\begin{DoxyCompactList}\small\item\em The size of the head of the message in bytes. \end{DoxyCompactList}\item 
+\Hypertarget{net_8h_a67a8b909e67ff01f352c9ee089207f5d}\label{net_8h_a67a8b909e67ff01f352c9ee089207f5d} 
+\#define {\bfseries MD\+\_\+\+SIZE}~sizeof(double) \texorpdfstring{$\ast$}{*} 2
+\begin{DoxyCompactList}\small\item\em The size of the data of the message in bytes. \end{DoxyCompactList}\item 
+\Hypertarget{net_8h_aafa04a66b5a25c9c3c72916936a62d57}\label{net_8h_aafa04a66b5a25c9c3c72916936a62d57} 
+\#define {\bfseries M\+\_\+\+SIZE}~\mbox{\hyperlink{net_8h_a2bb7a68d2f200fa53636c1fd70f2e63c}{MH\+\_\+\+SIZE}} + \mbox{\hyperlink{net_8h_a67a8b909e67ff01f352c9ee089207f5d}{MD\+\_\+\+SIZE}} + 5
+\begin{DoxyCompactList}\small\item\em The full size of a message with 5 bytes of padding after the head. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{net_8h_afb4b79601b9f07458ff37d2c507b3e6d}{MType}} \{ \mbox{\hyperlink{net_8h_afb4b79601b9f07458ff37d2c507b3e6da001479a58fb44c39a29b20d565081a68}{ID}}
+, \mbox{\hyperlink{net_8h_afb4b79601b9f07458ff37d2c507b3e6da91743bc3932693c4b8a6ca984e8a8437}{POS}}
+, \mbox{\hyperlink{net_8h_afb4b79601b9f07458ff37d2c507b3e6da21de7f48bf332bbbc158126e991b7a90}{WP}}
+, \mbox{\hyperlink{net_8h_afb4b79601b9f07458ff37d2c507b3e6daf5fa4bf4f5a7902efc5e057be1c0a0d1}{NEXT\+\_\+\+WP}}
+ \}
+\end{DoxyCompactItemize}
+
+
+\doxysubsubsection{Detailed Description}
+This is the header file for most networking functionalities. It contains the message structure. 
+
+\doxysubsubsection{Enumeration Type Documentation}
+\Hypertarget{net_8h_afb4b79601b9f07458ff37d2c507b3e6d}\label{net_8h_afb4b79601b9f07458ff37d2c507b3e6d} 
+\index{net.h@{net.h}!MType@{MType}}
+\index{MType@{MType}!net.h@{net.h}}
+\doxyparagraph{\texorpdfstring{MType}{MType}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{net_8h_afb4b79601b9f07458ff37d2c507b3e6d}{MType}}}
+
+The enum of the message type. Possible values are ID, POS, WP and NEXT\+\_\+\+WP \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ID@{ID}!net.h@{net.h}}\index{net.h@{net.h}!ID@{ID}}}\Hypertarget{net_8h_afb4b79601b9f07458ff37d2c507b3e6da001479a58fb44c39a29b20d565081a68}\label{net_8h_afb4b79601b9f07458ff37d2c507b3e6da001479a58fb44c39a29b20d565081a68} 
+ID&Used to send ids. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{POS@{POS}!net.h@{net.h}}\index{net.h@{net.h}!POS@{POS}}}\Hypertarget{net_8h_afb4b79601b9f07458ff37d2c507b3e6da91743bc3932693c4b8a6ca984e8a8437}\label{net_8h_afb4b79601b9f07458ff37d2c507b3e6da91743bc3932693c4b8a6ca984e8a8437} 
+POS&Used to share position. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{WP@{WP}!net.h@{net.h}}\index{net.h@{net.h}!WP@{WP}}}\Hypertarget{net_8h_afb4b79601b9f07458ff37d2c507b3e6da21de7f48bf332bbbc158126e991b7a90}\label{net_8h_afb4b79601b9f07458ff37d2c507b3e6da21de7f48bf332bbbc158126e991b7a90} 
+WP&Used for sending and receiving waypoints. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NEXT\_WP@{NEXT\_WP}!net.h@{net.h}}\index{net.h@{net.h}!NEXT\_WP@{NEXT\_WP}}}\Hypertarget{net_8h_afb4b79601b9f07458ff37d2c507b3e6daf5fa4bf4f5a7902efc5e057be1c0a0d1}\label{net_8h_afb4b79601b9f07458ff37d2c507b3e6daf5fa4bf4f5a7902efc5e057be1c0a0d1} 
+NEXT\+\_\+\+WP&Used to request next waypoint. \\
+\hline
+
+\end{DoxyEnumFields}

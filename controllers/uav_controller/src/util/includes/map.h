@@ -1,8 +1,7 @@
-/** \file map.h
+/** 
+ * \file map.h
  *
- * Header file for the map
- *
- * Author: Yannick Abouem
+ * Map functionality
  */
 
 #include "vec.h"
@@ -41,14 +40,18 @@ Tuple* map_get_connbrs(Map *m, State *s, int *num_nbrs);
 * adjacent to all three states or NULL if such cell does not exits.
 */
 Cell** map_get_cells_from_states(Map *m, State *s1, State *s2, State *s3, int *num_cells);
+
+/// Returns a state given its position as a vector
 State* map_get_state(Map *m, Vec3d v);
 
+/// Sets the cost of one or more cells given a vector v and the cost. Sets the number of returned cells into num_cells
 Cell** map_set_cells_cost(Map *m, Vec3d v, double cost, int *num_cells);
 
 static inline int states_are_equal(State *s1, State *s2) {
     return s1->v.x == s2->v.x && s1->v.y == s2->v.y;
 }
 
+/// Cleanup function
 void map_cleanup(Map *m);
 
 #endif // !MAP_H

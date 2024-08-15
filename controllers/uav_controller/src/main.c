@@ -1,3 +1,12 @@
+/**
+ * \file main.c
+ *
+ * \brief Main file of the controller
+ *
+ * This file contains the initialization, main loop
+ * and clean up functions.
+ *
+ */
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -8,12 +17,18 @@
 #include "util/includes/util.h"
 #include "util/includes/vec.h"
 
-#define GOAL_X 2.0f
+#define GOAL_X 20.0f
 #define GOAL_Y 0.0f
 #define TARGT_ALT 2.0f
 
-Uav uav;
+Uav uav; //< The global variable containing all data of the UAV
 
+/**
+ * This function randomly generates
+ * an id give the initial staring
+ * position of the UAV. It uses the 
+ * position as seeds.
+ */
 void set_id(Uav *uav, Vec3d start) {
   srand(start.x);
   int r = (rand() % 100) + 1;
@@ -25,6 +40,13 @@ void set_id(Uav *uav, Vec3d start) {
   printf("Assigned id: %d to uav at pos (%f,%f)\n", uav->id, start.x, start.y);
 }
 
+/**
+ * This funtion gets the GPS position of the UAV and 
+ * creates two vector, goal and start, based on 
+ * predefined value and the GPS position.
+ * The initial position is rounded to the nearest
+ * integer.
+ */
 void set_start_and_goal(Uav *uav) {
   const double *d_start = uav_get_gps_pos(uav);
   
@@ -54,6 +76,13 @@ void set_start_and_goal(Uav *uav) {
   set_id(uav, start);
 }
 
+/**
+ * This function initializes the program.
+ * First it initializes the webots controller,
+ * then it initializes debug logging, and the 
+ * UAV itself. It also call a function to 
+ * set the start goal.
+ */
 int init() {
   int timestep;
   
@@ -74,32 +103,16 @@ int init() {
   set_start_and_goal(&uav);
   return timestep;
 }
-/*
-void run() {
 
-  static int curr_wp = 0;
-
-  Vec3d *wps_list;
-  State* s;
-  int wps_num = -1;
-  int wp_reached = 0;
-
-  wps_list = cm_plan_path(&uav, &wps_num);
-  cm_followers_path(&uav, wps_list, wps_num);
-  net_send_wp(&uav, curr_wp);
-  wp_reached = cm_run(&uav, wps_list[curr_wp], TARGT_ALT, time);
-  if (wp_reached) {
-    s = map_get_state(uav.fds->m, wps_list[curr_wp]);
-    s->visited = 1;
-    curr_wp++;
-    printf("%d : Next Waypoint: (%f,%f)\n", uav.id, wps_list[curr_wp].x, wps_list[curr_wp].y);
-    if (curr_wp == wps_num)
-      uav.state = END;
-  }
-}
-*/
+/**
+ * This function is the backbone of the program.
+ * It is the main function of the leader UAV
+ * and it is responisble for planning the path of
+ * the leader and followers, and coordinate the movements.
+ */
 void run() {
   const double time = wb_robot_get_time();
+  int timestep = (int)wb_robot_get_basic_time_step();
 
   static int n = 0;
 
@@ -108,9 +121,14 @@ void run() {
   int wps_num = 0;
   int wp_reached = 0;
 
+  double alt = uav_get_gps_altitude(&uav);
+  
+  
   wps_list = cm_plan_path(&uav, &wps_num);
   cm_followers_path(&uav, wps_list, wps_num);
-  net_send_wp(&uav, n);
+  if (alt + 1.75f >= TARGT_ALT) {
+    net_send_wp(&uav, n);
+  }
   wp_reached = cm_run(&uav, wps_list[n], TARGT_ALT, time);
   if (wp_reached) {
     //s = map_get_state(uav.fds->m, wps_list[0]);
@@ -125,11 +143,19 @@ void run() {
   free(wps_list);
 }
 
+/**
+ * This functions makes the followers wait until a message is received
+ */
 void follower_wait() {
   const double time = wb_robot_get_time();
   cm_run(&uav, uav.fds->start->v, TARGT_ALT, time); 
 }
 
+/**
+  * The main function of the followers.
+  * It handles the received waypoints and
+  * coordinates the movements.
+  */
 void follower_run() {
   const double time = wb_robot_get_time();
 
@@ -149,6 +175,11 @@ void follower_run() {
   }
 }
 
+/**
+  * The main loop function proper.
+  * Depending on the values of the state of the UAV
+  * different functions are called.
+  */
 void main_loop(int timestep) {
     
   printf("Running main loop\n");
@@ -162,7 +193,7 @@ void main_loop(int timestep) {
         break;
       case RUN:
         run();
-        uav.state = END;
+        //uav.state = END;
         break;
       case F_WAIT:
         follower_wait();
@@ -175,6 +206,9 @@ void main_loop(int timestep) {
   };
 }
 
+/**
+  * The clean up function
+  */
 void clean_up() {
   printf("Cleaninig up\n");
   uav_cleanup(&uav);
@@ -182,6 +216,9 @@ void clean_up() {
   cleanup_debug_file();
 }
 
+/**
+  * The main function
+  */
 int main(int argc, char *argv[]) {
   int timestep;
   timestep = init();

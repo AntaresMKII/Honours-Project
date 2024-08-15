@@ -16,7 +16,7 @@ void net_elect_leader(Uav *uav, int timestep) {
 
     uav_send_msg(uav, m);
 
-    uav_wait(timestep, 5.0f);
+    uav_wait(timestep, 1.0f);
 
     n = uav_get_msg_num(uav);
 
@@ -44,6 +44,7 @@ void net_share_init_pos(Uav *uav, int timestep) {
         m.data.y = init_pos.y;
 
         uav_send_msg(uav, m);
+        uav_wait(timestep, 1.0f);
     }
     else {
         Message m;

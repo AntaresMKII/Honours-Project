@@ -1,0 +1,236 @@
+\doxysubsection{controllers/uav\+\_\+controller/src/includes/uav.h File Reference}
+\hypertarget{uav_8h}{}\label{uav_8h}\index{controllers/uav\_controller/src/includes/uav.h@{controllers/uav\_controller/src/includes/uav.h}}
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$webots/robot.\+h$>$}\newline
+{\ttfamily \#include $<$webots/compass.\+h$>$}\newline
+{\ttfamily \#include $<$webots/gps.\+h$>$}\newline
+{\ttfamily \#include $<$webots/gyro.\+h$>$}\newline
+{\ttfamily \#include $<$webots/inertial\+\_\+unit.\+h$>$}\newline
+{\ttfamily \#include $<$webots/keyboard.\+h$>$}\newline
+{\ttfamily \#include $<$webots/led.\+h$>$}\newline
+{\ttfamily \#include $<$webots/motor.\+h$>$}\newline
+{\ttfamily \#include $<$webots/camera.\+h$>$}\newline
+{\ttfamily \#include $<$webots/emitter.\+h$>$}\newline
+{\ttfamily \#include $<$webots/receiver.\+h$>$}\newline
+{\ttfamily \#include $<$webots/radar.\+h$>$}\newline
+{\ttfamily \#include \"{}../util/includes/util.\+h\"{}}\newline
+{\ttfamily \#include \"{}../modules/includes/comm\+\_\+module.\+h\"{}}\newline
+{\ttfamily \#include \"{}../modules/includes/fds.\+h\"{}}\newline
+{\ttfamily \#include \"{}../modules/includes/net.\+h\"{}}\newline
+\doxysubsubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structPosition}{Position}}
+\begin{DoxyCompactList}\small\item\em Used for storing position and attitude informations. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structFollower}{Follower}}
+\begin{DoxyCompactList}\small\item\em The \doxylink{structFollower}{Follower} structure. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structuav}{uav}}
+\begin{DoxyCompactList}\small\item\em The UAV structure containing the UAV data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{uav_8h_a127493eee6eda05708a14d7d552f0d05}{ROLL\+\_\+P}}~50.\+0
+\begin{DoxyCompactList}\small\item\em libc includes \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a999c3aab8b53dbd2db52cc49e5011576}\label{uav_8h_a999c3aab8b53dbd2db52cc49e5011576} 
+\#define {\bfseries PITCH\+\_\+P}~30.\+0
+\begin{DoxyCompactList}\small\item\em Pitch constant for PID. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_aa35dca2a49864400a773e5c8f99af3a2}\label{uav_8h_aa35dca2a49864400a773e5c8f99af3a2} 
+\#define {\bfseries VERTICAL\+\_\+P}~3.\+0
+\begin{DoxyCompactList}\small\item\em Vertical constant for PID. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_aa038cd23187774a4ed37f8a715ba818b}\label{uav_8h_aa038cd23187774a4ed37f8a715ba818b} 
+\#define {\bfseries VERTICAL\+\_\+T}~68.\+5
+\begin{DoxyCompactList}\small\item\em Vertical constant for PID. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_aeb4538730fc7af94ea645fa95d86f79a}\label{uav_8h_aeb4538730fc7af94ea645fa95d86f79a} 
+\#define {\bfseries VERTICAL\+\_\+O}~0.\+6
+\begin{DoxyCompactList}\small\item\em Vertical constant for PID. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a033e7a07e46a70e727c2733919f82bea}\label{uav_8h_a033e7a07e46a70e727c2733919f82bea} 
+\#define {\bfseries TARGET\+\_\+\+PRECISION}~0.\+5
+\begin{DoxyCompactList}\small\item\em This constant determines how close the UAV must be to the waypoint for it to be reaced. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_af021153094e124368e3959411d6664bf}\label{uav_8h_af021153094e124368e3959411d6664bf} 
+\#define {\bfseries MAX\+\_\+\+YAW\+\_\+\+DIST}~0.\+4
+\begin{DoxyCompactList}\small\item\em Maximum Yaw Displacement. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a598f3d34aadf27b6b9c01da8566498e3}\label{uav_8h_a598f3d34aadf27b6b9c01da8566498e3} 
+\#define {\bfseries MAX\+\_\+\+PITCH\+\_\+\+DIST}~-\/1
+\begin{DoxyCompactList}\small\item\em Maximum Pitch Displacement. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{uav_8h_aa78012e27ba983f9620fe4ff4bf1d616}\label{uav_8h_aa78012e27ba983f9620fe4ff4bf1d616} 
+typedef struct \mbox{\hyperlink{structPosition}{Position}} {\bfseries Position}
+\begin{DoxyCompactList}\small\item\em Used for storing position and attitude informations. \end{DoxyCompactList}\item 
+typedef struct \mbox{\hyperlink{structuav}{uav}} \mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}}
+\begin{DoxyCompactList}\small\item\em The UAV structure containing the UAV data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149}{Uav\+\_\+\+State}} \{ \newline
+\mbox{\hyperlink{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149a0cb1b2c6a7db1f1084886c98909a3f36}{INIT}}
+, \mbox{\hyperlink{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149a439c688a4e9ed31638d5922a50680a8e}{RUN}}
+, \mbox{\hyperlink{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149adc6f24fd6915a3f2786a1b7045406924}{END}}
+, \mbox{\hyperlink{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149acf85e2dd2626f7531ec4fb5a0178c5df}{F\+\_\+\+RUN}}
+, \newline
+\mbox{\hyperlink{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149ace538465abc19cb9fc4fa3ecc0653155}{F\+\_\+\+WAIT}}
+ \}
+\begin{DoxyCompactList}\small\item\em The Possible states of the UAV. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{uav_8h_a466b92ee95b864b7c60db8d9a03d3f8c}\label{uav_8h_a466b92ee95b864b7c60db8d9a03d3f8c} 
+void {\bfseries uav\+\_\+init} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}}, int timestep)
+\begin{DoxyCompactList}\small\item\em UAV initialization function. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a4f87dc360499a584e4a8fedececaef9e}\label{uav_8h_a4f87dc360499a584e4a8fedececaef9e} 
+double {\bfseries uav\+\_\+get\+\_\+roll} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}})
+\begin{DoxyCompactList}\small\item\em Returns the current roll. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_ab7f593cc50646a5bbcd5e0e76021465b}\label{uav_8h_ab7f593cc50646a5bbcd5e0e76021465b} 
+double {\bfseries uav\+\_\+get\+\_\+pitch} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}})
+\begin{DoxyCompactList}\small\item\em Returns the current pitch. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_ab0f58e1db6e2553e057acfb550d29c7a}\label{uav_8h_ab0f58e1db6e2553e057acfb550d29c7a} 
+double {\bfseries uav\+\_\+get\+\_\+yaw} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}})
+\begin{DoxyCompactList}\small\item\em Returns the current yaw. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a2f57de2f21b1908a131a404f5c3b66c1}\label{uav_8h_a2f57de2f21b1908a131a404f5c3b66c1} 
+double {\bfseries uav\+\_\+get\+\_\+gps\+\_\+altitude} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}})
+\begin{DoxyCompactList}\small\item\em Returns the current registered altitude. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a66e589a077eb4300678f7821dbb485c8}\label{uav_8h_a66e589a077eb4300678f7821dbb485c8} 
+const double \texorpdfstring{$\ast$}{*} {\bfseries uav\+\_\+get\+\_\+gps\+\_\+pos} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}})
+\begin{DoxyCompactList}\small\item\em Returns the current gps position. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_aa4a780622522599467e78f3ba4f667ba}\label{uav_8h_aa4a780622522599467e78f3ba4f667ba} 
+double {\bfseries uav\+\_\+get\+\_\+roll\+\_\+velocity} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}})
+\begin{DoxyCompactList}\small\item\em Returns the roll velocity. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_ab673db29b16b96d6d61a3e937727409e}\label{uav_8h_ab673db29b16b96d6d61a3e937727409e} 
+double {\bfseries uav\+\_\+get\+\_\+pitch\+\_\+velocity} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}})
+\begin{DoxyCompactList}\small\item\em Returns the pitch velocity. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a86976f9cddfbf601b4d4462201c388a6}\label{uav_8h_a86976f9cddfbf601b4d4462201c388a6} 
+double {\bfseries uav\+\_\+get\+\_\+yaw\+\_\+velocity} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}})
+\begin{DoxyCompactList}\small\item\em Returns the yaw velocity. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a1c476b21f20a173b973b9ff79abd14ef}\label{uav_8h_a1c476b21f20a173b973b9ff79abd14ef} 
+double {\bfseries uav\+\_\+get\+\_\+heading} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}})
+\begin{DoxyCompactList}\small\item\em Returns the current heading in degrees. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a717d8ce03bf177c2773db4785dfc8d97}\label{uav_8h_a717d8ce03bf177c2773db4785dfc8d97} 
+int {\bfseries uav\+\_\+get\+\_\+radar\+\_\+targets\+\_\+num} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}})
+\begin{DoxyCompactList}\small\item\em Returns the number of trargets. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a0ff14f04e32aa291682ae53737b0fadb}\label{uav_8h_a0ff14f04e32aa291682ae53737b0fadb} 
+const Wb\+Radar\+Target \texorpdfstring{$\ast$}{*} {\bfseries uav\+\_\+get\+\_\+radar\+\_\+targets} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}})
+\begin{DoxyCompactList}\small\item\em Returns an array of tragets. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a98a549b193b8839691e653ecc43d1d15}\label{uav_8h_a98a549b193b8839691e653ecc43d1d15} 
+int {\bfseries uav\+\_\+get\+\_\+obstacles} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}}, Wb\+Radar\+Target \texorpdfstring{$\ast$}{*}targets)
+\begin{DoxyCompactList}\small\item\em Given an empty array of targets, this function will return the numebr of targets and the targets themselves. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_abd85769b4b75f46b6fb4cb2692bf1255}\label{uav_8h_abd85769b4b75f46b6fb4cb2692bf1255} 
+void {\bfseries uav\+\_\+set\+\_\+position} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}}, \mbox{\hyperlink{structPosition}{Position}} position)
+\begin{DoxyCompactList}\small\item\em Sets the position of the UAV. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a588f3eb4559334dc387b9de1dfaf0123}\label{uav_8h_a588f3eb4559334dc387b9de1dfaf0123} 
+void {\bfseries uav\+\_\+actuate\+\_\+motors} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}}, double roll, double pitch, double yaw, double altitude)
+\begin{DoxyCompactList}\small\item\em Actuates the motors of the UAV. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_af226d8a3f53b24e31aa3a48f16a2d36b}\label{uav_8h_af226d8a3f53b24e31aa3a48f16a2d36b} 
+void {\bfseries uav\+\_\+wait} (int timestep, double x)
+\begin{DoxyCompactList}\small\item\em Waits for x seconds. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a5e1e32d9621de400f2feddb805ffb357}\label{uav_8h_a5e1e32d9621de400f2feddb805ffb357} 
+void {\bfseries uav\+\_\+cleanup} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}})
+\begin{DoxyCompactList}\small\item\em Cleanup function. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a1e84bc1ff0002178e39dc79d956d7be3}\label{uav_8h_a1e84bc1ff0002178e39dc79d956d7be3} 
+void {\bfseries uav\+\_\+send\+\_\+msg} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}}, const \mbox{\hyperlink{unionMessage}{Message}} m)
+\begin{DoxyCompactList}\small\item\em Send a message m. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_ad9a69bac029e8353dfdcb77bd95e347a}\label{uav_8h_ad9a69bac029e8353dfdcb77bd95e347a} 
+\mbox{\hyperlink{unionMessage}{Message}} {\bfseries uav\+\_\+receive\+\_\+msg} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}}, int \texorpdfstring{$\ast$}{*}queue\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Receive a message and get the number of messages in the queue. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_af99df76a1235128c9dc7e4f83be6b62a}\label{uav_8h_af99df76a1235128c9dc7e4f83be6b62a} 
+int {\bfseries uav\+\_\+get\+\_\+msg\+\_\+num} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}})
+\begin{DoxyCompactList}\small\item\em Returns the number of messages currently on the queue. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_aa9fd0f680df859f293241e185c7b4661}\label{uav_8h_aa9fd0f680df859f293241e185c7b4661} 
+int {\bfseries uav\+\_\+peek\+\_\+msg} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}})
+\begin{DoxyCompactList}\small\item\em Peek at next message but do not remove from queue. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_ae9639bbc91c9afd94ab702620f312bd4}\label{uav_8h_ae9639bbc91c9afd94ab702620f312bd4} 
+int {\bfseries cm\+\_\+run} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}}, \mbox{\hyperlink{unionVec3d}{Vec3d}} wp, double target\+\_\+alt, double time)
+\begin{DoxyCompactList}\small\item\em Runs the automated movement of the uav. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a2ad24b556549e6e5663ffefad3841d5b}\label{uav_8h_a2ad24b556549e6e5663ffefad3841d5b} 
+\mbox{\hyperlink{unionVec3d}{Vec3d}} \texorpdfstring{$\ast$}{*} {\bfseries cm\+\_\+detect\+\_\+obstacles} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}}, int \texorpdfstring{$\ast$}{*}num)
+\begin{DoxyCompactList}\small\item\em Detects the obstacles and returns the number and the position of the obstacles. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_aa65140401d45d54820bb0f9285be4ccb}\label{uav_8h_aa65140401d45d54820bb0f9285be4ccb} 
+\mbox{\hyperlink{unionVec3d}{Vec3d}} \texorpdfstring{$\ast$}{*} {\bfseries cm\+\_\+plan\+\_\+path} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}}, int \texorpdfstring{$\ast$}{*}wps\+\_\+num)
+\begin{DoxyCompactList}\small\item\em Plans the path using Filed D\texorpdfstring{$\ast$}{*}. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_ac29ff51c0bb87d4a9cfbfd896507cb52}\label{uav_8h_ac29ff51c0bb87d4a9cfbfd896507cb52} 
+void {\bfseries cm\+\_\+followers\+\_\+path} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}}, \mbox{\hyperlink{unionVec3d}{Vec3d}} \texorpdfstring{$\ast$}{*}wps, int wps\+\_\+num)
+\begin{DoxyCompactList}\small\item\em Plans the path of the followers. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a4816dcf08050acabc3c78b8ecbde4407}\label{uav_8h_a4816dcf08050acabc3c78b8ecbde4407} 
+void {\bfseries net\+\_\+elect\+\_\+leader} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}}, int timestep)
+\begin{DoxyCompactList}\small\item\em Leader election function. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a01c7fa22f2241abfffce03e8d41dea1c}\label{uav_8h_a01c7fa22f2241abfffce03e8d41dea1c} 
+void {\bfseries net\+\_\+share\+\_\+init\+\_\+pos} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}}, int timestep)
+\begin{DoxyCompactList}\small\item\em Sends inital position to leader. If the calling UAV is the leader then it will receive the followers psoitions. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a7e6be9f390e56ab143a9c28f7c5b5f78}\label{uav_8h_a7e6be9f390e56ab143a9c28f7c5b5f78} 
+void {\bfseries net\+\_\+send\+\_\+wp} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}}, int curr\+\_\+wp)
+\begin{DoxyCompactList}\small\item\em Send the current waypoint to the follower. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a4892b314fa1077717a071a534164209b}\label{uav_8h_a4892b314fa1077717a071a534164209b} 
+void {\bfseries net\+\_\+recieve\+\_\+wp} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}}, \mbox{\hyperlink{unionVec3d}{Vec3d}} \texorpdfstring{$\ast$}{*}wp)
+\begin{DoxyCompactList}\small\item\em Receive waypoint from leader. \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a9529203ce4614c896407fa02c2ef4f74}\label{uav_8h_a9529203ce4614c896407fa02c2ef4f74} 
+void {\bfseries net\+\_\+ask\+\_\+next\+\_\+wp} (\mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structuav}{uav}}, int curr\+\_\+wp)
+\begin{DoxyCompactList}\small\item\em Ask next waypoint from leader (unused) \end{DoxyCompactList}\item 
+\Hypertarget{uav_8h_a8407e3bb938c20ba6ade818007458566}\label{uav_8h_a8407e3bb938c20ba6ade818007458566} 
+void {\bfseries fds\+\_\+cleanup} (\mbox{\hyperlink{structFds}{Fds}} \texorpdfstring{$\ast$}{*}fds)
+\begin{DoxyCompactList}\small\item\em Cleanup fds structure. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsubsection{Detailed Description}
+This file contains most strucutres and function definition for the uav and the command module 
+
+\doxysubsubsection{Macro Definition Documentation}
+\Hypertarget{uav_8h_a127493eee6eda05708a14d7d552f0d05}\label{uav_8h_a127493eee6eda05708a14d7d552f0d05} 
+\index{uav.h@{uav.h}!ROLL\_P@{ROLL\_P}}
+\index{ROLL\_P@{ROLL\_P}!uav.h@{uav.h}}
+\doxyparagraph{\texorpdfstring{ROLL\_P}{ROLL\_P}}
+{\footnotesize\ttfamily \#define ROLL\+\_\+P~50.\+0}
+
+
+
+libc includes 
+
+webots robot includes webots devices includes local header files Roll costant for PID 
+
+\doxysubsubsection{Typedef Documentation}
+\Hypertarget{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}\label{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545} 
+\index{uav.h@{uav.h}!Uav@{Uav}}
+\index{Uav@{Uav}!uav.h@{uav.h}}
+\doxyparagraph{\texorpdfstring{Uav}{Uav}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structuav}{uav}} \mbox{\hyperlink{uav_8h_ad5913810cc5e4e9a6de5a7e53b7df545}{Uav}}}
+
+
+
+The UAV structure containing the UAV data. 
+
+This data structure contains all device tags to interface with the Webots robot. It also contains other varaibles needed in multiple functions 
+
+\doxysubsubsection{Enumeration Type Documentation}
+\Hypertarget{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149}\label{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149} 
+\index{uav.h@{uav.h}!Uav\_State@{Uav\_State}}
+\index{Uav\_State@{Uav\_State}!uav.h@{uav.h}}
+\doxyparagraph{\texorpdfstring{Uav\_State}{Uav\_State}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149}{Uav\+\_\+\+State}}}
+
+
+
+The Possible states of the UAV. 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{INIT@{INIT}!uav.h@{uav.h}}\index{uav.h@{uav.h}!INIT@{INIT}}}\Hypertarget{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149a0cb1b2c6a7db1f1084886c98909a3f36}\label{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149a0cb1b2c6a7db1f1084886c98909a3f36} 
+INIT&Set the UAV to intialization phase. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RUN@{RUN}!uav.h@{uav.h}}\index{uav.h@{uav.h}!RUN@{RUN}}}\Hypertarget{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149a439c688a4e9ed31638d5922a50680a8e}\label{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149a439c688a4e9ed31638d5922a50680a8e} 
+RUN&Set the UAV to run phase and declares the UAV as leader. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{END@{END}!uav.h@{uav.h}}\index{uav.h@{uav.h}!END@{END}}}\Hypertarget{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149adc6f24fd6915a3f2786a1b7045406924}\label{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149adc6f24fd6915a3f2786a1b7045406924} 
+END&Set the UAV to cleanup phase and terminate the program. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{F\_RUN@{F\_RUN}!uav.h@{uav.h}}\index{uav.h@{uav.h}!F\_RUN@{F\_RUN}}}\Hypertarget{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149acf85e2dd2626f7531ec4fb5a0178c5df}\label{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149acf85e2dd2626f7531ec4fb5a0178c5df} 
+F\+\_\+\+RUN&Set the UAV to run pahse as a follower. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{F\_WAIT@{F\_WAIT}!uav.h@{uav.h}}\index{uav.h@{uav.h}!F\_WAIT@{F\_WAIT}}}\Hypertarget{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149ace538465abc19cb9fc4fa3ecc0653155}\label{uav_8h_a73e7c41cebe78d2772e8e4c00cbea149ace538465abc19cb9fc4fa3ecc0653155} 
+F\+\_\+\+WAIT&Set the UAV to wait phase and wait for leader\textquotesingle{}s instructions. \\
+\hline
+
+\end{DoxyEnumFields}

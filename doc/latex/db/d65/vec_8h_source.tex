@@ -1,0 +1,43 @@
+\doxysubsection{vec.\+h}
+\hypertarget{vec_8h_source}{}\label{vec_8h_source}\index{controllers/uav\_controller/src/util/includes/vec.h@{controllers/uav\_controller/src/util/includes/vec.h}}
+\mbox{\hyperlink{vec_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#ifndef\ VEC\_H}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#define\ VEC\_H}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <math.h>}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00015\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{union\ }\mbox{\hyperlink{unionVec3d}{Vec3d}}\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ x;}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ y;}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ z;}
+\DoxyCodeLine{00020\ \ \ \ \ \};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ pitch;}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ roll;}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ yaw;}
+\DoxyCodeLine{00026\ \ \ \ \ \};}
+\DoxyCodeLine{00027\ \}\ \mbox{\hyperlink{unionVec3d}{Vec3d}};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ vec\_equal(\mbox{\hyperlink{unionVec3d}{Vec3d}}\ v,\ \mbox{\hyperlink{unionVec3d}{Vec3d}}\ u)\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordflow}{return}\ v.x\ ==\ u.x\ \&\&\ v.y\ ==\ u.y;}
+\DoxyCodeLine{00034\ \}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00039\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{unionVec3d}{Vec3d}}\ vec\_rotate(\mbox{\hyperlink{unionVec3d}{Vec3d}}\ v,\ \textcolor{keywordtype}{double}\ alpha)\ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{double}\ xp\ =\ v.x\ *\ cos(alpha)\ -\/\ v.y\ *\ sin(alpha);}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{double}\ yp\ =\ v.x\ *\ sin(alpha)\ +\ v.y\ *\ cos(alpha);}
+\DoxyCodeLine{00042\ \ \ \ \ \mbox{\hyperlink{unionVec3d}{Vec3d}}\ p\ =\ \{\ xp,\ yp,\ 0\ \};}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordflow}{return}\ p;}
+\DoxyCodeLine{00044\ \}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{unionVec3d}{Vec3d}}\ vec\_translate(\mbox{\hyperlink{unionVec3d}{Vec3d}}\ v,\ \mbox{\hyperlink{unionVec3d}{Vec3d}}\ u)\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \mbox{\hyperlink{unionVec3d}{Vec3d}}\ pf\ =\ \{\ v.x\ +\ u.x,\ v.y\ +\ u.y,\ v.z\ +\ u.z\ \};}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordflow}{return}\ pf;}
+\DoxyCodeLine{00052\ \}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ !VEC\_H}}
+
+\end{DoxyCode}

@@ -1,0 +1,35 @@
+\doxysubsection{State Struct Reference}
+\hypertarget{structState}{}\label{structState}\index{State@{State}}
+
+
+{\ttfamily \#include $<$fds\+\_\+types.\+h$>$}
+
+\doxysubsubsubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structState_aadfcdcb73d2753b29abc6c20304b08c8}\label{structState_aadfcdcb73d2753b29abc6c20304b08c8} 
+\mbox{\hyperlink{unionVec3d}{Vec3d}} {\bfseries v}
+\begin{DoxyCompactList}\small\item\em The position of the \doxylink{structState}{State} defined by a vector v. \end{DoxyCompactList}\item 
+\Hypertarget{structState_abbea5b331692ba5bca491f55c9a869b8}\label{structState_abbea5b331692ba5bca491f55c9a869b8} 
+double {\bfseries rhs}
+\begin{DoxyCompactList}\small\item\em The one-\/step lookahead value of the state. \end{DoxyCompactList}\item 
+\Hypertarget{structState_a3c4c778513dbcafc3d26c4481cf8da69}\label{structState_a3c4c778513dbcafc3d26c4481cf8da69} 
+double {\bfseries g}
+\begin{DoxyCompactList}\small\item\em The g-\/value of the state. Represents the path cost of this state. \end{DoxyCompactList}\item 
+\Hypertarget{structState_a1f3911a5fb1ba32e96a8b84e98b1c954}\label{structState_a1f3911a5fb1ba32e96a8b84e98b1c954} 
+char {\bfseries visited}
+\begin{DoxyCompactList}\small\item\em Equals one if the state is visited, otherwise it will be zero. \end{DoxyCompactList}\item 
+\Hypertarget{structState_a7b36445a29a01af6396d01420019b6c7}\label{structState_a7b36445a29a01af6396d01420019b6c7} 
+struct \mbox{\hyperlink{structState}{State}} \texorpdfstring{$\ast$}{*} {\bfseries s1}
+\begin{DoxyCompactList}\small\item\em Used for path extraction. \end{DoxyCompactList}\item 
+\Hypertarget{structState_abfbdc39953a9a9980825e21ce13d50ed}\label{structState_abfbdc39953a9a9980825e21ce13d50ed} 
+struct \mbox{\hyperlink{structState}{State}} \texorpdfstring{$\ast$}{*} {\bfseries s2}
+\begin{DoxyCompactList}\small\item\em Used for path extraction. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsubsection{Detailed Description}
+The state structure is usde to represent a vertex in Field D\texorpdfstring{$\ast$}{*} and is used to compute the shortest path 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+controllers/uav\+\_\+controller/src/includes/\mbox{\hyperlink{fds__types_8h}{fds\+\_\+types.\+h}}\end{DoxyCompactItemize}

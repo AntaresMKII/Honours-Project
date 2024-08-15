@@ -31,37 +31,8 @@ TexturedBackground {
 TexturedBackgroundLight {
 }
 Mavic2Pro {
-  translation 0 -2 0.1
+  translation 0 0 0.1
   rotation 2.9595424017543272e-05 -0.9999999995613612 1.1782927695336017e-06 0.0697052283504933
-  controller "uav_controller"
-  bodySlot [
-    Radar {
-      minRange 0
-      maxRange 10
-      horizontalFieldOfView 0.25
-    }
-    Receiver {
-      channel 1
-      baudRate 256
-    }
-    Emitter {
-      range 100
-      channel 1
-      baudRate 256
-    }
-  ]
-  cameraSlot [
-    Camera {
-      width 400
-      height 240
-      near 0.2
-    }
-  ]
-}
-Mavic2Pro {
-  translation 0 1 0.1
-  rotation 2.9595424017543272e-05 -0.9999999995613612 1.1782927695336017e-06 0.0697052283504933
-  name "Mavic 2 PRO(3)"
   controller "uav_controller"
   bodySlot [
     Radar {
@@ -117,7 +88,7 @@ Mavic2Pro {
   ]
 }
 Mavic2Pro {
-  translation -3 1 0.257183
+  translation -3 2 0.257183
   rotation 2.9595424017543272e-05 -0.9999999995613612 1.1782927695336017e-06 0.0697052283504933
   name "Mavic 2 PRO(2)"
   controller "uav_controller"

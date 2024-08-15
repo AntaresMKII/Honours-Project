@@ -1,10 +1,3 @@
-/*
- * File: uav.c
- * Author: Yannick Abouem
- * Date: 25/01/2024
- * Description: uav structure35.6
-*/
-
 #include "includes/uav.h"
 #include "modules/includes/net.h"
 #include <stdlib.h>
@@ -262,6 +255,7 @@ int uav_peek_msg(Uav *uav) {
     }
 }
 
+// clean up fnction
 void uav_cleanup(Uav *uav) {
     fds_cleanup(uav->fds);
     free(uav->fds);

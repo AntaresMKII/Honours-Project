@@ -1,0 +1,73 @@
+\doxysubsection{controllers/uav\+\_\+controller/src/util/includes/map.h File Reference}
+\hypertarget{map_8h}{}\label{map_8h}\index{controllers/uav\_controller/src/util/includes/map.h@{controllers/uav\_controller/src/util/includes/map.h}}
+{\ttfamily \#include \"{}vec.\+h\"{}}\newline
+{\ttfamily \#include \"{}../../includes/fds\+\_\+types.\+h\"{}}\newline
+\doxysubsubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structTuple}{Tuple}}
+\end{DoxyCompactItemize}
+\doxysubsubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{map_8h_a0a82fd70402bbdc2259248e735fecbca}\label{map_8h_a0a82fd70402bbdc2259248e735fecbca} 
+\#define {\bfseries MAP\+\_\+\+SIZE}~100
+\end{DoxyCompactItemize}
+\doxysubsubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{map_8h_ac2210bb520dc1234ba534103dd59415e}\label{map_8h_ac2210bb520dc1234ba534103dd59415e} 
+typedef \mbox{\hyperlink{structCell}{Cell}} \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} {\bfseries Map}
+\end{DoxyCompactItemize}
+\doxysubsubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{map_8h_a4cf47603c850bde9caf57e6d9923f529}\label{map_8h_a4cf47603c850bde9caf57e6d9923f529} 
+\mbox{\hyperlink{structCell}{Map}} {\bfseries map\+\_\+create} ()
+\item 
+\mbox{\hyperlink{structCell}{Cell}} \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{map_8h_af2032524164f6bde613f0e442b496bb5}{map\+\_\+get\+\_\+cells}} (\mbox{\hyperlink{structCell}{Map}} \texorpdfstring{$\ast$}{*}m, \mbox{\hyperlink{unionVec3d}{Vec3d}} v, int \texorpdfstring{$\ast$}{*}num\+\_\+cells)
+\begin{DoxyCompactList}\small\item\em Returns adjacent cells of a given point. \end{DoxyCompactList}\item 
+\Hypertarget{map_8h_a5d71763999d4a23c2b38b926099649fc}\label{map_8h_a5d71763999d4a23c2b38b926099649fc} 
+\mbox{\hyperlink{structState}{State}} \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} {\bfseries map\+\_\+get\+\_\+nbrs} (\mbox{\hyperlink{structCell}{Map}} \texorpdfstring{$\ast$}{*}m, \mbox{\hyperlink{structState}{State}} \texorpdfstring{$\ast$}{*}s, int \texorpdfstring{$\ast$}{*}num\+\_\+nbrs)
+\begin{DoxyCompactList}\small\item\em Returns the neighbor of a specific state. \end{DoxyCompactList}\item 
+\Hypertarget{map_8h_abcd07d641f513404070753d29abd5b34}\label{map_8h_abcd07d641f513404070753d29abd5b34} 
+\mbox{\hyperlink{structTuple}{Tuple}} \texorpdfstring{$\ast$}{*} {\bfseries map\+\_\+get\+\_\+connbrs} (\mbox{\hyperlink{structCell}{Map}} \texorpdfstring{$\ast$}{*}m, \mbox{\hyperlink{structState}{State}} \texorpdfstring{$\ast$}{*}s, int \texorpdfstring{$\ast$}{*}num\+\_\+nbrs)
+\begin{DoxyCompactList}\small\item\em Returns the contiguous neighbors of a state s. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structCell}{Cell}} \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{map_8h_a222fa3f8c0b50a9e039b99d9730e8c64}{map\+\_\+get\+\_\+cells\+\_\+from\+\_\+states}} (\mbox{\hyperlink{structCell}{Map}} \texorpdfstring{$\ast$}{*}m, \mbox{\hyperlink{structState}{State}} \texorpdfstring{$\ast$}{*}s1, \mbox{\hyperlink{structState}{State}} \texorpdfstring{$\ast$}{*}s2, \mbox{\hyperlink{structState}{State}} \texorpdfstring{$\ast$}{*}s3, int \texorpdfstring{$\ast$}{*}num\+\_\+cells)
+\begin{DoxyCompactList}\small\item\em Finds a specific cell given the adjacent states. \end{DoxyCompactList}\item 
+\Hypertarget{map_8h_ac47c7944625e51f8c3734985de50f863}\label{map_8h_ac47c7944625e51f8c3734985de50f863} 
+\mbox{\hyperlink{structState}{State}} \texorpdfstring{$\ast$}{*} {\bfseries map\+\_\+get\+\_\+state} (\mbox{\hyperlink{structCell}{Map}} \texorpdfstring{$\ast$}{*}m, \mbox{\hyperlink{unionVec3d}{Vec3d}} v)
+\begin{DoxyCompactList}\small\item\em Returns a state given its position as a vector. \end{DoxyCompactList}\item 
+\Hypertarget{map_8h_adf5ec5179ee52d1d150990623c39ef95}\label{map_8h_adf5ec5179ee52d1d150990623c39ef95} 
+\mbox{\hyperlink{structCell}{Cell}} \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} {\bfseries map\+\_\+set\+\_\+cells\+\_\+cost} (\mbox{\hyperlink{structCell}{Map}} \texorpdfstring{$\ast$}{*}m, \mbox{\hyperlink{unionVec3d}{Vec3d}} v, double cost, int \texorpdfstring{$\ast$}{*}num\+\_\+cells)
+\begin{DoxyCompactList}\small\item\em Sets the cost of one or more cells given a vector v and the cost. Sets the number of returned cells into num\+\_\+cells. \end{DoxyCompactList}\item 
+\Hypertarget{map_8h_ad71fee01246ff6dff901f52832666b4d}\label{map_8h_ad71fee01246ff6dff901f52832666b4d} 
+void {\bfseries map\+\_\+cleanup} (\mbox{\hyperlink{structCell}{Map}} \texorpdfstring{$\ast$}{*}m)
+\begin{DoxyCompactList}\small\item\em Cleanup function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsubsection{Detailed Description}
+Map functionality 
+
+\doxysubsubsection{Function Documentation}
+\Hypertarget{map_8h_af2032524164f6bde613f0e442b496bb5}\label{map_8h_af2032524164f6bde613f0e442b496bb5} 
+\index{map.h@{map.h}!map\_get\_cells@{map\_get\_cells}}
+\index{map\_get\_cells@{map\_get\_cells}!map.h@{map.h}}
+\doxyparagraph{\texorpdfstring{map\_get\_cells()}{map\_get\_cells()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structCell}{Cell}} \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} map\+\_\+get\+\_\+cells (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structCell}{Map}} \texorpdfstring{$\ast$}{*}}]{m,  }\item[{\mbox{\hyperlink{unionVec3d}{Vec3d}}}]{v,  }\item[{int \texorpdfstring{$\ast$}{*}}]{num\+\_\+cells }\end{DoxyParamCaption})}
+
+
+
+Returns adjacent cells of a given point. 
+
+This function returns one or more cells from a point vector. If the point falls on the edge between two cells both cells will be returned. If the point lies on a vertex of a cell, it will return all four adjacent cells. \Hypertarget{map_8h_a222fa3f8c0b50a9e039b99d9730e8c64}\label{map_8h_a222fa3f8c0b50a9e039b99d9730e8c64} 
+\index{map.h@{map.h}!map\_get\_cells\_from\_states@{map\_get\_cells\_from\_states}}
+\index{map\_get\_cells\_from\_states@{map\_get\_cells\_from\_states}!map.h@{map.h}}
+\doxyparagraph{\texorpdfstring{map\_get\_cells\_from\_states()}{map\_get\_cells\_from\_states()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structCell}{Cell}} \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} map\+\_\+get\+\_\+cells\+\_\+from\+\_\+states (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structCell}{Map}} \texorpdfstring{$\ast$}{*}}]{m,  }\item[{\mbox{\hyperlink{structState}{State}} \texorpdfstring{$\ast$}{*}}]{s1,  }\item[{\mbox{\hyperlink{structState}{State}} \texorpdfstring{$\ast$}{*}}]{s2,  }\item[{\mbox{\hyperlink{structState}{State}} \texorpdfstring{$\ast$}{*}}]{s3,  }\item[{int \texorpdfstring{$\ast$}{*}}]{num\+\_\+cells }\end{DoxyParamCaption})}
+
+
+
+Finds a specific cell given the adjacent states. 
+
+Given three distinct states, this function returns a pointer to a \doxylink{structCell}{Cell} adjacent to all three states or NULL if such cell does not exits. 
