@@ -1,6 +1,8 @@
 #include "includes/map.h"
+#include "includes/util.h"
 #include "includes/vec.h"
 
+#include <csv.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,6 +12,23 @@
 static inline Vec3d convert(Vec3d v) {
     Vec3d u = { v.x + MAP_SIZE / 2.0f, MAP_SIZE / 2.0f - v.y, v.z };
     return u;
+}
+
+void print_obs_to_file(double x, double y, double c) {
+    FILE *csv_file = fopen("obs.csv", "ab+");
+    if (!csv_file) {
+        printf("Error opening file\n!");
+        exit(EXIT_FAILURE);
+    }
+
+    csv_fwrite(csv_file, (void*)&x, sizeof(double));
+    fprintf(csv_file, ",");
+    csv_fwrite(csv_file, (void*)&y, sizeof(double));
+    fprintf(csv_file, ",");
+    csv_fwrite(csv_file, (void*)&c, sizeof(double));
+    fprintf(csv_file, "\n");
+
+    fclose(csv_file);
 }
 
 Map map_create() {
@@ -407,6 +426,11 @@ Cell** map_set_cells_cost(Map *m, Vec3d v, double cost, int *num_cells) {
             }
 
             changed[k - 1] = cells[i];
+
+            double x,y;
+            x = cells[i]->s2->v.x;
+            y = cells[i]->s2->v.y;
+            print_obs_to_file(x, y, cost);
         }
     }
 
@@ -490,3 +514,5 @@ void map_cleanup(Map *m) {
     free(*m);
     free(m);
 }
+
+

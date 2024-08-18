@@ -67,6 +67,8 @@
 
 MOD = src/modules/control_module.c src/modules/fds.c src/modules/net.c
 UTIL = src/util/util.c src/util/map.c src/util/heap.c
+LIBRARIES = -lcsv
+
 
 C_SOURCES = src/main.c src/uav.c $(MOD) $(UTIL)
 ### Do not modify: this includes Webots global Makefile.include

@@ -22,7 +22,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation -0.5773502691896258 0.5773502691896258 0.5773502691896258 2.0944
-  position 0.6837141647551147 0.2058246708060424 86.13421546210462
+  position 1.6154021723690055e-15 4.3277751222537075e-14 86.62473967966712
   near 0.2
   follow "Mavic 2 PRO"
   followSmoothness 0.2
@@ -35,6 +35,64 @@ TexturedBackgroundLight {
 Mavic2Pro {
   translation -25 0 0.1
   rotation -0.01459599468092307 -0.02748622899311429 -0.9995156147629773 -0.05589712032081007
+  controller "uav_controller"
+  bodySlot [
+    Radar {
+      minRange 0
+      maxRange 10
+      horizontalFieldOfView 0.25
+    }
+    Receiver {
+      channel 1
+      baudRate 256
+    }
+    Emitter {
+      range 100
+      channel 1
+      baudRate 256
+    }
+  ]
+  cameraSlot [
+    Camera {
+      width 400
+      height 240
+      near 0.2
+    }
+  ]
+}
+Mavic2Pro {
+  translation -27 2 0.1
+  rotation -0.01459599468092307 -0.02748622899311429 -0.9995156147629773 -0.05589712032081007
+  name "Mavic 2 PRO(1)"
+  controller "uav_controller"
+  bodySlot [
+    Radar {
+      minRange 0
+      maxRange 10
+      horizontalFieldOfView 0.25
+    }
+    Receiver {
+      channel 1
+      baudRate 256
+    }
+    Emitter {
+      range 100
+      channel 1
+      baudRate 256
+    }
+  ]
+  cameraSlot [
+    Camera {
+      width 400
+      height 240
+      near 0.2
+    }
+  ]
+}
+Mavic2Pro {
+  translation -27 -2 0.1
+  rotation -0.01459599468092307 -0.02748622899311429 -0.9995156147629773 -0.05589712032081007
+  name "Mavic 2 PRO(2)"
   controller "uav_controller"
   bodySlot [
     Radar {
@@ -95,39 +153,6 @@ Wall {
   translation -30 0 0
   name "wall(4)"
   size 0.2 20 2.4
-}
-Solid {
-  translation -12.71 0 0
-  children [
-    Solid {
-      translation 0 0 1.2
-      children [
-        Shape {
-          appearance PBRAppearance {
-            roughness 1
-            metalness 0
-            normalMap ImageTexture {
-              url [
-                "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/textures/roughcast/roughcast_normal.jpg"
-              ]
-            }
-            textureTransform TextureTransform {
-              scale 2.4 1
-            }
-          }
-          geometry Box {
-            size 0.2 5 2.4
-          }
-        }
-      ]
-      boundingObject Box {
-        size 0.2 5 2.4
-      }
-    }
-  ]
-  name "obstacle"
-  model "wall"
-  radarCrossSection 50
 }
 Solid {
   translation -5.47 -7.43 0
@@ -196,6 +221,39 @@ Solid {
   radarCrossSection 50
 }
 Solid {
+  translation 10.34 6.96 0
+  children [
+    Solid {
+      translation 0 0 1.2
+      children [
+        Shape {
+          appearance PBRAppearance {
+            roughness 1
+            metalness 0
+            normalMap ImageTexture {
+              url [
+                "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/textures/roughcast/roughcast_normal.jpg"
+              ]
+            }
+            textureTransform TextureTransform {
+              scale 2.4 1
+            }
+          }
+          geometry Box {
+            size 0.2 6 2.4
+          }
+        }
+      ]
+      boundingObject Box {
+        size 0.2 6 2.4
+      }
+    }
+  ]
+  name "obstacle(5)"
+  model "wall"
+  radarCrossSection 50
+}
+Solid {
   translation 2.99 5.52 0
   children [
     Solid {
@@ -229,139 +287,6 @@ Solid {
   radarCrossSection 50
 }
 Solid {
-  translation 13.07 -4.92 0
-  rotation 0 0 1 -0.785395307179586
-  children [
-    Solid {
-      translation 0 0 1.2
-      children [
-        Shape {
-          appearance PBRAppearance {
-            roughness 1
-            metalness 0
-            normalMap ImageTexture {
-              url [
-                "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/textures/roughcast/roughcast_normal.jpg"
-              ]
-            }
-            textureTransform TextureTransform {
-              scale 2.4 1
-            }
-          }
-          geometry Box {
-            size 0.2 10 2.4
-          }
-        }
-      ]
-      boundingObject Box {
-        size 0.2 10 2.4
-      }
-    }
-  ]
-  name "obstacle(4)"
-  model "wall"
-  radarCrossSection 50
-}
-Solid {
-  translation 17.36 0.04 0
-  children [
-    Solid {
-      translation 0 0 1.2
-      children [
-        Shape {
-          appearance PBRAppearance {
-            roughness 1
-            metalness 0
-            normalMap ImageTexture {
-              url [
-                "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/textures/roughcast/roughcast_normal.jpg"
-              ]
-            }
-            textureTransform TextureTransform {
-              scale 2.4 1
-            }
-          }
-          geometry Box {
-            size 0.2 3 2.4
-          }
-        }
-      ]
-      boundingObject Box {
-        size 0.2 3 2.4
-      }
-    }
-  ]
-  name "obstacle(5)"
-  model "wall"
-  radarCrossSection 50
-}
-Solid {
-  translation -5.61 0.16 0
-  children [
-    Solid {
-      translation 0 0 1.2
-      children [
-        Shape {
-          appearance PBRAppearance {
-            roughness 1
-            metalness 0
-            normalMap ImageTexture {
-              url [
-                "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/textures/roughcast/roughcast_normal.jpg"
-              ]
-            }
-            textureTransform TextureTransform {
-              scale 2.4 1
-            }
-          }
-          geometry Box {
-            size 0.2 1 2.4
-          }
-        }
-      ]
-      boundingObject Box {
-        size 0.2 1 2.4
-      }
-    }
-  ]
-  name "obstacle(11)"
-  model "wall"
-  radarCrossSection 10
-}
-Solid {
-  translation 9.91 5.1 0
-  children [
-    Solid {
-      translation 0 0 1.2
-      children [
-        Shape {
-          appearance PBRAppearance {
-            roughness 1
-            metalness 0
-            normalMap ImageTexture {
-              url [
-                "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/textures/roughcast/roughcast_normal.jpg"
-              ]
-            }
-            textureTransform TextureTransform {
-              scale 2.4 1
-            }
-          }
-          geometry Box {
-            size 0.2 1 2.4
-          }
-        }
-      ]
-      boundingObject Box {
-        size 0.2 1 2.4
-      }
-    }
-  ]
-  name "obstacle(9)"
-  model "wall"
-  radarCrossSection 10
-}
-Solid {
   translation 22.4 5.98 0
   children [
     Solid {
@@ -391,6 +316,39 @@ Solid {
     }
   ]
   name "obstacle(12)"
+  model "wall"
+  radarCrossSection 10
+}
+Solid {
+  translation 15.35 -6.98 0
+  children [
+    Solid {
+      translation 0 0 1.2
+      children [
+        Shape {
+          appearance PBRAppearance {
+            roughness 1
+            metalness 0
+            normalMap ImageTexture {
+              url [
+                "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/textures/roughcast/roughcast_normal.jpg"
+              ]
+            }
+            textureTransform TextureTransform {
+              scale 2.4 1
+            }
+          }
+          geometry Box {
+            size 0.2 1 2.4
+          }
+        }
+      ]
+      boundingObject Box {
+        size 0.2 1 2.4
+      }
+    }
+  ]
+  name "obstacle(4)"
   model "wall"
   radarCrossSection 10
 }
@@ -427,39 +385,6 @@ Solid {
   name "obstacle(13)"
   model "wall"
   radarCrossSection 50
-}
-Solid {
-  translation 5.17 -1.56 0
-  children [
-    Solid {
-      translation 0 0 1.2
-      children [
-        Shape {
-          appearance PBRAppearance {
-            roughness 1
-            metalness 0
-            normalMap ImageTexture {
-              url [
-                "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/textures/roughcast/roughcast_normal.jpg"
-              ]
-            }
-            textureTransform TextureTransform {
-              scale 2.4 1
-            }
-          }
-          geometry Box {
-            size 0.2 1 2.4
-          }
-        }
-      ]
-      boundingObject Box {
-        size 0.2 1 2.4
-      }
-    }
-  ]
-  name "obstacle(10)"
-  model "wall"
-  radarCrossSection 10
 }
 Solid {
   translation -16.68 -6.64 0

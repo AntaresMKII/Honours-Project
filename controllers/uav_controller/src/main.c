@@ -22,6 +22,8 @@
 #define TARGT_ALT 2.0f
 
 Uav uav; //< The global variable containing all data of the UAV
+double **g_wp_list;
+int g_wp_num = 0;
 
 /**
  * This function randomly generates
@@ -74,6 +76,23 @@ void set_start_and_goal(Uav *uav) {
   uav->fds = fds_init(start, goal);
 
   set_id(uav, start);
+
+  g_wp_list = (double**) malloc(sizeof(double*));
+  if (g_wp_list == NULL) {
+    printf("Failure to allocate memory\n");
+    exit(EXIT_FAILURE);
+  }
+
+  g_wp_list[0] = (double*) malloc(sizeof(double)*2);
+  if (g_wp_list[0] == NULL) {
+    printf("Failure to allocate memory\n");
+    exit(EXIT_FAILURE);
+  }
+
+  g_wp_num++;
+
+  g_wp_list[0][0] = uav->fds->start->v.x;
+  g_wp_list[0][1] = uav->fds->start->v.y;
 }
 
 /**
@@ -129,15 +148,31 @@ void run() {
   if (alt + 1.75f >= TARGT_ALT) {
     net_send_wp(&uav, n);
   }
-  wp_reached = cm_run(&uav, wps_list[n], TARGT_ALT, time);
+  wp_reached = cm_run(&uav, wps_list[0], TARGT_ALT, time);
   if (wp_reached) {
-    //s = map_get_state(uav.fds->m, wps_list[0]);
-    //uav.fds->start = s;
+    s = map_get_state(uav.fds->m, wps_list[0]);
+    uav.fds->start = s;
     n++;
-    printf("Waypoint reached! Next wp: (%f, %f)\n", wps_list[n].x, wps_list[n].y);
-    //if (states_are_equal(uav.fds->start, uav.fds->end)) {
-    if (n == wps_num) {
+    printf("Waypoint reached! Next wp: (%f, %f)\n", wps_list[1].x, wps_list[1].y);
+    if (!((uav.fds->start->v.x == g_wp_list[g_wp_num-1][0]) && (uav.fds->start->v.y == g_wp_list[g_wp_num-1][1]))) {
+      g_wp_num++;
+      g_wp_list = (double**)realloc(g_wp_list, sizeof(double*) * g_wp_num);
+      if (g_wp_list == NULL) {
+        printf("Failed to allocate emmory!\n");
+        exit(EXIT_FAILURE);
+      }
+      g_wp_list[g_wp_num-1] = (double*) malloc(sizeof(double)*2);
+      if (g_wp_list[g_wp_num-1]== NULL) {
+        printf("Failed to allocate emmory!\n");
+        exit(EXIT_FAILURE);
+      }
+      g_wp_list[g_wp_num-1][0] = uav.fds->start->v.x;
+      g_wp_list[g_wp_num-1][1] = uav.fds->start->v.y;
+    }
+    if (states_are_equal(uav.fds->start, uav.fds->end)) {
+    //if (n == wps_num) {
       printf("Goal reached!\n");
+      uav.state = END;
     }
   }
   free(wps_list);
@@ -224,5 +259,6 @@ int main(int argc, char *argv[]) {
   timestep = init();
   main_loop(timestep);
   clean_up();
+  print_csv(g_wp_list, g_wp_num);
   return EXIT_SUCCESS;
 }

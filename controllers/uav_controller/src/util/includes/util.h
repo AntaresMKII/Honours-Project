@@ -23,4 +23,6 @@ double to_deg(double alpha);    ///< Converts an angle in radians into degrees
 
 unsigned char dtouc(double d);  ///< Convert a double value to unsigned character (deprecated)
 
+void print_csv(double** data, int n);
+
 #endif // !UTIL_H

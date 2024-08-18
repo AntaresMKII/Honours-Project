@@ -1,9 +1,15 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <fcntl.h>
+#include <mqueue.h>
+#include <sys/stat.h>
+#include <csv.h>
+
 #include <webots/robot.h>
 
 FILE *file_ptr;
+FILE *wp_file;
 
 void init_debug_file() {
     int time = wb_robot_get_time();
@@ -54,7 +60,7 @@ double to_rad(double alpha) {
     return alpha / 180.0f * M_PI;
 }
 
-unsigned char dtouc(double d) {
+void dtouc(double d, unsigned char* c) {
     union conv {
         double d;
         unsigned char c[8];
@@ -64,5 +70,19 @@ unsigned char dtouc(double d) {
 
     conv.d = d;
 
-    return conv.c[6] - conv.c[7];
+    for (int i = 0; i < 8; i++) {
+        c[i] = conv.c[i];
+    }
+}
+
+void print_csv(double** data, int n) {
+    FILE* csv_file = fopen("wps.csv", "wb+");
+    double infty = INFINITY;
+    for (int i = 0; i < n; i++) {
+        csv_fwrite(csv_file, &data[i][0], sizeof(double));
+        fprintf(csv_file, ",");
+        csv_fwrite(csv_file, &data[i][1], sizeof(double));
+        fprintf(csv_file, "\n");
+    }
+    fclose(file_ptr);
 }

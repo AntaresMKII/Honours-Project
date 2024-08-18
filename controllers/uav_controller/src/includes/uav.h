@@ -31,7 +31,6 @@
 
 /// local header files
 #include "../util/includes/util.h"
-#include "../modules/includes/comm_module.h"
 #include "../modules/includes/fds.h"
 #include "../modules/includes/net.h"
 
@@ -39,14 +38,14 @@
 //#define DEBUG
 
 // Constants
-#define ROLL_P 50.0             ///< Roll costant for PID
-#define PITCH_P 30.0            ///< Pitch constant for PID
-#define VERTICAL_P 3.0          ///< Vertical constant for PID
-#define VERTICAL_T 68.5         ///< Vertical constant for PID
-#define VERTICAL_O 0.6          ///< Vertical constant for PID
-#define TARGET_PRECISION 0.5    ///< This constant determines how close the UAV must be to the waypoint for it to be reaced
-#define MAX_YAW_DIST 0.4        ///< Maximum Yaw Displacement
-#define MAX_PITCH_DIST -1       ///< Maximum Pitch Displacement
+#define ROLL_P 50.0f             ///< Roll costant for PID
+#define PITCH_P 30.0f            ///< Pitch constant for PID
+#define VERTICAL_P 3.0f          ///< Vertical constant for PID
+#define VERTICAL_T 68.5f         ///< Vertical constant for PID
+#define VERTICAL_O 0.6f          ///< Vertical constant for PID
+#define TARGET_PRECISION 0.5f    ///< This constant determines how close the UAV must be to the waypoint for it to be reaced
+#define MAX_YAW_DIST 0.4f        ///< Maximum Yaw Displacement
+#define MAX_PITCH_DIST -1        ///< Maximum Pitch Displacement
 
 /// Used for storing position and attitude informations
 typedef struct Position {

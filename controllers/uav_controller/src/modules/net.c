@@ -108,8 +108,8 @@ void net_send_wp(Uav *uav, int curr_wp) {
         m.head.s_id = uav->id;
         m.head.r_id = uav->followers[i].id;
         m.head.type = WP;
-        m.data.x = uav->followers[i].wps[curr_wp].x;
-        m.data.y = uav->followers[i].wps[curr_wp].y;
+        m.data.x = uav->followers[i].wps[0].x;
+        m.data.y = uav->followers[i].wps[0].y;
 
         uav->followers[i].wp_num = curr_wp;
 

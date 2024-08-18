@@ -120,6 +120,8 @@ void cm_followers_path(Uav *uav, Vec3d *wps, int wps_num) {
             printf("Failed to allocate memory in cm_followers_path()\n");
         }
 
+        prev_wp = uav->fds->start->v;
+
         for (int j = 0; j < wps_num; j++) {
 
             angle = acos((wps[j].x - prev_wp.x) / (sqrt(pow(wps[j].x - prev_wp.x, 2) + pow(wps[j].y - prev_wp.y, 2))));
@@ -151,7 +153,7 @@ Vec3d* cm_plan_path(Uav *uav, int *wps_num) {
     }
 
     for (int i = 0; i < obs_num; i++) {
-        curr_cells = map_set_cells_cost(uav->fds->m, obs_arr[i], 32, &num_cells);
+        curr_cells = map_set_cells_cost(uav->fds->m, obs_arr[i], 4, &num_cells);
 
         for (int j = 0; j < num_cells; j++) {
             mod_cells_num++;

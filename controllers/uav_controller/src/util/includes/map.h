@@ -10,7 +10,7 @@
 #ifndef MAP_H
 
 #define MAP_H
-#define MAP_SIZE 100
+#define MAP_SIZE 200
 
 typedef Cell** Map;
 
@@ -53,5 +53,7 @@ static inline int states_are_equal(State *s1, State *s2) {
 
 /// Cleanup function
 void map_cleanup(Map *m);
+
+void print_obs_to_map(Map *m, int n);
 
 #endif // !MAP_H
