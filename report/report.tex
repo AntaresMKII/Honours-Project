@@ -138,9 +138,18 @@
 %----------------------------------------------------------------------------------------
 
 \chapter*{Abstract}
-Abstract goes here!
+
+Pattern formation for swarms of robots is a novel problem in the field of robotics
+with many useful use cases, especially for swarms of UAVs. In this report we 
+present a solution we developed for this problem using a leader-follower approach, 
+where the leader decides the position the followers needs to reach, and we pair it 
+with the path planning algorithm Field D*, to allow a swarm of UAVs to navigate an 
+obstacle course while maintaining a certain formation. We finally test our solution 
+in two scenarios to demonstrate that our solution works, albeit with some issues
+pertaining to the precision of the UAV's movements and the leader-follower paradigm.
 
 \chapter*{Acknowledgements}
+
 This project uses Webots (http://www.cyberbotics.com), an open-source mobile robot simulation software developed by Cyberbotics Ltd.
 
 \tableofcontents
@@ -383,10 +392,17 @@ Solving Eq. (\ref{eq:vx}) and Eq. (\ref{eq:vy}) will produce the coordinates of 
 From there it is simply necessary to translate the vector $v$ by the UAV position, resulting in the 
 absolute position of the obstacle.
 
+To avoid having the followers hit the obstacles we decided to add a buffer zone around each obstacle. 
+These buffer zones have a traversal cost higher than the values for obstacle-free zones but lower than
+a zone with an obstacle. We do this by setting the traversal cost of each cell around the cell containing
+the obstacle to half the cost. So, each time an obstacle is detected, and its position computed, a specific
+cost $c$ is assigned to the cell where the obstacle is located, and the neighboring cells cost is set to 
+$\frac{c}{2}$.
+
 \section{Obstacle Avoidance}
 
 Once obstacles are detected, the UAVs should be capable of avoiding them and navigate between them 
-until a goal is reached. As explained above, the navigation algorithm used in this project computes
+until the swarm reaches the goal. As explained above, the navigation algorithm used in this project computes
 the trajectory to take to reach a specific waypoint, so we can define the path the UAVs have to take
 as a list of waypoints. If we restrict the waypoints as being intersections of cells in a grid then
 we can abstract this grid as being a graph. Thus, what we wish to do, in this case, is to find a path
@@ -515,8 +531,8 @@ In order for Field D* to function it requires access to a \emph{"map"} of the en
 where the cost of each cell and states are stored. This map is, essentially, a grid shaped
 graph, where each vertex is connected to eight neighbors, four adjacent and four diagonal. 
 The node and its four adjacent neighbors form a cell, which has a specific traversal cost which
-is grater than zero. The cost to traverse an edge from a vertex to one of its adjacent neighbors
-is equal to the lowest traversal cost of the cells around the edge. While to traverse an edge
+is greater than zero. The cost to traverse an edge from a vertex to one of its adjacent neighbors
+are equal to the lowest traversal cost of the cells around the edge. While to traverse an edge
 from a vertex to a diagonal neighbor, the cost is $c \sqrt{2}$, where $c$ is the traversal cost
 of the cell the edge lies into, as shown in \autocite{DF06}. The map is used to compute the 
 cost required to reach the goal, and it does not represent the movements the UAV can execute. 
@@ -752,7 +768,7 @@ as shown in Eq. (\ref{eq:rot-mat}).
 	\label{eq:rot-mat}
 \end{equation}
 
-Once the formation is rotated it is then translated with respect of the leader waypoint.
+Once the formation is rotated it is then translated with respect to the leader's waypoint.
 
 However, this solution works only if the robots are restricted to specific headings, which
 we found that this is not the case in our project. The use of interpolation in path planning
@@ -800,7 +816,7 @@ also serves to determine whether a UAV has been elected leader or not during the
 of the program. 
 
 \begin{table}
-	\caption{Possible values of the state}\label{tab:states}
+	\caption{Possible values of the state variable}\label{tab:states}
 	\begin{center}
 		\begin{tabular}[t]{l|l}
 			\hline
@@ -895,45 +911,155 @@ scenarios we designed to demonstrate the effectiveness of the solution presented
 
 \section{Test scenario}
 
-For this project we constructed three scenarios consisting of different environments and UAVs formations. Each 
-scenario is constructed around one of the following use cases for UAVs swarms: disaster management, environment
-mapping, search and rescue and industry.
+We constructed two tests scenarios to test the effectiveness of the solution presented. The first scenario is intended
+to verify the correctness of the obstacle avoidance component of this project, while the second scenario
+was designed to test the pattern formation component. Both scenarios use a similar obstacle course with the only
+difference in the number of obstacles and the number of UAVs used, being one in the first and three in the second.
+Fig. \ref{fig:sc-1} and Fig. \ref{fig:sc-2} show a map of the obstacle courses used in the first scenario and the second scenario respectively,
+where $u$ is the start position of the UAVs and $v$ is the goal the UAVs need to reach.
 
-\textbf{Factory scenario}: Four UAVs are placed in a square formation, and they are tasked to carry a box through a 
-busy environment like a factory with many obstacles and little room to move in. 
+\begin{figure}
+	\begin{center}
+		\includesvg{./img/res_s1.svg}
+	\end{center}
+	\caption{The map of the obstacle course for the first scenario}\label{fig:sc-1}
+\end{figure}
 
-\textbf{Bird flock scenario}: Five UAVs are placed in a V shape similar to a flock of birds and navigate through an
-obstacle filled environment.
+\begin{figure}
+	\begin{center}
+		\includesvg{./img/res_s2.svg}
+	\end{center}
+	\caption{The map of the obstacle course for the second scenario}\label{fig:sc-2}
+\end{figure}
 
-\textbf{Line scenario}: Five UAVs are placed in a horizontal line, simulating a communication line between two points, and 
-navigate in an environment.
+The reason why we decided to design two scenarios to test the solution is due to the UAVs having
+difficulty avoiding obstacles while maintaining a formation. This was caused by a lack of space
+available for the swarm to pass through, thus we designed a second scenario with fewer obstacles for 
+the formation only.
 
 \section{Observations from scenarios}
 
-In this section we will discuss observations obtained from the test scenarios above. 
-Overall the solution developed performed as expected in each scenario. The main objectives
-of the project were met without any faults. Among the three scenarios, the factory
-scenario is perhaps the most significant in terms of real world usage. In this scenario
-the UAVs were successfully able to navigate through the environment without touching
-any obstacles while maintaining the formation as closely as possible. Similarly, 
-the other scenarios exhibit similar results. 
+In this section we will discuss observations and results obtained from the test scenarios above. 
+Overall, in both scenarios the UAVs were able to carry out the defined tasks. However, the 
+final result is far from perfect. During the execution multiple incorrect behavior were
+observed, including some UAVs travelling at a slower speed than other UAVs in the second 
+scenario and the UAV not following the shortest path, as determined by Field D*, in the 
+first scenario. In the following subsections we will have a closer look at these issues.
 
-Another notable observation is an issue that occurs when the UAVs change direction. 
-This issue causes the formation to "stretch" and each follower UAV disperse in a 
-different direction which is not desired behavior. We believe that this issue is
-caused by the followers reaching the waypoint provided by the leader before the 
-leader reaches its own. Since the follower has no new waypoint provided it will then 
-wander off until a new waypoint is communicated by the leader. This is less than
-ideal and more work is needed to resolve this issue.
+\subsection{First Scenario}
+
+As explained previously, the first scenario is intended to test the obstacle avoidance of the 
+presented solution. It involves a single UAV and the obstacle course shown in Fig. \ref{fig:sc-1}. 
+Due to the difficulty in observing the path the UAV has to take in order to reach the goal,
+we developed a companion program to visualize this path from data extracted from the Webots 
+simulation. In the images captured from the execution of this program the red dots are the 
+waypoints the UAV has to reach, the red line represents the path between each waypoint, and
+the blue line is the shortest distance between the last waypoint we reached and the goal, while 
+the dark gray squares are areas with high cost, meaning there is an obstacle in that area, and 
+the light gray squares are areas with lower cost than the darker squares.
+
+\begin{figure}
+	\begin{center}
+		\begin{subfigure}[t]{\textwidth}
+			\includegraphics[width=0.95\textwidth]{./img/gv_1.png}
+			\caption{At the beginning of the program the UAV has no data on the obstacles, so it assumes the shortest path must be a straight line to the goal}\label{fig:gv-1}
+		\end{subfigure}
+		\begin{subfigure}[t]{\textwidth}
+			\includegraphics[width=0.95\textwidth]{./img/gv_2.png}
+			\caption{As the program continues it detects an obstacle in front of it, and it turns to avoid it}\label{fig:gv-2}
+		\end{subfigure}
+	\end{center}
+	\caption{Path computed by Field D* - Part 1}\label{fig:gv-a}
+\end{figure}
+\begin{figure}
+	\begin{center}
+		\begin{subfigure}[t]{\textwidth}
+			\includegraphics[width=0.95\textwidth]{./img/gv_3.png}
+			\caption{It turns until it is clear of the obstacle}\label{fig:gv-3}
+		\end{subfigure}
+		\begin{subfigure}[t]{\textwidth}
+			\includegraphics[width=0.95\textwidth]{./img/gv_4.png}
+			\caption{After avoiding the obstacle it attempts to return on the shortest path between the start and the goal}\label{fig:gv-4}
+		\end{subfigure}
+	\end{center}
+	\caption{Path computed by Field D* - Part 2}\label{fig:gv-b}
+\end{figure}
+\begin{figure}
+	\begin{center}
+		\begin{subfigure}[t]{\textwidth}
+			\includegraphics[width=0.95\textwidth]{./img/gv_5.png}
+			\caption{It is unable to return on the shortest path, as there is an obstacle in the way, so it turns towards the goal and continues in a straight line until a new obstacle is found}\label{fig:gv-5}
+		\end{subfigure}
+		\begin{subfigure}[t]{\textwidth}
+			\includegraphics[width=0.95\textwidth]{./img/gv_6.png}
+			\caption{Avoids another obstacle and detects an obstacle in front of it}\label{fig:gv-6}
+		\end{subfigure}
+	\end{center}
+	\caption{Path computed by Field D* - Part 3}\label{fig:gv-c}
+\end{figure}
+\begin{figure}
+	\begin{center}
+		\begin{subfigure}[t]{\textwidth}
+			\includegraphics[width=0.95\textwidth]{./img/gv_7.png}
+			\caption{It continues upwards to avoid a larger obstacle and diagonally to avoid one in front of it}\label{fig:gv-7}
+		\end{subfigure}
+		\begin{subfigure}[t]{\textwidth}
+			\includegraphics[width=0.95\textwidth]{./img/gv_8.png}
+			\caption{The UAV turns around to reach the goal}\label{fig:gv-8}
+		\end{subfigure}
+	\end{center}
+	\caption{Path computed by Field D* - Part 4}\label{fig:gv-d}
+\end{figure}
+
+As seen in Fig. \ref{fig:gv-a}, Fig. \ref{fig:gv-a}, Fig. \ref{fig:gv-a}, and Fig. \ref{fig:gv-a}, the path
+computed by our project allows the UAV to avoid obstacles while minimizing the cost of this path. In practice,
+however the UAV does not always follow this path strictly, but it deviates due to physical limitations of the 
+UAV. For example, if we compare the UAV motion at the beginning of the simulation with the path shown in 
+Fig. \ref{fig:gv-2}, we see that the UAV performs some turns that are not in the computed path, that's because
+the UAV drifts from the path and needs to adjust in order to return on the path. Another case is after 4 minutes
+and 2 seconds from the beginning of the simulation, where the UAV does a 180-degree turn because it has overshot
+one of the waypoints and needs to turn back, instead of turning upwards and then forwards as shown in \ref{fig:gv-5}.
+
+\subsection{Second scenario}
+
+The second scenario is aimed at testing the formation capabilities of the project. It is a simple scenario where
+three UAVs in a V-shaped formation fly while avoiding few obstacles as shown in Fig. \ref{fig:sc-2}. The UAVs
+were able to reach the goal without touching any of the obstacles and roughly maintaining the predefined formation.
+However, there were a few situations in which the shape of the formation was violated. One such cases is at 1 minute
+into the simulation where the UAVs break the formation in order to reposition after a turn to the left. This movement
+causes the UAV at the bottom of the formation to fly at a slower speed and trail behind the other UAVs. This is because
+the UAV turns excessively, and thus it has to adjust its heading before moving forward. The issue can be seen better after 2 minutes
+and 30 seconds from the start of the program. We can see the lower UAV turning slightly to its left and then turn right to 
+face forward, while the other UAV had already begun moving at that point, leaving the UAV behind. Thar slight left turn is caused
+by the leader sending the new waypoint to the UAV later than expected, causing the UAV to retain the older waypoint and deviate from 
+the path. Fig. \ref{fig:drift} shows the problematic behavior.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.5\textwidth]{./img/drift.png}
+	\end{center}
+	\caption{Image of the bottom UAV turning excessively to the left}\label{fig:drift}
+\end{figure}
+
 
 \chapter{Conclusion}
 
-In this report we showcased our solution to the pattern formation problem in robotics
-for a swarm of unmanned aerial vehicles. We covered different algorithms used to 
-control the inputs to the motors of the UAVs and different path planning algorithms,
-and explained what the advantages and characteristics of PID control and Field D*. 
-We presented our approach to the pattern formation problem and provided a solution 
-alongside test scenarios to observe its capabilities.
+In this project we explored a solution to pattern formation of robotic swarms, a novel research topic
+in the field of robotics. Our presented solution makes use of a swarm Unmanned Aerial Vehicles, controlled
+by a PID controller, which needs to navigate through an obstacle course while maintaining a specific formation. 
+To achieve this we implemented the path planning algorithm Field D* that computes the lowest cost path from the 
+start point to the goal point. We paired this algorithm alongside a radar to detect the position of the obstacles
+and used a custom algorithm to extract the obstacles position. 
+
+In order to create the formation we adopted a leader-follower structure where the leader finds the path the formation
+has to fly and communicates the path the followers have to take. We compute the followers paths from the distance
+the UAVs have at the beginning of the simulation and the angle between two waypoints in the path. Moreover, we use
+distributed computing concept, such as leader election. 
+
+We tested our solution in two scenarios to test the obstacle avoidance part and formation part. The first scenario
+was completed successfully by the UAV, however we witnessed some issues caused by the poor precision of the UAV
+controller. The second scenario was also completed successfully by the swarm, but the formation shape was not
+always maintained correctly because of excessive turning by one UAV.
 
 \printbibliography
 \end{document}

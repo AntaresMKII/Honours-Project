@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
 
     while (!WindowShouldClose()) {
         if (IsKeyPressed(KEY_SPACE) && max < arr_len) {
-            max++;
+            max+=2;
         }
         BeginDrawing();
             ClearBackground(RAYWHITE);
@@ -173,6 +173,8 @@ int main(int argc, char *argv[])
                              GetScreenWidth()/2.0f + OFFSET_X + STEP * data[i], GetScreenHeight() / 2.0f + OFFSET_Y - STEP * data[i+1], RED);
                     }
                 }
+                DrawLine(GetScreenWidth()/2.0f + OFFSET_X + STEP * data[max-1], GetScreenHeight() / 2.0f + OFFSET_Y - STEP * data[max],
+                             GetScreenWidth()/2.0f + OFFSET_X + STEP * data[arr_len-2], GetScreenHeight() / 2.0f + OFFSET_Y - STEP * data[arr_len-1], BLUE);
                 
             EndMode2D();
         EndDrawing();
