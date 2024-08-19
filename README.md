@@ -1,5 +1,7 @@
 # Formation Flight of UAV Swarms in an Obstacle Filled Three-Dimensional Environment
 
+![Cover image](./doc/cover.png)
+
 This project showcases the formation flight of a group of unmanned aerial vehicles
 avoiding obstacles while navigating and maintaining the formation. This project
 uses Cyberbotic's Webots to simulate the drones and physics.
